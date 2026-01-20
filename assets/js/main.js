@@ -1,7 +1,8 @@
 /* =========================================
    La Main d'Or — main.js (vanilla)
    - Prestations: tabs + recherche + rendu cards
-   - WhatsApp: message pré-rempli (nom + prix + durée)
+   - Réservation: liens Calendly par prestation
+   - WhatsApp: contact / message libre
    - Galerie: filtres + lightbox
    - FAQ: accordéon
    - Active links nav + reveal
@@ -28,63 +29,66 @@
 
   const fmtEuro = (v) => (typeof v === "number" ? `${v}€` : "—");
   const fmtMin = (v) => (typeof v === "number" ? `${v} min` : "—");
-
-  const buildWALink = (service) => {
-    const price = fmtEuro(service.price).replace("€", ""); // keep number in text below
-    const pText = typeof service.price === "number" ? `${service.price}€` : "—€";
-    const dText = typeof service.duration === "number" ? `${service.duration} min` : "— min";
+  const buildBookingLink = (service) => {
+    // Réservation directe Calendly (1 clic = la bonne prestation)
+    if (service && typeof service.calendlyUrl === 'string' && service.calendlyUrl.startsWith('https://calendly.com/')) {
+      return service.calendlyUrl;
+    }
+    // Fallback (ne devrait pas arriver) : contact WhatsApp avec message pré-rempli
+    const pText = typeof service.price === 'number' ? `${service.price}€` : '—€';
+    const dText = typeof service.duration === 'number' ? `${service.duration} min` : '— min';
     const msg = `Bonjour, je souhaite réserver : ${service.title} (${pText} / ${dText}). Merci !`;
     return `${WA_BASE}?text=${encodeURIComponent(msg)}`;
   };
 
-  // ---------- PRESTATIONS DATA (33)
+  // ---------- PRESTATIONS DATA (32)
   // Règle respectée: 1er nombre = prix, 2e nombre = durée.
   // Si valeur manquante => null => affichage "—" + liste À vérifier.
   const SERVICES = [
     // Ongles pieds
-    { title: "Semi-permanent pieds", price: 25, duration: 45, category: "Ongles pieds", tag: "Pieds" },
+    { title: "Semi-permanent pieds", price: 25, duration: 45, category: "Ongles pieds", tag: "Pieds", calendlyUrl: "https://calendly.com/behramanon/semi-permanent-pieds-25-45-min" },
 
     // Manucure
-    { title: "Gainage / renfort", price: 40, duration: 75, category: "Manucure", featured: true, tag: "Renfort" },
+    { title: "Gainage / renfort", price: 40, duration: 75, category: "Manucure", featured: true, tag: "Renfort", calendlyUrl: "https://calendly.com/behramanon/gainage-renfort-40-75-min" },
 
     // Ongles mains
-    { title: "Semi-permanent mains", price: 25, duration: 45, category: "Ongles mains", featured: true },
-    { title: "Dépose semi-permanent", price: 15, duration: 20, category: "Ongles mains", tag: "Dépose" },
-    { title: "Pack dépose semi + nouvelle pose semi", price: 35, duration: 60, category: "Ongles mains", tag: "Pack" },
-    { title: "Pose américaine", price: 35, duration: 90, category: "Ongles mains", featured: true, tag: "Capsules" },
-    { title: "Dépose pose américaine", price: 15, duration: 30, category: "Ongles mains", tag: "Dépose" },
-    { title: "Pack dépose capsule + nouvelle pose capsule", price: 45, duration: 90, category: "Ongles mains", tag: "Pack" },
-    { title: "Dépose gel", price: 20, duration: 45, category: "Ongles mains", tag: "Dépose" },
-    { title: "Remplissage gel", price: 35, duration: 90, category: "Ongles mains", tag: "Remplissage" },
-    { title: "Rallongement chablon", price: 50, duration: 120, category: "Ongles mains", tag: "Chablon" },
-    { title: "Pack semi mains + pieds", price: 45, duration: 105, category: "Ongles mains", tag: "Pack" },
-    { title: "Pack pose américaine + semi pieds", price: 55, duration: 105, category: "Ongles mains", tag: "Pack" },
+    { title: "Semi-permanent mains", price: 25, duration: 45, category: "Ongles mains", featured: true, calendlyUrl: "https://calendly.com/behramanon/semi-permanent-mains-25-45-min" },
+    { title: "Dépose semi-permanent", price: 15, duration: 20, category: "Ongles mains", tag: "Dépose", calendlyUrl: "https://calendly.com/behramanon/depose-semi-permanent-15-20min" },
+    { title: "Pack dépose semi + nouvelle pose semi", price: 35, duration: 60, category: "Ongles mains", tag: "Pack", calendlyUrl: "https://calendly.com/behramanon/pack-depose-semi-nouvelle-pose-semi-35-60min" },
+    { title: "Pose américaine", price: 35, duration: 90, category: "Ongles mains", featured: true, tag: "Capsules", calendlyUrl: "https://calendly.com/behramanon/pose-americaine-35-90-min" },
+    { title: "Dépose pose américaine", price: 15, duration: 30, category: "Ongles mains", tag: "Dépose", calendlyUrl: "https://calendly.com/behramanon/depose-pose-americaine-15-30-min" },
+    { title: "Pack dépose capsule + nouvelle pose capsule", price: 45, duration: 90, category: "Ongles mains", tag: "Pack", calendlyUrl: "https://calendly.com/behramanon/pack-depose-capsule-nouvelle-pose-capsule-45-90min" },
+    { title: "Dépose gel", price: 20, duration: 45, category: "Ongles mains", tag: "Dépose", calendlyUrl: "https://calendly.com/behramanon/depose-gel-20-45-min" },
+    { title: "Remplissage gel", price: 35, duration: 90, category: "Ongles mains", tag: "Remplissage", calendlyUrl: "https://calendly.com/behramanon/remplissage-gel-35-90-min" },
+    { title: "Rallongement chablon", price: 50, duration: 120, category: "Ongles mains", tag: "Chablon", calendlyUrl: "https://calendly.com/behramanon/rallongement-chablon-50-120-min" },
+    { title: "Pack semi mains + pieds", price: 45, duration: 105, category: "Ongles mains", tag: "Pack", calendlyUrl: "https://calendly.com/behramanon/pack-semi-mains-pieds-45-105-min" },
+    { title: "Pack pose américaine + semi pieds", price: 55, duration: 105, category: "Ongles mains", tag: "Pack", calendlyUrl: "https://calendly.com/behramanon/pack-pose-americaine-semi-pieds-55-105-min" },
 
     // Cils
-    { title: "Rehaussement de cils", price: 45, duration: 70, category: "Cils", tag: "Rehaussement" },
-    { title: "Rehaussement de cils + teinture", price: 55, duration: 75, category: "Cils", tag: "Rehaussement" },
-    { title: "Dépose extensions de cils (pose extérieure)", price: 15, duration: 15, category: "Cils", tag: "Dépose" },
-    { title: "Dépose extensions de cils (réalisée par mes soins)", price: 10, duration: null, category: "Cils", tag: "Dépose" },
+    { title: "Rehaussement de cils", price: 45, duration: 70, category: "Cils", tag: "Rehaussement", calendlyUrl: "https://calendly.com/behramanon/rehaussement-de-cils-45-70-min" },
+    { title: "Rehaussement de cils + teinture", price: 55, duration: 75, category: "Cils", tag: "Rehaussement", calendlyUrl: "https://calendly.com/behramanon/rehaussement-de-cils-teinture-55-75min" },
+    { title: "Dépose extensions de cils (pose extérieure)", price: 15, duration: 15, category: "Cils", tag: "Dépose", calendlyUrl: "https://calendly.com/behramanon/depose-extensions-de-cils-pose-exterieure-15-15min" },
+    { title: "Dépose extensions de cils (réalisée par mes soins)", price: 10, duration: null, category: "Cils", tag: "Dépose", calendlyUrl: "https://calendly.com/behramanon/depose-extensions-de-cils-realisee-par-mes-soins-10" },
 
-    { title: "Extensions de cils — cils à cils", price: 40, duration: 90, category: "Cils", featured: true },
-    { title: "Remplissage cils à cils — 2 semaines", price: 30, duration: 60, category: "Cils", tag: "2 semaines" },
-    { title: "Remplissage cils à cils — 3 semaines", price: 35, duration: 75, category: "Cils", tag: "3 semaines" },
+    { title: "Extensions de cils — cils à cils", price: 40, duration: 90, category: "Cils", featured: true, calendlyUrl: "https://calendly.com/behramanon/extensions-de-cils-cils-a-cils-40-90-min" },
+    { title: "Remplissage cils à cils — 2 semaines", price: 30, duration: 60, category: "Cils", tag: "2 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-cils-a-cils-2-semaines-30-60-min" },
+    { title: "Remplissage cils à cils — 3 semaines", price: 35, duration: 75, category: "Cils", tag: "3 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-cils-a-cils-3-semaines-35-75-min" },
 
-    { title: "Extensions de cils — volume mixte naturel", price: 50, duration: 90, category: "Cils" },
-    { title: "Remplissage mixte naturel — 2 semaines", price: 40, duration: 60, category: "Cils", tag: "2 semaines" },
-    { title: "Remplissage mixte naturel — 3 semaines", price: 45, duration: 75, category: "Cils", tag: "3 semaines" },
+    { title: "Extensions de cils — volume mixte naturel", price: 50, duration: 90, category: "Cils", calendlyUrl: "https://calendly.com/behramanon/extensions-de-cils-volume-mixte-naturel-50-90-min" },
+    { title: "Remplissage mixte naturel — 2 semaines", price: 40, duration: 60, category: "Cils", tag: "2 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mixte-naturel-2-semaines-40-60-min" },
+    { title: "Remplissage mixte naturel — 3 semaines", price: 45, duration: 75, category: "Cils", tag: "3 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mixte-naturel-3-semaines-45-75-min" },
 
-    { title: "Extensions de cils — volume mixte fourni", price: 55, duration: 90, category: "Cils" },
-    { title: "Remplissage mixte fourni — 2 semaines", price: 45, duration: 60, category: "Cils", tag: "2 semaines" },
-    { title: "Remplissage mixte fourni — 3 semaines", price: 50, duration: 75, category: "Cils", tag: "3 semaines" },
+    { title: "Extensions de cils — volume mixte fourni", price: 55, duration: 90, category: "Cils", calendlyUrl: "https://calendly.com/behramanon/extensions-de-cils-volume-mixte-fourni-55-90-min" },
+    { title: "Remplissage mixte fourni — 2 semaines", price: 45, duration: 60, category: "Cils", tag: "2 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mixte-fourni-2-semaines-45-60min" },
+    { title: "Remplissage mixte fourni — 3 semaines", price: 50, duration: 75, category: "Cils", tag: "3 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mixte-fourni-3-semaines-50-75min" },
 
-    { title: "Extensions de cils — volume russe", price: 60, duration: 90, category: "Cils" },
-    { title: "Remplissage volume russe — 2 semaines", price: 45, duration: 60, category: "Cils", tag: "2 semaines" },
-    { title: "Remplissage volume russe — 3 semaines", price: 50, duration: 75, category: "Cils", tag: "3 semaines" },
+    { title: "Extensions de cils — volume russe", price: 60, duration: 90, category: "Cils", calendlyUrl: "https://calendly.com/behramanon/extensions-de-cils-volume-russe-60-90-min" },
+    { title: "Remplissage volume russe — 2 semaines", price: 45, duration: 60, category: "Cils", tag: "2 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-volume-russe-2-semaines-45-60-min" },
+    { title: "Remplissage volume russe — 3 semaines", price: 50, duration: 75, category: "Cils", tag: "3 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-volume-russe-3-semaines-50-75-min" },
 
-    { title: "Extensions de cils — volume mega russe", price: 70, duration: 90, category: "Cils" },
-    { title: "Remplissage mega russe — 2 semaines", price: 55, duration: 60, category: "Cils", tag: "2 semaines" },
-    { title: "Remplissage mega russe — 3 semaines", price: 60, duration: 75, category: "Cils", tag: "3 semaines" }
+    { title: "Extensions de cils — volume mega russe", price: 70, duration: 90, category: "Cils", calendlyUrl: "https://calendly.com/behramanon/extensions-de-cils-volume-mega-russe-70-90-min" },
+    { title: "Remplissage mega russe — 2 semaines", price: 55, duration: 60, category: "Cils", tag: "2 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mega-russe-2-semaines-55-60min" },
+    { title: "Remplissage mega russe — 3 semaines", price: 60, duration: 75, category: "Cils", tag: "3 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mega-russe-3-semaines-60-75-min" }
   ];
 
   const CATEGORIES = ["Manucure", "Ongles mains", "Ongles pieds", "Cils"];
@@ -105,12 +109,12 @@
     const tag = s.tag ? `<span class="badge badge--ghost">${s.tag}</span>` : "";
     const featuredBadge = isFeatured ? `<span class="badge badge--pop">Populaire</span>` : "";
 
-    const waUrl = buildWALink(s);
+    const bookingUrl = buildBookingLink(s);
 
     return `
       <article class="svc ${isFeatured ? "svc--featured" : ""}" data-title="${s.title}">
         <header class="svc__hd">
-          <div class="svc__badges">${featuredBadge}${tag}</div>
+          <div class="svc__badges">${featuredBadge}<span class="badge badge--ghost">Réservation en ligne</span>${tag}</div>
           <h3 class="svc__title">${s.title}</h3>
         </header>
 
@@ -120,7 +124,7 @@
         </div>
 
         <div class="svc__cta">
-          <a class="btn btn--outline" href="${waUrl}" target="_blank" rel="noopener noreferrer" data-wa>
+          <a class="btn btn--outline" href="${bookingUrl}" target="_blank" rel="noopener noreferrer" data-calendly>
             Réserver
           </a>
         </div>
@@ -161,14 +165,14 @@
   const buildToCheck = () => {
     if (!toCheckBox || !toCheckList) return;
 
-    const issues = SERVICES.filter(s => s.price == null || s.duration == null);
+    const issues = SERVICES.filter(s => s.price == null || s.duration == null || !s.calendlyUrl);
     if (!issues.length) {
       toCheckBox.hidden = true;
       return;
     }
 
     toCheckList.innerHTML = issues.map(s => {
-      const missing = [s.price == null ? "prix" : null, s.duration == null ? "durée" : null].filter(Boolean).join(" + ");
+      const missing = [s.price == null ? 'prix' : null, s.duration == null ? 'durée' : null, !s.calendlyUrl ? 'lien Calendly' : null].filter(Boolean).join(' + ');
       return `<li><strong>${s.title}</strong> — ${missing} manquant(s)</li>`;
     }).join("");
 
@@ -181,6 +185,18 @@
   if (searchInput) {
     searchInput.addEventListener("input", () => applyServices());
   }
+
+  
+  const validateCalendlyLinks = () => {
+    const urls = SERVICES.map(s => s.calendlyUrl).filter(Boolean);
+    const dup = urls.filter((u,i) => urls.indexOf(u) !== i);
+    if (dup.length) console.warn('[Calendly] Liens en doublon détectés:', Array.from(new Set(dup)));
+    const missing = SERVICES.filter(s => !s.calendlyUrl);
+    if (missing.length) console.warn('[Calendly] Prestations sans lien:', missing.map(s => s.title));
+  };
+
+  // vérif console (doublons / manquants)
+  validateCalendlyLinks();
 
   // init
   setActiveTab(activeCategory);
