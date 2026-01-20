@@ -21,11 +21,15 @@
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
   // ---------- utils
-  const normalize = (s) => (s || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .trim();
+  const normalize = (s) => {
+    const v = (s || "").toLowerCase().normalize("NFD");
+    try {
+      return v.replace(/\p{Diacritic}/gu, "").trim();
+    } catch (_) {
+      // Fallback (environnements sans Unicode property escapes)
+      return v.replace(/[̀-ͯ]/g, "").trim();
+    }
+  };
 
   const fmtEuro = (v) => (typeof v === "number" ? `${v}€` : "—");
   const fmtMin = (v) => (typeof v === "number" ? `${v} min` : "—");
@@ -102,35 +106,33 @@
   const toCheckBox = $("[data-to-check]");
   const toCheckList = $("[data-to-check-list]");
 
-  let activeCategory = "Ongles mains";
+  let activeCategory = tabButtons.find(b => b.classList.contains("active"))?.dataset.tab || "Manucure";
 
-  const renderServiceCard = (s, opts = {}) => {
+
+  const renderServiceCard = (s) => {
     const isFeatured = !!s.featured;
-    const tag = s.tag ? `<span class="badge badge--ghost">${s.tag}</span>` : "";
-    const featuredBadge = isFeatured ? `<span class="badge badge--pop">Populaire</span>` : "";
-
     const bookingUrl = buildBookingLink(s);
 
+    const tag = s.tag ? `<span class="badge badge-left">${s.tag}</span>` : "";
+    const featuredBadge = isFeatured ? `<span class="badge">Populaire</span>` : "";
+
     return `
-      <article class="svc ${isFeatured ? "svc--featured" : ""}" data-title="${s.title}">
-        <header class="svc__hd">
-          <div class="svc__badges">${featuredBadge}<span class="badge badge--ghost">Réservation en ligne</span>${tag}</div>
-          <h3 class="svc__title">${s.title}</h3>
-        </header>
-
-        <div class="svc__meta">
-          <span class="pill"><strong>Prix</strong> ${fmtEuro(s.price)}</span>
-          <span class="pill ${s.duration == null ? "pill--warn" : ""}"><strong>Durée</strong> ${fmtMin(s.duration)}</span>
+      <article class="prestation ${isFeatured ? "featured" : ""}" data-title="${s.title}">
+        ${featuredBadge}
+        ${tag}
+        <h3 class="title">${s.title}</h3>
+        <p class="desc">Réservation en ligne (Calendly) • Prix & durée visibles</p>
+        <div class="meta-row">
+          <span class="meta-pill"><strong>Prix</strong> ${fmtEuro(s.price)}</span>
+          <span class="meta-pill ${s.duration == null ? "meta-pill--warn" : ""}"><strong>Durée</strong> ${fmtMin(s.duration)}</span>
         </div>
-
-        <div class="svc__cta">
-          <a class="btn btn--outline" href="${bookingUrl}" target="_blank" rel="noopener noreferrer" data-calendly>
-            Réserver
-          </a>
-        </div>
+        <a class="btn btn--outline" href="${bookingUrl}" target="_blank" rel="noopener noreferrer" data-calendly>
+          Réserver
+        </a>
       </article>
     `.trim();
   };
+
 
   const applyServices = () => {
     if (!listRoot) return;
@@ -144,13 +146,13 @@
     if (featuredRoot) {
       const featured = filtered.filter(s => s.featured).slice(0, 3);
       featuredRoot.innerHTML = featured.length
-        ? `<div class="svc-grid">${featured.map(s => renderServiceCard(s)).join("")}</div>`
+        ? `<div class="featured-wrap">${featured.map(s => renderServiceCard(s)).join("")}</div>`
         : "";
     }
 
     const rest = filtered.filter(s => !s.featured);
     listRoot.innerHTML = rest.length
-      ? `<div class="svc-grid">${rest.map(s => renderServiceCard(s)).join("")}</div>`
+      ? `<div class="prestations-list">${rest.map(s => renderServiceCard(s)).join("")}</div>`
       : `<p class="empty">Aucune prestation trouvée. Essaie un autre mot-clé.</p>`;
 
     buildToCheck();
@@ -202,10 +204,13 @@
   setActiveTab(activeCategory);
 
   // ---------- GALLERY FILTERS + LIGHTBOX
-  const chips = $$("[data-gchip]");
-  const items = $$("[data-gitem]");
-  const lb = $("[data-lightbox]");
-  const lbImg = lb ? $("[data-lb-img]", lb) : null;
+  // Supporte 2 versions de markup:
+  // - v1 (data-gchip / data-gitem / data-src)
+  // - v2 (data-filter / .g-item / <img src>)
+  const chips = $$("[data-gchip], [data-filter]");
+  const items = $$("[data-gitem], .g-item");
+  const lb = $("[data-lightbox]") || $("#lightbox");
+  const lbImg = lb ? ($("[data-lb-img]", lb) || $(".lightbox__img", lb)) : null;
   const lbClose = lb ? $("[data-lb-close]", lb) : null;
   const lbPrev = lb ? $("[data-lb-prev]", lb) : null;
   const lbNext = lb ? $("[data-lb-next]", lb) : null;
@@ -220,8 +225,9 @@
 
     lbIndex = Math.max(0, Math.min(index, vis.length - 1));
     const fig = vis[lbIndex];
-    const src = fig.getAttribute("data-src");
-    const alt = fig.getAttribute("data-alt") || "";
+    const img = fig.querySelector("img") || fig;
+    const src = fig.getAttribute("data-src") || img.getAttribute("src") || "";
+    const alt = fig.getAttribute("data-alt") || img.getAttribute("alt") || "";
 
     lbImg.src = src;
     lbImg.alt = alt;
@@ -241,15 +247,20 @@
     if (!vis.length) return;
     lbIndex = (lbIndex + dir + vis.length) % vis.length;
     const fig = vis[lbIndex];
-    lbImg.src = fig.getAttribute("data-src");
-    lbImg.alt = fig.getAttribute("data-alt") || "";
+    const img = fig.querySelector("img") || fig;
+    lbImg.src = fig.getAttribute("data-src") || img.getAttribute("src") || "";
+    lbImg.alt = fig.getAttribute("data-alt") || img.getAttribute("alt") || "";
   };
 
   if (chips.length && items.length) {
     chips.forEach(chip => {
       chip.addEventListener("click", () => {
-        chips.forEach(c => c.classList.toggle("active", c === chip));
-        const type = chip.getAttribute("data-gchip");
+        chips.forEach(c => {
+          c.classList.toggle("active", c === chip);
+          c.classList.toggle("is-active", c === chip);
+          c.setAttribute("aria-selected", c === chip ? "true" : "false");
+        });
+        const type = chip.getAttribute("data-gchip") || chip.getAttribute("data-filter");
 
         items.forEach(fig => {
           const t = fig.getAttribute("data-type");
@@ -354,11 +365,18 @@
       if (name.length < 2) errors.push('Merci d’indiquer ton prénom.');
       if (message.length < 10) errors.push('Ton message est un peu court (min. 10 caractères).');
 
-      const box = form.querySelector('[data-form-feedback]');
-      if (box) {
-        box.textContent = '';
-        box.classList.remove('ok', 'err');
+      let box = form.querySelector('[data-form-feedback]');
+      if (!box) {
+        box = document.createElement('p');
+        box.className = 'form__feedback';
+        box.setAttribute('data-form-feedback', '');
+        box.setAttribute('aria-live', 'polite');
+        const note = form.querySelector('.form__note');
+        (note ? note.parentNode : form).insertBefore(box, note || null);
       }
+
+      box.textContent = '';
+      box.classList.remove('ok', 'err');
 
       if (errors.length) {
         if (box) {
