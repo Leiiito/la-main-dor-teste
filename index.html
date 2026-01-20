@@ -3,202 +3,274 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin — La Main d’Or</title>
-  <meta name="robots" content="noindex,nofollow" />
-  <link rel="stylesheet" href="../assets/css/style.css" />
-  <script type="module" src="../assets/js/admin.js"></script>
+  <title>La Main d’Or — Ongles & Cils à Gravelines (sur rendez-vous)</title>
+  <meta name="description" content="Prothésiste ongulaire & technicienne de cils à Gravelines. Réservation rapide, prestations claires, galerie, avis et infos pratiques." />
+
+  <meta property="og:title" content="La Main d’Or — Ongles & Cils à Gravelines" />
+  <meta property="og:description" content="Réservez votre rendez-vous ongles & cils en quelques secondes. Prestations, galerie, avis, contact." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/img/og-cover.jpg" />
+  <meta property="og:locale" content="fr_FR" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="La Main d’Or — Ongles & Cils à Gravelines" />
+  <meta name="twitter:description" content="Réservez votre rendez-vous ongles & cils en quelques secondes." />
+  <meta name="twitter:image" content="assets/img/og-cover.jpg" />
+
+  <link rel="icon" href="favicon.png" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script type="module" src="assets/js/main.js"></script>
 </head>
-<body class="admin-body">
+
+<body>
   <a class="skip-link" href="#main">Aller au contenu</a>
 
   <header class="nav-wrap">
-    <nav class="nav container" aria-label="Admin">
-      <a class="brand" href="../index.html" aria-label="Retour au site">
+    <nav class="nav container" aria-label="Navigation principale">
+      <a class="brand" href="#top" aria-label="La Main d’Or, retour en haut de page">
         <span class="brand__mark" aria-hidden="true">✦</span>
         <span class="brand__text">
           <span class="brand__name">La Main d’Or</span>
-          <span class="brand__tag">Admin</span>
+          <span class="brand__tag">Ongles • Cils • Gravelines</span>
         </span>
       </a>
 
-      <div class="nav__menu is-admin">
-        <a class="btn btn--ghost btn--sm" href="../index.html">Voir le site</a>
-        <button class="btn btn--primary btn--sm" id="logoutBtn" type="button" hidden>Déconnexion</button>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="navMenu">
+        <span class="sr-only">Ouvrir le menu</span>
+        <span class="nav__burger" aria-hidden="true"></span>
+      </button>
+
+      <div id="navMenu" class="nav__menu">
+        <a href="#prestations">Prestations</a>
+        <a href="#galerie">Galerie</a>
+        <a href="#avis">Avis</a>
+        <a href="#contact">Infos</a>
+        <a class="btn btn--primary btn--sm" href="#reserver" data-cta="book-generic">Réserver</a>
       </div>
     </nav>
   </header>
 
-  <main id="main" class="container admin">
-    <!-- LOGIN -->
-    <section class="admin-card" id="loginView" hidden>
-      <h1>Connexion</h1>
-      <p class="muted">
-        Accès protégé par mot de passe (protection simple côté navigateur).
-      </p>
+  <main id="main">
+    <section id="top" class="hero">
+      <div class="container hero__grid">
+        <div class="hero__copy">
+          <p class="pill">Sur rendez-vous • Gravelines</p>
+          <h1>Ongles &amp; Cils à Gravelines — <span class="accent">résultats nets</span>, tenue durable.</h1>
+          <p class="lead">
+            Prestations premium, hygiène irréprochable, produits professionnels. Réservation en quelques secondes.
+          </p>
 
-      <form id="loginForm" class="form">
-        <div class="field">
-          <label for="password">Mot de passe</label>
-          <input id="password" name="password" type="password" required autocomplete="current-password" />
+          <div class="hero__cta" id="reserver">
+            <a class="btn btn--primary" href="#" data-cta="book-generic">Réserver sur Calendly</a>
+            <a class="btn btn--ghost" href="#prestations">Voir les prestations</a>
+          </div>
+
+          <ul class="hero__bullets" role="list">
+            <li>⏱️ Créneaux clairs • rappel automatique</li>
+            <li>🧼 Hygiène &amp; matériel désinfecté</li>
+            <li>✨ Finition précise • tenue optimisée</li>
+          </ul>
         </div>
-        <button class="btn btn--primary" type="submit">Se connecter</button>
-      </form>
 
-      <div id="loginStatus" class="status" role="status" aria-live="polite"></div>
+        <div class="hero__visual" aria-hidden="true">
+          <div class="glass-card">
+            <div class="glass-card__top">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+            <div class="glass-card__body">
+              <div class="stat">
+                <div class="stat__k">Réservation</div>
+                <div class="stat__v">30 s</div>
+              </div>
+              <div class="divider"></div>
+              <div class="mini-grid">
+                <div class="mini-swatch"></div>
+                <div class="mini-swatch"></div>
+                <div class="mini-swatch"></div>
+                <div class="mini-swatch"></div>
+              </div>
+              <p class="muted">Un design chic, simple et rassurant — orienté conversion.</p>
+            </div>
+          </div>
+          <div class="hero__glow"></div>
+        </div>
+      </div>
+    </section>
 
-      <div class="note mt-lg">
-        <p class="muted">
-          ⚠️ Cette protection n’est pas une sécurité serveur. Quelqu’un de technique pourrait la contourner.
-          Pour une vraie sécurité : Supabase/Firebase + Auth.
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2>Réserver en 30 secondes</h2>
+          <p class="muted">Sans appels, sans échanges interminables. Vous choisissez, vous validez, c’est réservé.</p>
+        </div>
+
+        <div class="steps">
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">1</div>
+            <h3>Choisissez votre prestation</h3>
+            <p>Filtrez par catégorie ou recherchez par mot-clé.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">2</div>
+            <h3>Sélectionnez un créneau</h3>
+            <p>Le lien de réservation ouvre la disponibilité en temps réel.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">3</div>
+            <h3>Confirmez</h3>
+            <p>Vous recevez une confirmation + rappel automatique.</p>
+          </article>
+        </div>
+
+        <div class="center mt-lg">
+          <a class="btn btn--primary" href="#" data-cta="book-generic">Réserver maintenant</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="prestations" class="section section--soft">
+      <div class="container">
+        <div class="section__head">
+          <h2>Prestations</h2>
+          <p class="muted">Prix &amp; durées transparents. Chaque prestation possède son bouton de réservation.</p>
+        </div>
+
+        <div class="services-ui" role="region" aria-label="Recherche et filtres des prestations">
+          <div class="tabs" role="tablist" aria-label="Catégories de prestations">
+            <button class="tab is-active" role="tab" aria-selected="true" data-category="all">Tout</button>
+            <button class="tab" role="tab" aria-selected="false" data-category="Manucure">Manucure</button>
+            <button class="tab" role="tab" aria-selected="false" data-category="Ongles mains">Ongles mains</button>
+            <button class="tab" role="tab" aria-selected="false" data-category="Ongles pieds">Ongles pieds</button>
+            <button class="tab" role="tab" aria-selected="false" data-category="Cils">Cils</button>
+          </div>
+
+          <div class="search">
+            <label class="sr-only" for="serviceSearch">Rechercher une prestation</label>
+            <input id="serviceSearch" type="search" placeholder="Rechercher (ex : gel, remplissage, volume…)" autocomplete="off" />
+            <button class="btn btn--ghost btn--sm" type="button" id="clearSearch">Effacer</button>
+          </div>
+        </div>
+
+        <div id="servicesStatus" class="status" role="status" aria-live="polite"></div>
+        <div id="servicesGrid" class="cards-grid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="galerie" class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2>Galerie</h2>
+          <p class="muted">Quelques réalisations. Cliquez pour agrandir.</p>
+        </div>
+
+        <div id="galleryStatus" class="status" role="status" aria-live="polite"></div>
+        <div id="galleryGrid" class="gallery-grid"></div>
+
+        <div class="center mt-lg">
+          <a class="btn btn--ghost" href="https://instagram.com/manon__behra" target="_blank" rel="noopener">Voir plus sur Instagram</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--soft">
+      <div class="container">
+        <div class="section__head">
+          <h2>Réassurance</h2>
+          <p class="muted">Du soin, de la précision, et une routine qualité à chaque rendez-vous.</p>
+        </div>
+
+        <div class="trust">
+          <article class="card">
+            <h3>Hygiène stricte</h3>
+            <p>Désinfection du matériel et protocole propre à chaque cliente.</p>
+          </article>
+          <article class="card">
+            <h3>Produits pro</h3>
+            <p>Produits professionnels pour une finition propre et une tenue optimisée.</p>
+          </article>
+          <article class="card">
+            <h3>Tenue &amp; confort</h3>
+            <p>Préparation soignée + conseils d’entretien pour durer.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="avis" class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2>Avis</h2>
+          <p class="muted">Ce que les clientes disent (exemples). Consultez les avis Google.</p>
+        </div>
+
+        <div class="reviews">
+          <article class="review">
+            <p class="review__quote">“Résultat magnifique, très propre, et super tenue. Je recommande.”</p>
+            <p class="review__meta">— Cliente</p>
+          </article>
+          <article class="review">
+            <p class="review__quote">“Accueil chaleureux, hygiène parfaite, finitions impeccables.”</p>
+            <p class="review__meta">— Cliente</p>
+          </article>
+          <article class="review">
+            <p class="review__quote">“Réservation facile, créneaux clairs, et travail hyper précis.”</p>
+            <p class="review__meta">— Cliente</p>
+          </article>
+        </div>
+
+        <div class="center mt-lg">
+          <a class="btn btn--primary" href="https://g.page/r/CTha_eAXpwwcEAE/review" target="_blank" rel="noopener">Lire / laisser un avis Google</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section section--soft">
+      <div class="container">
+        <div class="section__head">
+          <h2>Contact &amp; infos</h2>
+          <p class="muted">Une question rapide ? Écrivez sur WhatsApp. Pour réserver : utilisez le bouton.</p>
+        </div>
+
+        <div class="contact">
+          <div class="contact__card">
+            <h3>Réservation</h3>
+            <p>Le plus rapide : choisissez une prestation et cliquez sur “Réserver”.</p>
+            <a class="btn btn--primary" href="#" data-cta="book-generic">Réserver</a>
+          </div>
+
+          <div class="contact__card">
+            <h3>WhatsApp</h3>
+            <p>Message direct : réponse dès que possible.</p>
+            <a class="btn btn--ghost" href="https://wa.me/33750126032" target="_blank" rel="noopener">Écrire sur WhatsApp</a>
+          </div>
+
+          <div class="contact__card">
+            <h3>Instagram</h3>
+            <p>Dernières réalisations &amp; infos.</p>
+            <a class="btn btn--ghost" href="https://instagram.com/manon__behra" target="_blank" rel="noopener">@manon__behra</a>
+          </div>
+        </div>
+
+        <p class="fineprint mt-lg">
+          © <span id="year"></span> La Main d’Or • Gravelines • <a href="admin/index.html">Admin</a>
         </p>
       </div>
     </section>
-
-    <!-- APP -->
-    <section class="admin-card" id="appView" hidden>
-      <div class="admin-head">
-        <div>
-          <h1>Tableau de bord</h1>
-          <p class="muted">Prestations & galerie — changements immédiats sur la vitrine.</p>
-        </div>
-        <div class="admin-head__right">
-          <span class="pill pill--dark" id="sessionBadge">Connecté</span>
-        </div>
-      </div>
-
-      <div class="admin-tabs" role="tablist" aria-label="Sections admin">
-        <button class="tab is-active" role="tab" aria-selected="true" data-admin-tab="services">Prestations</button>
-        <button class="tab" role="tab" aria-selected="false" data-admin-tab="gallery">Galerie</button>
-        <button class="tab" role="tab" aria-selected="false" data-admin-tab="backup">Exporter / Importer</button>
-      </div>
-
-      <div id="adminStatus" class="status" role="status" aria-live="polite"></div>
-
-      <!-- PRESTATIONS -->
-      <section id="servicesPanel" class="admin-panel">
-        <div class="panel-head">
-          <h2>Prestations</h2>
-          <div class="panel-actions">
-            <button class="btn btn--ghost btn--sm" id="resetServiceFormBtn" type="button">Nouveau</button>
-          </div>
-        </div>
-
-        <div class="admin-grid">
-          <div class="card card--soft">
-            <h3 id="serviceFormTitle">Ajouter une prestation</h3>
-
-            <form id="serviceForm" class="form">
-              <input type="hidden" id="serviceId" />
-
-              <div class="field">
-                <label for="category">Catégorie</label>
-                <select id="category" required>
-                  <option value="Manucure">Manucure</option>
-                  <option value="Ongles mains">Ongles mains</option>
-                  <option value="Ongles pieds">Ongles pieds</option>
-                  <option value="Cils">Cils</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="title">Nom de la prestation</label>
-                <input id="title" type="text" required maxlength="80" />
-              </div>
-
-              <div class="field-row">
-                <div class="field">
-                  <label for="price">Prix (€)</label>
-                  <input id="price" type="number" min="0" step="1" required />
-                </div>
-                <div class="field">
-                  <label for="duration">Durée (min) <span class="muted">(optionnel)</span></label>
-                  <input id="duration" type="number" min="0" step="1" placeholder="ex: 60" />
-                </div>
-              </div>
-
-              <div class="field">
-                <label for="link_url">Lien affilié / lien réservation</label>
-                <input id="link_url" type="url" placeholder="https://..." />
-              </div>
-
-              <div class="field">
-                <label for="description">Description courte <span class="muted">(optionnel)</span></label>
-                <textarea id="description" rows="3" maxlength="180" placeholder="Ex : Pose complète, finition brillante, conseils…"></textarea>
-              </div>
-
-              <div class="field checkbox">
-                <input id="featured" type="checkbox" />
-                <label for="featured">Populaire</label>
-              </div>
-
-              <div class="field-row">
-                <button class="btn btn--primary" type="submit" id="saveServiceBtn">Ajouter</button>
-                <button class="btn btn--ghost" type="button" id="cancelEditBtn" hidden>Annuler</button>
-              </div>
-            </form>
-          </div>
-
-          <div class="card card--soft">
-            <h3>Liste</h3>
-
-            <div class="search">
-              <label class="sr-only" for="serviceSearch">Rechercher</label>
-              <input id="serviceSearch" type="search" placeholder="Rechercher (titre, catégorie…)" />
-              <button class="btn btn--ghost btn--sm" type="button" id="clearServiceSearch">Effacer</button>
-            </div>
-
-            <p class="muted mt-sm">Astuce : glissez-déposez pour réordonner.</p>
-            <div id="servicesList" class="admin-list" aria-live="polite"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- GALERIE -->
-      <section id="galleryPanel" class="admin-panel" hidden>
-        <div class="panel-head">
-          <h2>Galerie</h2>
-          <div class="panel-actions">
-            <button class="btn btn--ghost btn--sm" id="clearGalleryBtn" type="button">Tout supprimer</button>
-          </div>
-        </div>
-
-        <div class="upload-zone" id="dropZone" tabindex="0" role="button" aria-label="Zone d'ajout d'images">
-          <p><strong>Glissez-déposez</strong> des images ici, ou <span class="linklike">cliquez</span> pour choisir.</p>
-          <p class="muted">Vous pouvez aussi coller (Ctrl+V) une image depuis le presse-papiers.</p>
-          <input id="fileInput" type="file" accept="image/*" multiple hidden />
-        </div>
-
-        <div class="note mt-md">
-          <p class="muted">
-            Les images sont compressées et stockées en localStorage (limité). Si ça bloque, exporte le JSON, puis passe sur Supabase Storage.
-          </p>
-        </div>
-
-        <div id="galleryList" class="gallery-admin-grid" aria-live="polite"></div>
-      </section>
-
-      <!-- BACKUP -->
-      <section id="backupPanel" class="admin-panel" hidden>
-        <div class="panel-head">
-          <h2>Exporter / Importer</h2>
-        </div>
-
-        <div class="admin-grid">
-          <div class="card card--soft">
-            <h3>Exporter</h3>
-            <p class="muted">Télécharge un fichier JSON (prestations + galerie) pour sauvegarde.</p>
-            <button class="btn btn--primary" id="exportBtn" type="button">Exporter JSON</button>
-          </div>
-
-          <div class="card card--soft">
-            <h3>Importer</h3>
-            <p class="muted">Importe un JSON précédemment exporté (remplace les données actuelles).</p>
-            <input type="file" id="importFile" accept="application/json" />
-            <button class="btn btn--ghost mt-sm" id="importBtn" type="button">Importer</button>
-          </div>
-        </div>
-      </section>
-    </section>
   </main>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement d'image">
+    <div class="lightbox__backdrop" data-close></div>
+    <div class="lightbox__panel" role="document">
+      <button class="lightbox__close" type="button" data-close aria-label="Fermer">×</button>
+      <img id="lightboxImg" alt="" />
+      <p id="lightboxCaption" class="lightbox__caption"></p>
+    </div>
+  </div>
+
+  <noscript>
+    <div class="noscript container">
+      <p><strong>JavaScript est nécessaire</strong> pour afficher les prestations et la galerie (stockées localement via l’admin).</p>
+    </div>
+  </noscript>
 </body>
 </html>

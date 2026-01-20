@@ -1,4 +1,8 @@
-// /assets/js/admin.js
+// Admin (site statique) — La Main d’Or
+// - Mot de passe (protection simple front) + session localStorage
+// - CRUD prestations (localStorage)
+// - Galerie : drag&drop + Ctrl+V + thumbnails + delete + reorder
+// - Export/Import JSON
 
 const LS = {
   SESSION: "lmd_admin_authed",
@@ -6,29 +10,12 @@ const LS = {
   GALLERY: "lmd_gallery",
 };
 
-// Mot de passe = 18121995, stocké sous forme de hash SHA-256 (protection simple, côté front)
 const ADMIN_PASS_HASH_SHA256_HEX =
-  "293a5e11f0aad8d69be0ee35a564fea7828e192ddd70057eb88872f1878d96a1";
+  "293a5e11f0aad8d69be0ee35a564fea7828e192ddd70057eb88872f1878d96a1"; // sha256("18121995")
 
-const $ = (sel) => document.querySelector(sel);
+const $ = (s) => document.querySelector(s);
 
-const loginView = $("#loginView");
-const appView = $("#appView");
-const logoutBtn = $("#logoutBtn");
-const loginForm = $("#loginForm");
-const loginStatus = $("#loginStatus");
-const adminStatus = $("#adminStatus");
-
-const servicesPanel = $("#servicesPanel");
-const galleryPanel = $("#galleryPanel");
-const backupPanel = $("#backupPanel");
-
-const tabs = Array.from(document.querySelectorAll("[data-admin-tab]"));
-
-/* =========================
-   Utils
-========================= */
-function setStatus(el, msg, type = "info") {
+function setStatus(el, msg, type = "") {
   if (!el) return;
   el.textContent = msg || "";
   el.classList.remove("is-ok", "is-err");
@@ -36,75 +23,12 @@ function setStatus(el, msg, type = "info") {
   if (type === "err") el.classList.add("is-err");
 }
 
-function safeJSONParse(str, fallback) {
-  try {
-    return JSON.parse(str);
-  } catch {
-    return fallback;
-  }
+function safeParse(v, fallback) {
+  try { return JSON.parse(v); } catch { return fallback; }
 }
 
 function uuid() {
-  return (crypto && crypto.randomUUID) ? crypto.randomUUID() : `id_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-}
-
-function normalizeService(s, idx = 0) {
-  return {
-    id: s.id || uuid(),
-    category: s.category || "Manucure",
-    title: (s.title || "").trim(),
-    price: Number.isFinite(+s.price) ? +s.price : 0,
-    duration: s.duration === "" || s.duration == null ? null : (Number.isFinite(+s.duration) ? +s.duration : null),
-    link_url: (s.link_url || "").trim(),
-    description: (s.description || "").trim(),
-    featured: !!s.featured,
-    order_index: Number.isFinite(+s.order_index) ? +s.order_index : idx,
-    created_at: s.created_at || new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
-}
-
-function normalizeGalleryItem(g, idx = 0) {
-  return {
-    id: g.id || uuid(),
-    dataUrl: g.dataUrl || "",
-    alt: (g.alt || "").trim(),
-    order_index: Number.isFinite(+g.order_index) ? +g.order_index : idx,
-    created_at: g.created_at || new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
-}
-
-function loadServices() {
-  const arr = safeJSONParse(localStorage.getItem(LS.SERVICES), []);
-  const norm = arr.map((s, i) => normalizeService(s, i));
-  norm.sort((a, b) => a.order_index - b.order_index);
-  return norm;
-}
-
-function saveServices(arr) {
-  try {
-    localStorage.setItem(LS.SERVICES, JSON.stringify(arr));
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function loadGallery() {
-  const arr = safeJSONParse(localStorage.getItem(LS.GALLERY), []);
-  const norm = arr.map((g, i) => normalizeGalleryItem(g, i));
-  norm.sort((a, b) => a.order_index - b.order_index);
-  return norm;
-}
-
-function saveGallery(arr) {
-  try {
-    localStorage.setItem(LS.GALLERY, JSON.stringify(arr));
-    return true;
-  } catch (e) {
-    return false;
-  }
+  return (crypto?.randomUUID) ? crypto.randomUUID() : `id_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 }
 
 async function sha256Hex(str) {
@@ -113,54 +37,84 @@ async function sha256Hex(str) {
   return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-/* =========================
-   Auth (simple)
-========================= */
 function isAuthed() {
   return localStorage.getItem(LS.SESSION) === "1";
 }
-
 function setAuthed(v) {
   if (v) localStorage.setItem(LS.SESSION, "1");
   else localStorage.removeItem(LS.SESSION);
 }
 
-async function handleLogin(password) {
-  const hash = await sha256Hex(password);
-  return hash === ADMIN_PASS_HASH_SHA256_HEX;
+function loadServices() {
+  const arr = safeParse(localStorage.getItem(LS.SERVICES), []);
+  return Array.isArray(arr) ? arr : [];
+}
+function saveServices(arr) {
+  localStorage.setItem(LS.SERVICES, JSON.stringify(arr));
 }
 
-function showApp() {
-  loginView.hidden = true;
-  appView.hidden = false;
-  logoutBtn.hidden = false;
+function loadGallery() {
+  const arr = safeParse(localStorage.getItem(LS.GALLERY), []);
+  return Array.isArray(arr) ? arr : [];
 }
+function saveGallery(arr) {
+  localStorage.setItem(LS.GALLERY, JSON.stringify(arr));
+}
+
+function reindex(arr) {
+  arr.forEach((x, i) => x.order_index = i * 10);
+}
+
+function esc(str) {
+  return String(str ?? "").replace(/[&<>"']/g, (m) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
+// ----------------- Boot views
+const loginView = $("#loginView");
+const appView = $("#appView");
+const logoutBtn = $("#logoutBtn");
+const loginForm = $("#loginForm");
+const loginStatus = $("#loginStatus");
+const adminStatus = $("#adminStatus");
 
 function showLogin() {
   loginView.hidden = false;
   appView.hidden = true;
   logoutBtn.hidden = true;
 }
+function showApp() {
+  loginView.hidden = true;
+  appView.hidden = false;
+  logoutBtn.hidden = false;
+}
 
-/* =========================
-   Tabs
-========================= */
-function setActiveTab(name) {
+// ----------------- Tabs
+const tabBtns = Array.from(document.querySelectorAll("[data-admin-tab]"));
+const servicesPanel = $("#servicesPanel");
+const galleryPanel = $("#galleryPanel");
+const backupPanel = $("#backupPanel");
+
+function setTab(name) {
   const panels = { services: servicesPanel, gallery: galleryPanel, backup: backupPanel };
   for (const [k, el] of Object.entries(panels)) el.hidden = k !== name;
-
-  tabs.forEach(btn => {
-    const active = btn.dataset.adminTab === name;
-    btn.classList.toggle("is-active", active);
-    btn.setAttribute("aria-selected", active ? "true" : "false");
+  tabBtns.forEach(b => {
+    const active = b.dataset.adminTab === name;
+    b.classList.toggle("is-active", active);
+    b.setAttribute("aria-selected", active ? "true" : "false");
   });
 }
 
-/* =========================
-   Services UI
-========================= */
+// ----------------- Services (CRUD + reorder)
+let services = [];
+let dragServiceId = null;
+
 const serviceForm = $("#serviceForm");
 const serviceFormTitle = $("#serviceFormTitle");
+const resetServiceFormBtn = $("#resetServiceFormBtn");
+const cancelEditBtn = $("#cancelEditBtn");
+
 const serviceId = $("#serviceId");
 const category = $("#category");
 const title = $("#title");
@@ -169,16 +123,9 @@ const duration = $("#duration");
 const link_url = $("#link_url");
 const description = $("#description");
 const featured = $("#featured");
-const saveServiceBtn = $("#saveServiceBtn");
-const cancelEditBtn = $("#cancelEditBtn");
-const resetServiceFormBtn = $("#resetServiceFormBtn");
-
 const servicesList = $("#servicesList");
 const serviceSearch = $("#serviceSearch");
 const clearServiceSearch = $("#clearServiceSearch");
-
-let services = [];
-let dragServiceId = null;
 
 function resetServiceForm() {
   serviceId.value = "";
@@ -189,13 +136,29 @@ function resetServiceForm() {
   link_url.value = "";
   description.value = "";
   featured.checked = false;
-
   serviceFormTitle.textContent = "Ajouter une prestation";
-  saveServiceBtn.textContent = "Ajouter";
+  $("#saveServiceBtn").textContent = "Ajouter";
   cancelEditBtn.hidden = true;
 }
 
-function fillServiceForm(s) {
+function normalizeService(raw, idx) {
+  const d = raw.duration === "" || raw.duration == null ? null : +raw.duration;
+  return {
+    id: raw.id || uuid(),
+    category: raw.category || "Manucure",
+    title: (raw.title || "").trim(),
+    price: Number.isFinite(+raw.price) ? Math.round(+raw.price) : 0,
+    duration: Number.isFinite(d) && d > 0 ? Math.round(d) : null,
+    link_url: (raw.link_url || "").trim(),
+    description: (raw.description || "").trim(),
+    featured: !!raw.featured,
+    order_index: Number.isFinite(+raw.order_index) ? +raw.order_index : idx * 10,
+    updated_at: new Date().toISOString(),
+    created_at: raw.created_at || new Date().toISOString(),
+  };
+}
+
+function fillForm(s) {
   serviceId.value = s.id;
   category.value = s.category;
   title.value = s.title;
@@ -204,54 +167,53 @@ function fillServiceForm(s) {
   link_url.value = s.link_url;
   description.value = s.description;
   featured.checked = !!s.featured;
-
   serviceFormTitle.textContent = "Modifier la prestation";
-  saveServiceBtn.textContent = "Enregistrer";
+  $("#saveServiceBtn").textContent = "Enregistrer";
   cancelEditBtn.hidden = false;
 }
 
-function renderServicesList() {
+function formatMeta(s) {
+  const d = s.duration ? ` • ${s.duration} min` : "";
+  const link = s.link_url ? "• lien OK" : "• lien générique";
+  return `${s.price}€${d} ${link}`;
+}
+
+function renderServices() {
   const q = (serviceSearch.value || "").trim().toLowerCase();
-  const filtered = services.filter(s => {
-    if (!q) return true;
-    return (
-      s.title.toLowerCase().includes(q) ||
-      s.category.toLowerCase().includes(q) ||
-      (s.description || "").toLowerCase().includes(q)
-    );
-  });
+  const list = services
+    .slice()
+    .sort((a,b)=>a.order_index-b.order_index)
+    .filter(s => !q || `${s.title} ${s.category} ${s.description}`.toLowerCase().includes(q));
 
   servicesList.innerHTML = "";
-
-  if (filtered.length === 0) {
+  if (!list.length) {
     servicesList.innerHTML = `<p class="muted">Aucune prestation.</p>`;
     return;
   }
 
   const wrap = document.createElement("div");
   wrap.className = "admin-dnd-list";
-  wrap.setAttribute("role", "list");
+  wrap.setAttribute("role","list");
 
-  filtered.forEach((s) => {
-    const item = document.createElement("div");
-    item.className = "admin-row";
-    item.setAttribute("role", "listitem");
-    item.draggable = true;
-    item.dataset.id = s.id;
+  list.forEach(s => {
+    const row = document.createElement("div");
+    row.className = "admin-row";
+    row.draggable = true;
+    row.dataset.id = s.id;
+    row.setAttribute("role","listitem");
 
-    item.innerHTML = `
+    row.innerHTML = `
       <div class="admin-row__drag" aria-hidden="true">⋮⋮</div>
       <div class="admin-row__main">
         <div class="admin-row__top">
-          <strong>${escapeHTML(s.title)}</strong>
+          <strong>${esc(s.title)}</strong>
           ${s.featured ? `<span class="badge">Populaire</span>` : ""}
         </div>
         <div class="admin-row__meta">
-          <span class="pill pill--dark">${escapeHTML(s.category)}</span>
-          <span class="muted">${formatPriceDuration(s.price, s.duration)}</span>
-          ${s.link_url ? `<span class="muted">• lien OK</span>` : `<span class="muted">• lien générique</span>`}
+          <span class="pill pill--dark">${esc(s.category)}</span>
+          <span class="muted">${esc(formatMeta(s))}</span>
         </div>
-        ${s.description ? `<div class="admin-row__desc muted">${escapeHTML(s.description)}</div>` : ""}
+        ${s.description ? `<div class="admin-row__desc muted">${esc(s.description)}</div>` : ""}
       </div>
       <div class="admin-row__actions">
         <button class="btn btn--ghost btn--sm" data-action="edit">Modifier</button>
@@ -259,295 +221,189 @@ function renderServicesList() {
       </div>
     `;
 
-    item.addEventListener("click", (e) => {
+    row.addEventListener("click", (e) => {
       const btn = e.target.closest("button[data-action]");
       if (!btn) return;
-      const action = btn.dataset.action;
-
-      if (action === "edit") {
-        fillServiceForm(s);
+      if (btn.dataset.action === "edit") {
+        fillForm(s);
         setStatus(adminStatus, "Mode édition activé.", "ok");
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
-
-      if (action === "delete") {
-        const ok = confirm(`Supprimer "${s.title}" ?`);
-        if (!ok) return;
+      if (btn.dataset.action === "delete") {
+        if (!confirm(`Supprimer "${s.title}" ?`)) return;
         services = services.filter(x => x.id !== s.id);
-        reindexOrder(services);
-        if (!saveServices(services)) {
-          setStatus(adminStatus, "Erreur: stockage plein. Exportez puis supprimez des images.", "err");
-        } else {
-          setStatus(adminStatus, "Prestation supprimée.", "ok");
-        }
-        renderServicesList();
+        reindex(services);
+        saveServices(services);
+        renderServices();
+        setStatus(adminStatus, "Prestation supprimée.", "ok");
       }
     });
 
-    // Drag reorder
-    item.addEventListener("dragstart", () => {
-      dragServiceId = s.id;
-      item.classList.add("is-dragging");
-    });
-    item.addEventListener("dragend", () => {
-      dragServiceId = null;
-      item.classList.remove("is-dragging");
-      document.querySelectorAll(".admin-row.is-over").forEach(el => el.classList.remove("is-over"));
-    });
-    item.addEventListener("dragover", (e) => {
+    row.addEventListener("dragstart", () => { dragServiceId = s.id; row.classList.add("is-dragging"); });
+    row.addEventListener("dragend", () => { dragServiceId = null; row.classList.remove("is-dragging"); row.classList.remove("is-over"); });
+    row.addEventListener("dragover", (e) => { e.preventDefault(); row.classList.add("is-over"); });
+    row.addEventListener("dragleave", () => row.classList.remove("is-over"));
+    row.addEventListener("drop", (e) => {
       e.preventDefault();
-      item.classList.add("is-over");
-    });
-    item.addEventListener("dragleave", () => item.classList.remove("is-over"));
-    item.addEventListener("drop", (e) => {
-      e.preventDefault();
-      item.classList.remove("is-over");
+      row.classList.remove("is-over");
       if (!dragServiceId || dragServiceId === s.id) return;
-      const fromIdx = services.findIndex(x => x.id === dragServiceId);
-      const toIdx = services.findIndex(x => x.id === s.id);
-      if (fromIdx < 0 || toIdx < 0) return;
-
-      const [moved] = services.splice(fromIdx, 1);
-      services.splice(toIdx, 0, moved);
-      reindexOrder(services);
-
-      if (!saveServices(services)) {
-        setStatus(adminStatus, "Erreur: stockage plein. Exportez puis supprimez des images.", "err");
-      } else {
-        setStatus(adminStatus, "Ordre des prestations mis à jour.", "ok");
-      }
-      renderServicesList();
+      const from = services.findIndex(x => x.id === dragServiceId);
+      const to = services.findIndex(x => x.id === s.id);
+      if (from < 0 || to < 0) return;
+      const [moved] = services.splice(from, 1);
+      services.splice(to, 0, moved);
+      reindex(services);
+      saveServices(services);
+      renderServices();
+      setStatus(adminStatus, "Ordre mis à jour.", "ok");
     });
 
-    wrap.appendChild(item);
+    wrap.appendChild(row);
   });
 
   servicesList.appendChild(wrap);
 }
 
-function reindexOrder(arr) {
-  arr.forEach((x, i) => (x.order_index = i * 10));
-}
+// ----------------- Gallery
+let gallery = [];
+let dragGalleryId = null;
 
-function formatPriceDuration(p, d) {
-  const priceStr = `${Math.round(p)}€`;
-  const durStr = (d == null || d === 0) ? "" : ` • ${Math.round(d)} min`;
-  return `${priceStr}${durStr}`;
-}
-
-function escapeHTML(str) {
-  return String(str).replace(/[&<>"']/g, (m) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
-  }[m]));
-}
-
-/* =========================
-   Gallery UI
-========================= */
 const dropZone = $("#dropZone");
 const fileInput = $("#fileInput");
 const galleryList = $("#galleryList");
 const clearGalleryBtn = $("#clearGalleryBtn");
 
-let gallery = [];
-let dragGalleryId = null;
-
-function renderGalleryList() {
+function renderGallery() {
   galleryList.innerHTML = "";
-
-  if (gallery.length === 0) {
+  const list = gallery.slice().sort((a,b)=>a.order_index-b.order_index);
+  if (!list.length) {
     galleryList.innerHTML = `<p class="muted">Aucune image. Ajoutez via glisser-déposer ou Ctrl+V.</p>`;
     return;
   }
 
-  gallery.forEach((g) => {
+  list.forEach(g => {
     const card = document.createElement("div");
     card.className = "gadmin-item";
     card.draggable = true;
     card.dataset.id = g.id;
 
     card.innerHTML = `
-      <div class="gadmin-thumb">
-        <img src="${g.dataUrl}" alt="${escapeHTML(g.alt || "Image galerie")}" loading="lazy" decoding="async">
-      </div>
+      <div class="gadmin-thumb"><img src="${g.dataUrl}" alt="${esc(g.alt || "Image galerie")}" loading="lazy" decoding="async"></div>
       <div class="gadmin-meta">
-        <label class="sr-only" for="alt_${g.id}">Texte alternatif</label>
-        <input id="alt_${g.id}" class="gadmin-alt" type="text" placeholder="Alt (ex: Pose gel nude)" value="${escapeHTML(g.alt || "")}">
+        <input class="gadmin-alt" type="text" placeholder="Alt (ex: Pose gel nude)" value="${esc(g.alt || "")}">
         <div class="gadmin-actions">
           <button class="btn btn--ghost btn--sm" data-action="delete">Supprimer</button>
         </div>
       </div>
     `;
 
-    const altInput = card.querySelector(".gadmin-alt");
-    altInput.addEventListener("input", () => {
+    const alt = card.querySelector(".gadmin-alt");
+    alt.addEventListener("input", () => {
       const item = gallery.find(x => x.id === g.id);
       if (!item) return;
-      item.alt = altInput.value.trim();
+      item.alt = alt.value.trim();
       item.updated_at = new Date().toISOString();
-      if (!saveGallery(gallery)) {
-        setStatus(adminStatus, "Erreur: stockage plein. Exportez puis supprimez des images.", "err");
-      }
+      saveGallery(gallery);
     });
 
     card.addEventListener("click", (e) => {
       const btn = e.target.closest("button[data-action]");
       if (!btn) return;
-      if (btn.dataset.action === "delete") {
-        const ok = confirm("Supprimer cette image ?");
-        if (!ok) return;
-        gallery = gallery.filter(x => x.id !== g.id);
-        reindexOrder(gallery);
-        if (!saveGallery(gallery)) {
-          setStatus(adminStatus, "Erreur: stockage plein. Exportez puis supprimez des images.", "err");
-        } else {
-          setStatus(adminStatus, "Image supprimée.", "ok");
-        }
-        renderGalleryList();
-      }
+      if (!confirm("Supprimer cette image ?")) return;
+      gallery = gallery.filter(x => x.id !== g.id);
+      reindex(gallery);
+      saveGallery(gallery);
+      renderGallery();
+      setStatus(adminStatus, "Image supprimée.", "ok");
     });
 
-    // Drag reorder
-    card.addEventListener("dragstart", () => {
-      dragGalleryId = g.id;
-      card.classList.add("is-dragging");
-    });
-    card.addEventListener("dragend", () => {
-      dragGalleryId = null;
-      card.classList.remove("is-dragging");
-      document.querySelectorAll(".gadmin-item.is-over").forEach(el => el.classList.remove("is-over"));
-    });
-    card.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      card.classList.add("is-over");
-    });
+    card.addEventListener("dragstart", () => { dragGalleryId = g.id; card.classList.add("is-dragging"); });
+    card.addEventListener("dragend", () => { dragGalleryId = null; card.classList.remove("is-dragging"); card.classList.remove("is-over"); });
+    card.addEventListener("dragover", (e) => { e.preventDefault(); card.classList.add("is-over"); });
     card.addEventListener("dragleave", () => card.classList.remove("is-over"));
     card.addEventListener("drop", (e) => {
       e.preventDefault();
       card.classList.remove("is-over");
       if (!dragGalleryId || dragGalleryId === g.id) return;
-
-      const fromIdx = gallery.findIndex(x => x.id === dragGalleryId);
-      const toIdx = gallery.findIndex(x => x.id === g.id);
-      if (fromIdx < 0 || toIdx < 0) return;
-
-      const [moved] = gallery.splice(fromIdx, 1);
-      gallery.splice(toIdx, 0, moved);
-      reindexOrder(gallery);
-
-      if (!saveGallery(gallery)) {
-        setStatus(adminStatus, "Erreur: stockage plein. Exportez puis supprimez des images.", "err");
-      } else {
-        setStatus(adminStatus, "Ordre de la galerie mis à jour.", "ok");
-      }
-      renderGalleryList();
+      const from = gallery.findIndex(x => x.id === dragGalleryId);
+      const to = gallery.findIndex(x => x.id === g.id);
+      if (from < 0 || to < 0) return;
+      const [moved] = gallery.splice(from, 1);
+      gallery.splice(to, 0, moved);
+      reindex(gallery);
+      saveGallery(gallery);
+      renderGallery();
+      setStatus(adminStatus, "Ordre de la galerie mis à jour.", "ok");
     });
 
     galleryList.appendChild(card);
   });
 }
 
-async function processImageFile(file) {
-  // Resize/compress best-effort
-  const maxSide = 1600;
-  const quality = 0.82;
-
-  const img = await fileToImage(file);
-  const { canvas, ctx, w, h } = fitToCanvas(img, maxSide);
-
-  ctx.drawImage(img, 0, 0, w, h);
-
-  // Try WEBP, fallback JPEG
-  let dataUrl = "";
-  try {
-    dataUrl = canvas.toDataURL("image/webp", quality);
-    if (!dataUrl.startsWith("data:image/webp")) throw new Error("WEBP non supporté");
-  } catch {
-    dataUrl = canvas.toDataURL("image/jpeg", quality);
-  }
-
-  return dataUrl;
-}
-
-function fitToCanvas(img, maxSide) {
-  let w = img.naturalWidth || img.width;
-  let h = img.naturalHeight || img.height;
-
-  const ratio = w / h;
-  if (w > h && w > maxSide) {
-    w = maxSide;
-    h = Math.round(maxSide / ratio);
-  } else if (h >= w && h > maxSide) {
-    h = maxSide;
-    w = Math.round(maxSide * ratio);
-  }
-
-  const canvas = document.createElement("canvas");
-  canvas.width = w;
-  canvas.height = h;
-  const ctx = canvas.getContext("2d", { alpha: false });
-  return { canvas, ctx, w, h };
-}
-
 function fileToImage(file) {
-  return new Promise((resolve, reject) => {
+  return new Promise((res, rej) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      resolve(img);
-    };
-    img.onerror = reject;
+    img.onload = () => { URL.revokeObjectURL(url); res(img); };
+    img.onerror = rej;
     img.src = url;
   });
 }
 
-async function addImagesFromFiles(files) {
-  const list = Array.from(files).filter(f => f.type && f.type.startsWith("image/"));
-  if (list.length === 0) {
-    setStatus(adminStatus, "Aucune image détectée.", "err");
-    return;
-  }
+function fitCanvas(img, maxSide) {
+  let w = img.naturalWidth || img.width;
+  let h = img.naturalHeight || img.height;
+  const ratio = w / h;
+
+  if (w > h && w > maxSide) { w = maxSide; h = Math.round(maxSide / ratio); }
+  else if (h >= w && h > maxSide) { h = maxSide; w = Math.round(maxSide * ratio); }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext("2d", { alpha: false });
+  return { canvas, ctx, w, h };
+}
+
+async function processImage(file) {
+  const img = await fileToImage(file);
+  const { canvas, ctx, w, h } = fitCanvas(img, 1600);
+  ctx.drawImage(img, 0, 0, w, h);
+
+  try {
+    const webp = canvas.toDataURL("image/webp", 0.82);
+    if (webp.startsWith("data:image/webp")) return webp;
+  } catch {}
+  return canvas.toDataURL("image/jpeg", 0.82);
+}
+
+async function addImages(files) {
+  const list = Array.from(files).filter(f => f.type?.startsWith("image/"));
+  if (!list.length) { setStatus(adminStatus, "Aucune image détectée.", "err"); return; }
 
   setStatus(adminStatus, `Ajout de ${list.length} image(s)…`, "ok");
 
   for (const f of list) {
     try {
-      const dataUrl = await processImageFile(f);
-      gallery.push(normalizeGalleryItem({ dataUrl, alt: "" }, gallery.length));
-      reindexOrder(gallery);
-
-      if (!saveGallery(gallery)) {
-        setStatus(adminStatus, "Stockage plein. Exportez le JSON puis supprimez des images.", "err");
-        // rollback last push
-        gallery.pop();
-        reindexOrder(gallery);
-        break;
-      }
-    } catch (e) {
+      const dataUrl = await processImage(f);
+      gallery.push({ id: uuid(), dataUrl, alt: "", order_index: gallery.length*10, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
+      reindex(gallery);
+      saveGallery(gallery);
+    } catch {
       setStatus(adminStatus, "Erreur lors du traitement d’une image.", "err");
     }
   }
 
-  renderGalleryList();
+  renderGallery();
   setStatus(adminStatus, "Images ajoutées.", "ok");
 }
 
-/* =========================
-   Backup
-========================= */
+// ----------------- Backup
 const exportBtn = $("#exportBtn");
 const importFile = $("#importFile");
 const importBtn = $("#importBtn");
 
-function exportJSON() {
-  const payload = {
-    version: 1,
-    exported_at: new Date().toISOString(),
-    services,
-    gallery,
-  };
-
+function doExport() {
+  const payload = { version: 1, exported_at: new Date().toISOString(), services, gallery };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -558,79 +414,37 @@ function exportJSON() {
   setStatus(adminStatus, "Export terminé.", "ok");
 }
 
-async function importJSON() {
-  const file = importFile.files && importFile.files[0];
-  if (!file) {
-    setStatus(adminStatus, "Choisissez un fichier JSON.", "err");
-    return;
-  }
-
+async function doImport() {
+  const file = importFile.files?.[0];
+  if (!file) { setStatus(adminStatus, "Choisissez un fichier JSON.", "err"); return; }
   try {
-    const txt = await file.text();
-    const data = JSON.parse(txt);
-
-    if (!data || typeof data !== "object") throw new Error("JSON invalide");
-    const importedServices = Array.isArray(data.services) ? data.services : [];
-    const importedGallery = Array.isArray(data.gallery) ? data.gallery : [];
-
-    const normS = importedServices.map((s, i) => normalizeService(s, i));
-    const normG = importedGallery.map((g, i) => normalizeGalleryItem(g, i));
-    reindexOrder(normS);
-    reindexOrder(normG);
-
-    // save
-    localStorage.setItem(LS.SERVICES, JSON.stringify(normS));
-    localStorage.setItem(LS.GALLERY, JSON.stringify(normG));
-
-    services = loadServices();
-    gallery = loadGallery();
-    renderServicesList();
-    renderGalleryList();
-
-    setStatus(adminStatus, "Import réussi. La vitrine est mise à jour.", "ok");
+    const data = JSON.parse(await file.text());
+    const s = Array.isArray(data.services) ? data.services : [];
+    const g = Array.isArray(data.gallery) ? data.gallery : [];
+    services = s.map((x,i)=>normalizeService(x,i));
+    gallery = g.map((x,i)=>({ id: x.id || uuid(), dataUrl: x.dataUrl || "", alt: (x.alt||"").trim(), order_index: Number.isFinite(+x.order_index)?+x.order_index:i*10, created_at: x.created_at || new Date().toISOString(), updated_at: new Date().toISOString() }));
+    reindex(services); reindex(gallery);
+    saveServices(services); saveGallery(gallery);
+    renderServices(); renderGallery();
+    setStatus(adminStatus, "Import réussi.", "ok");
   } catch {
     setStatus(adminStatus, "Import impossible : fichier invalide.", "err");
   }
 }
 
-/* =========================
-   Events / Boot
-========================= */
-function boot() {
-  // auth
-  if (isAuthed()) showApp();
-  else showLogin();
-
-  // load data
-  services = loadServices();
-  gallery = loadGallery();
-
-  renderServicesList();
-  renderGalleryList();
-
-  // default tab
-  setActiveTab("services");
-}
-
+// ----------------- Events
 loginForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  setStatus(loginStatus, "", "info");
-
-  const pwd = $("#password").value;
-  if (!pwd) return;
-
-  try {
-    const ok = await handleLogin(pwd);
-    if (!ok) {
-      setStatus(loginStatus, "Mot de passe incorrect.", "err");
-      return;
-    }
-    setAuthed(true);
-    showApp();
-    setStatus(adminStatus, "Connexion réussie.", "ok");
-  } catch {
-    setStatus(loginStatus, "Erreur de connexion (navigateur).", "err");
+  setStatus(loginStatus, "");
+  const pwd = $("#password").value || "";
+  const hash = await sha256Hex(pwd);
+  if (hash !== ADMIN_PASS_HASH_SHA256_HEX) {
+    setStatus(loginStatus, "Mot de passe incorrect.", "err");
+    return;
   }
+  setAuthed(true);
+  showApp();
+  setStatus(adminStatus, "Connexion réussie.", "ok");
 });
 
 logoutBtn?.addEventListener("click", () => {
@@ -639,30 +453,17 @@ logoutBtn?.addEventListener("click", () => {
   setStatus(loginStatus, "Déconnecté.", "ok");
 });
 
-tabs.forEach(btn => {
-  btn.addEventListener("click", () => {
-    const name = btn.dataset.adminTab;
-    setActiveTab(name);
-  });
-});
+tabBtns.forEach(b => b.addEventListener("click", () => setTab(b.dataset.adminTab)));
 
-/* Services actions */
-resetServiceFormBtn?.addEventListener("click", () => {
-  resetServiceForm();
-  setStatus(adminStatus, "Formulaire réinitialisé.", "ok");
-});
-
-cancelEditBtn?.addEventListener("click", () => {
-  resetServiceForm();
-  setStatus(adminStatus, "Édition annulée.", "ok");
-});
+resetServiceFormBtn?.addEventListener("click", resetServiceForm);
+cancelEditBtn?.addEventListener("click", () => { resetServiceForm(); setStatus(adminStatus, "Édition annulée.", "ok"); });
 
 serviceForm?.addEventListener("submit", (e) => {
   e.preventDefault();
-
   const isEdit = !!serviceId.value;
+  const base = isEdit ? (services.find(s=>s.id===serviceId.value) || {}) : {};
   const raw = {
-    id: serviceId.value || uuid(),
+    id: isEdit ? serviceId.value : uuid(),
     category: category.value,
     title: title.value,
     price: price.value,
@@ -670,76 +471,50 @@ serviceForm?.addEventListener("submit", (e) => {
     link_url: link_url.value,
     description: description.value,
     featured: featured.checked,
-    order_index: isEdit
-      ? (services.find(s => s.id === serviceId.value)?.order_index ?? services.length * 10)
-      : services.length * 10,
+    order_index: base.order_index ?? (services.length * 10),
+    created_at: base.created_at,
   };
-
   const norm = normalizeService(raw, services.length);
-
-  if (!norm.title) {
-    setStatus(adminStatus, "Le nom de la prestation est obligatoire.", "err");
-    return;
-  }
+  if (!norm.title) { setStatus(adminStatus, "Le nom de la prestation est obligatoire.", "err"); return; }
 
   if (isEdit) {
-    services = services.map(s => (s.id === norm.id ? { ...s, ...norm, updated_at: new Date().toISOString() } : s));
+    services = services.map(s => s.id === norm.id ? { ...s, ...norm } : s);
     setStatus(adminStatus, "Prestation modifiée.", "ok");
   } else {
     services.push(norm);
-    reindexOrder(services);
+    reindex(services);
     setStatus(adminStatus, "Prestation ajoutée.", "ok");
   }
 
-  if (!saveServices(services)) {
-    setStatus(adminStatus, "Erreur: stockage plein. Exportez puis supprimez des images.", "err");
-    return;
-  }
-
-  renderServicesList();
+  saveServices(services);
+  renderServices();
   resetServiceForm();
 });
 
-serviceSearch?.addEventListener("input", renderServicesList);
-clearServiceSearch?.addEventListener("click", () => {
-  serviceSearch.value = "";
-  renderServicesList();
-});
+serviceSearch?.addEventListener("input", renderServices);
+clearServiceSearch?.addEventListener("click", () => { serviceSearch.value = ""; renderServices(); });
 
-/* Gallery: drag&drop + click */
+// Gallery events
 dropZone?.addEventListener("click", () => fileInput.click());
-dropZone?.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" || e.key === " ") fileInput.click();
-});
-
-dropZone?.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  dropZone.classList.add("is-over");
-});
+dropZone?.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") fileInput.click(); });
+dropZone?.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("is-over"); });
 dropZone?.addEventListener("dragleave", () => dropZone.classList.remove("is-over"));
 dropZone?.addEventListener("drop", async (e) => {
   e.preventDefault();
   dropZone.classList.remove("is-over");
-  const files = e.dataTransfer?.files;
-  if (files && files.length) await addImagesFromFiles(files);
+  if (e.dataTransfer?.files?.length) await addImages(e.dataTransfer.files);
 });
 
 fileInput?.addEventListener("change", async () => {
-  const files = fileInput.files;
-  if (files && files.length) await addImagesFromFiles(files);
+  if (fileInput.files?.length) await addImages(fileInput.files);
   fileInput.value = "";
 });
 
-/* Gallery: paste Ctrl+V */
+// Ctrl+V (uniquement onglet Galerie)
 window.addEventListener("paste", async (e) => {
-  // only if authed + on gallery tab
-  if (!isAuthed()) return;
-  const activeGallery = !galleryPanel.hidden;
-  if (!activeGallery) return;
-
+  if (!isAuthed() || galleryPanel.hidden) return;
   const items = e.clipboardData?.items;
-  if (!items || items.length === 0) return;
-
+  if (!items?.length) return;
   const files = [];
   for (const it of items) {
     if (it.kind === "file") {
@@ -749,25 +524,31 @@ window.addEventListener("paste", async (e) => {
   }
   if (files.length) {
     e.preventDefault();
-    await addImagesFromFiles(files);
+    await addImages(files);
   }
 });
 
 clearGalleryBtn?.addEventListener("click", () => {
-  const ok = confirm("Tout supprimer dans la galerie ?");
-  if (!ok) return;
+  if (!confirm("Tout supprimer dans la galerie ?")) return;
   gallery = [];
   saveGallery(gallery);
-  renderGalleryList();
+  renderGallery();
   setStatus(adminStatus, "Galerie vidée.", "ok");
 });
 
-/* Backup */
-exportBtn?.addEventListener("click", exportJSON);
-importBtn?.addEventListener("click", importJSON);
+exportBtn?.addEventListener("click", doExport);
+importBtn?.addEventListener("click", doImport);
 
-/* Init */
+// ----------------- Init
 document.addEventListener("DOMContentLoaded", () => {
+  if (isAuthed()) showApp(); else showLogin();
+  services = loadServices();
+  gallery = loadGallery();
+  // ensure order indexes
+  reindex(services); reindex(gallery);
+  saveServices(services); saveGallery(gallery);
+  renderServices();
+  renderGallery();
   resetServiceForm();
-  boot();
+  setTab("services");
 });

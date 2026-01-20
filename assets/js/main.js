@@ -1,4 +1,6 @@
-// /assets/js/main.js
+// Vitrine — La Main d’Or (site statique)
+// Lit prestations + galerie depuis localStorage (remplies via /admin)
+
 import { GENERIC_CALENDLY_URL } from "./supabase-config.js";
 
 const LS = {
@@ -6,7 +8,7 @@ const LS = {
   GALLERY: "lmd_gallery",
 };
 
-const $ = (sel) => document.querySelector(sel);
+const $ = (s) => document.querySelector(s);
 
 const servicesGrid = $("#servicesGrid");
 const servicesStatus = $("#servicesStatus");
@@ -20,82 +22,68 @@ const clearSearchBtn = $("#clearSearch");
 const yearEl = $("#year");
 if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-/* =========================
-   Helpers
-========================= */
-function safeJSONParse(str, fallback) {
-  try { return JSON.parse(str); } catch { return fallback; }
+function safeParse(v, fallback) {
+  try { return JSON.parse(v); } catch { return fallback; }
 }
-function escapeHTML(str) {
-  return String(str).replace(/[&<>"']/g, (m) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+function esc(str) {
+  return String(str ?? "").replace(/[&<>"']/g, (m) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
   }[m]));
 }
-function setStatus(el, msg) {
-  if (!el) return;
-  el.textContent = msg || "";
-}
+function setStatus(el, msg) { if (el) el.textContent = msg || ""; }
+
 function loadServices() {
-  const arr = safeJSONParse(localStorage.getItem(LS.SERVICES), []);
+  const arr = safeParse(localStorage.getItem(LS.SERVICES), []);
   return Array.isArray(arr) ? arr : [];
 }
 function loadGallery() {
-  const arr = safeJSONParse(localStorage.getItem(LS.GALLERY), []);
+  const arr = safeParse(localStorage.getItem(LS.GALLERY), []);
   return Array.isArray(arr) ? arr : [];
 }
-function normalizeDuration(d) {
-  if (d === "" || d == null) return null;
-  const n = +d;
-  return Number.isFinite(n) && n > 0 ? Math.round(n) : null;
-}
+
 function formatPriceDuration(price, duration) {
   const p = Number.isFinite(+price) ? Math.round(+price) : 0;
-  const d = normalizeDuration(duration);
+  const d = (duration == null || duration === "" || +duration <= 0) ? null : Math.round(+duration);
   return d ? `${p}€ • ${d} min` : `${p}€`;
 }
+
 function getBookUrl(service) {
   const u = (service.link_url || "").trim();
   return u || GENERIC_CALENDLY_URL || "#";
 }
 
-/* =========================
-   Services rendering
-========================= */
+// ----------------- Prestations
 let services = [];
 let activeCategory = "all";
 let q = "";
 
-function getFilteredServices() {
-  const normalized = services
+function filteredServices() {
+  return services
     .slice()
-    .sort((a, b) => (+a.order_index || 0) - (+b.order_index || 0));
-
-  return normalized.filter(s => {
-    const catOk = activeCategory === "all" ? true : (s.category === activeCategory);
-    if (!catOk) return false;
-
-    if (!q) return true;
-    const hay = `${s.title || ""} ${s.category || ""} ${s.description || ""}`.toLowerCase();
-    return hay.includes(q);
-  });
+    .sort((a,b)=>(+a.order_index||0)-(+b.order_index||0))
+    .filter(s => {
+      const catOk = activeCategory === "all" ? true : s.category === activeCategory;
+      if (!catOk) return false;
+      if (!q) return true;
+      const hay = `${s.title||""} ${s.category||""} ${s.description||""}`.toLowerCase();
+      return hay.includes(q);
+    });
 }
 
 function renderServices() {
   if (!servicesGrid) return;
   servicesGrid.innerHTML = "";
 
-  const list = getFilteredServices();
-
-  if (services.length === 0) {
+  if (!services.length) {
     setStatus(servicesStatus, "Aucune prestation pour l’instant. Ajoutez-les via /admin.");
     servicesGrid.innerHTML = `
       <div class="note">
         <p><strong>Admin :</strong> allez sur <code>admin/</code> pour ajouter prestations & galerie.</p>
-      </div>
-    `;
+      </div>`;
     return;
   }
 
+  const list = filteredServices();
   setStatus(servicesStatus, `${list.length} prestation(s) affichée(s).`);
 
   list.forEach(s => {
@@ -105,50 +93,42 @@ function renderServices() {
 
     card.innerHTML = `
       <div class="service-card__top">
-        <h3 class="service-card__title">${escapeHTML(s.title || "")}</h3>
+        <h3 class="service-card__title">${esc(s.title || "")}</h3>
         ${s.featured ? `<span class="badge">Populaire</span>` : ""}
       </div>
-      <p class="service-card__meta">${escapeHTML(s.category || "")} • ${escapeHTML(formatPriceDuration(s.price, s.duration))}</p>
-      ${s.description ? `<p class="service-card__desc">${escapeHTML(s.description)}</p>` : ""}
+      <p class="service-card__meta">${esc(s.category || "")} • ${esc(formatPriceDuration(s.price, s.duration))}</p>
+      ${s.description ? `<p class="service-card__desc">${esc(s.description)}</p>` : ""}
       <div class="service-card__actions">
-        <a class="btn btn--primary btn--sm" href="${escapeHTML(bookUrl)}" target="_blank" rel="noopener">Réserver</a>
+        <a class="btn btn--primary btn--sm" href="${esc(bookUrl)}" target="_blank" rel="noopener">Réserver</a>
       </div>
     `;
     servicesGrid.appendChild(card);
   });
 }
 
-/* =========================
-   Tabs + Search
-========================= */
-function setActiveTab(category) {
-  activeCategory = category;
+function setActiveTab(cat) {
+  activeCategory = cat;
   tabs.forEach(t => {
-    const isActive = t.dataset.category === category;
-    t.classList.toggle("is-active", isActive);
-    t.setAttribute("aria-selected", isActive ? "true" : "false");
+    const on = t.dataset.category === cat;
+    t.classList.toggle("is-active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
   });
   renderServices();
 }
 
-tabs.forEach(btn => {
-  btn.addEventListener("click", () => setActiveTab(btn.dataset.category));
-});
+tabs.forEach(btn => btn.addEventListener("click", () => setActiveTab(btn.dataset.category)));
 
 searchInput?.addEventListener("input", () => {
   q = (searchInput.value || "").trim().toLowerCase();
   renderServices();
 });
-
 clearSearchBtn?.addEventListener("click", () => {
   searchInput.value = "";
   q = "";
   renderServices();
 });
 
-/* =========================
-   Gallery rendering + lightbox
-========================= */
+// ----------------- Galerie + lightbox
 const lightbox = $("#lightbox");
 const lightboxImg = $("#lightboxImg");
 const lightboxCaption = $("#lightboxCaption");
@@ -162,7 +142,6 @@ function openLightbox(src, alt) {
   lightbox.classList.add("is-open");
   document.body.classList.add("no-scroll");
 }
-
 function closeLightbox() {
   if (!lightbox) return;
   lightbox.setAttribute("aria-hidden", "true");
@@ -175,11 +154,9 @@ function renderGallery() {
   if (!galleryGrid) return;
   galleryGrid.innerHTML = "";
 
-  const items = loadGallery()
-    .slice()
-    .sort((a, b) => (+a.order_index || 0) - (+b.order_index || 0));
+  const items = loadGallery().slice().sort((a,b)=>(+a.order_index||0)-(+b.order_index||0));
 
-  if (items.length === 0) {
+  if (!items.length) {
     setStatus(galleryStatus, "Galerie vide. Ajoutez des images via /admin.");
     return;
   }
@@ -191,12 +168,7 @@ function renderGallery() {
     btn.type = "button";
     btn.className = "gallery-item";
     const alt = g.alt || `Réalisation ${idx + 1}`;
-
-    // Dimensions fixes pour limiter CLS (ratio via CSS)
-    btn.innerHTML = `
-      <img src="${g.dataUrl}" alt="${escapeHTML(alt)}" loading="lazy" decoding="async" />
-    `;
-
+    btn.innerHTML = `<img src="${g.dataUrl}" alt="${esc(alt)}" loading="lazy" decoding="async" />`;
     btn.addEventListener("click", () => openLightbox(g.dataUrl, alt));
     galleryGrid.appendChild(btn);
   });
@@ -205,14 +177,9 @@ function renderGallery() {
 lightbox?.addEventListener("click", (e) => {
   if (e.target.matches("[data-close]") || e.target.closest("[data-close]")) closeLightbox();
 });
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeLightbox();
-});
-lightbox?.querySelectorAll("[data-close]")?.forEach(el => el.addEventListener("click", closeLightbox));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeLightbox(); });
 
-/* =========================
-   Generic CTA "Réserver"
-========================= */
+// ----------------- CTA générique
 document.addEventListener("click", (e) => {
   const a = e.target.closest("[data-cta='book-generic']");
   if (!a) return;
@@ -222,13 +189,18 @@ document.addEventListener("click", (e) => {
   window.open(url, "_blank", "noopener");
 });
 
-/* =========================
-   Boot
-========================= */
-function boot() {
+// ----------------- Mobile nav toggle (si présent)
+const toggle = document.querySelector(".nav__toggle");
+const menu = document.querySelector("#navMenu");
+toggle?.addEventListener("click", () => {
+  const expanded = toggle.getAttribute("aria-expanded") === "true";
+  toggle.setAttribute("aria-expanded", expanded ? "false" : "true");
+  menu?.classList.toggle("is-open", !expanded);
+});
+
+// ----------------- Boot
+document.addEventListener("DOMContentLoaded", () => {
   services = loadServices();
   setActiveTab("all");
   renderGallery();
-}
-
-document.addEventListener("DOMContentLoaded", boot);
+});
