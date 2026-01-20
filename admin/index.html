@@ -62,14 +62,132 @@
       </div>
 
       <div class="admin-tabs" role="tablist" aria-label="Sections admin">
-        <button class="tab is-active" role="tab" aria-selected="true" data-admin-tab="services">Prestations</button>
+        <button class="tab is-active" role="tab" aria-selected="true" data-admin-tab="settings">Vitrine</button>
+        <button class="tab" role="tab" aria-selected="false" data-admin-tab="services">Prestations</button>
         <button class="tab" role="tab" aria-selected="false" data-admin-tab="gallery">Galerie</button>
+        <button class="tab" role="tab" aria-selected="false" data-admin-tab="reviews">Avis clients</button>
         <button class="tab" role="tab" aria-selected="false" data-admin-tab="backup">Exporter / Importer</button>
       </div>
 
       <div id="adminStatus" class="status" role="status" aria-live="polite"></div>
 
-      <section id="servicesPanel" class="admin-panel">
+      <section id="settingsPanel" class="admin-panel">
+        <div class="panel-head">
+          <h2>Vitrine</h2>
+          <div class="panel-actions">
+            <span class="pill pill--dark">Modifications instantanées sur la vitrine</span>
+          </div>
+        </div>
+
+        <div class="admin-grid">
+          <div class="card card--soft">
+            <h3>Haut de page / Hero</h3>
+
+            <form id="heroForm" class="form">
+              <div class="field">
+                <label for="hero_h1">Titre principal (H1)</label>
+                <input id="hero_h1" type="text" required maxlength="140" />
+              </div>
+
+              <div class="field">
+                <label for="hero_subtitle">Sous-titre</label>
+                <textarea id="hero_subtitle" rows="2" maxlength="220" required></textarea>
+              </div>
+
+              <div class="field">
+                <label for="hero_promise">Texte court (promesse)</label>
+                <input id="hero_promise" type="text" maxlength="120" placeholder="Ex : Tenue durable, finitions nettes…" />
+              </div>
+
+              <div class="field">
+                <label for="hero_location">Badge localisation</label>
+                <input id="hero_location" type="text" maxlength="40" placeholder="Ex : Gravelines" />
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="hero_cta_primary_text">Texte du CTA principal</label>
+                  <input id="hero_cta_primary_text" type="text" required maxlength="40" />
+                </div>
+                <div class="field">
+                  <label for="hero_cta_primary_url">Lien du CTA principal</label>
+                  <input id="hero_cta_primary_url" type="url" placeholder="https://..." />
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="hero_cta_secondary_text">Texte du CTA secondaire <span class="muted">(optionnel)</span></label>
+                  <input id="hero_cta_secondary_text" type="text" maxlength="40" placeholder="Ex : Voir les prestations" />
+                </div>
+                <div class="field">
+                  <label for="hero_cta_secondary_url">Lien du CTA secondaire <span class="muted">(optionnel)</span></label>
+                  <input id="hero_cta_secondary_url" type="text" placeholder="#prestations ou https://..." />
+                </div>
+              </div>
+
+              <button class="btn btn--primary" type="submit">Enregistrer</button>
+            </form>
+          </div>
+
+          <div class="card card--soft">
+            <h3>Contact &amp; infos</h3>
+
+            <form id="contactForm" class="form">
+              <div class="field-row">
+                <div class="field">
+                  <label for="contact_phone">Téléphone</label>
+                  <input id="contact_phone" type="tel" placeholder="07 ..." />
+                </div>
+                <div class="field">
+                  <label for="contact_email">Email</label>
+                  <input id="contact_email" type="email" placeholder="contact@..." />
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="contact_city">Ville / zone</label>
+                  <input id="contact_city" type="text" placeholder="Gravelines" />
+                </div>
+                <div class="field">
+                  <label for="contact_address">Adresse <span class="muted">(optionnel)</span></label>
+                  <input id="contact_address" type="text" placeholder="Rue…, 59820" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="contact_hours">Horaires <span class="muted">(multi-lignes)</span></label>
+                <textarea id="contact_hours" rows="4" placeholder="Lun–Ven : 9h–18h\nSam : 10h–16h\nDim : fermé"></textarea>
+              </div>
+
+              <div class="admin-subtitle">Liens</div>
+
+              <div class="field">
+                <label for="contact_whatsapp">WhatsApp</label>
+                <input id="contact_whatsapp" type="url" placeholder="https://wa.me/..." />
+              </div>
+              <div class="field">
+                <label for="contact_instagram">Instagram</label>
+                <input id="contact_instagram" type="url" placeholder="https://instagram.com/..." />
+              </div>
+              <div class="field">
+                <label for="contact_google">Avis Google</label>
+                <input id="contact_google" type="url" placeholder="https://g.page/..." />
+              </div>
+              <div class="field">
+                <label for="contact_calendly">Calendly</label>
+                <input id="contact_calendly" type="url" placeholder="https://calendly.com/..." />
+              </div>
+
+              <button class="btn btn--primary" type="submit">Enregistrer</button>
+              <p class="muted">Validation basique : email + URLs (si renseignées).</p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="servicesPanel" class="admin-panel" hidden>
         <div class="panel-head">
           <h2>Prestations</h2>
           <div class="panel-actions">
@@ -170,6 +288,63 @@
         <div id="galleryList" class="gallery-admin-grid" aria-live="polite"></div>
       </section>
 
+      <section id="reviewsPanel" class="admin-panel" hidden>
+        <div class="panel-head">
+          <h2>Avis clients</h2>
+          <div class="panel-actions">
+            <button class="btn btn--ghost btn--sm" id="resetReviewFormBtn" type="button">Nouveau</button>
+          </div>
+        </div>
+
+        <div class="admin-grid">
+          <div class="card card--soft">
+            <h3 id="reviewFormTitle">Ajouter un avis</h3>
+
+            <form id="reviewForm" class="form">
+              <input type="hidden" id="reviewId" />
+
+              <div class="field">
+                <label for="review_name">Prénom / pseudo</label>
+                <input id="review_name" type="text" required maxlength="40" placeholder="Ex : Sarah" />
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="review_rating">Note (1–5)</label>
+                  <select id="review_rating" required>
+                    <option value="5">5</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="review_date">Date <span class="muted">(optionnel)</span></label>
+                  <input id="review_date" type="date" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="review_text">Texte de l’avis</label>
+                <textarea id="review_text" rows="4" required maxlength="420" placeholder="Ex : Très satisfaite, travail impeccable…"></textarea>
+              </div>
+
+              <div class="field-row">
+                <button class="btn btn--primary" type="submit" id="saveReviewBtn">Ajouter</button>
+                <button class="btn btn--ghost" type="button" id="cancelReviewEditBtn" hidden>Annuler</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card card--soft">
+            <h3>Liste</h3>
+            <p class="muted mt-sm">Astuce : glissez-déposez pour réordonner.</p>
+            <div id="reviewsList" class="admin-list" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+
       <section id="backupPanel" class="admin-panel" hidden>
         <div class="panel-head">
           <h2>Exporter / Importer</h2>
@@ -178,7 +353,7 @@
         <div class="admin-grid">
           <div class="card card--soft">
             <h3>Exporter</h3>
-            <p class="muted">Télécharge un fichier JSON (prestations + galerie) pour sauvegarde.</p>
+            <p class="muted">Télécharge un fichier JSON (vitrine + prestations + galerie + avis) pour sauvegarde.</p>
             <button class="btn btn--primary" id="exportBtn" type="button">Exporter JSON</button>
           </div>
 

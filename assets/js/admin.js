@@ -8,6 +8,8 @@ const LS = {
   SESSION: "lmd_admin_authed",
   SERVICES: "lmd_services",
   GALLERY: "lmd_gallery",
+  SETTINGS: "lmd_settings",
+  REVIEWS: "lmd_reviews",
 };
 
 const ADMIN_PASS_HASH_SHA256_HEX =
@@ -61,6 +63,22 @@ function saveGallery(arr) {
   localStorage.setItem(LS.GALLERY, JSON.stringify(arr));
 }
 
+function loadSettings() {
+  const obj = safeParse(localStorage.getItem(LS.SETTINGS), null);
+  return obj && typeof obj === "object" ? obj : null;
+}
+function saveSettings(obj) {
+  localStorage.setItem(LS.SETTINGS, JSON.stringify(obj));
+}
+
+function loadReviews() {
+  const arr = safeParse(localStorage.getItem(LS.REVIEWS), []);
+  return Array.isArray(arr) ? arr : [];
+}
+function saveReviews(arr) {
+  localStorage.setItem(LS.REVIEWS, JSON.stringify(arr));
+}
+
 function reindex(arr) {
   arr.forEach((x, i) => x.order_index = i * 10);
 }
@@ -92,18 +110,144 @@ function showApp() {
 
 // ----------------- Tabs
 const tabBtns = Array.from(document.querySelectorAll("[data-admin-tab]"));
+const settingsPanel = $("#settingsPanel");
 const servicesPanel = $("#servicesPanel");
 const galleryPanel = $("#galleryPanel");
+const reviewsPanel = $("#reviewsPanel");
 const backupPanel = $("#backupPanel");
 
 function setTab(name) {
-  const panels = { services: servicesPanel, gallery: galleryPanel, backup: backupPanel };
+  const panels = {
+    settings: settingsPanel,
+    services: servicesPanel,
+    gallery: galleryPanel,
+    reviews: reviewsPanel,
+    backup: backupPanel,
+  };
   for (const [k, el] of Object.entries(panels)) el.hidden = k !== name;
   tabBtns.forEach(b => {
     const active = b.dataset.adminTab === name;
     b.classList.toggle("is-active", active);
     b.setAttribute("aria-selected", active ? "true" : "false");
   });
+}
+
+// ----------------- Settings (Hero + Contact)
+const heroForm = $("#heroForm");
+const contactForm = $("#contactForm");
+
+const hero_h1 = $("#hero_h1");
+const hero_subtitle = $("#hero_subtitle");
+const hero_promise = $("#hero_promise");
+const hero_location = $("#hero_location");
+const hero_cta_primary_text = $("#hero_cta_primary_text");
+const hero_cta_primary_url = $("#hero_cta_primary_url");
+const hero_cta_secondary_text = $("#hero_cta_secondary_text");
+const hero_cta_secondary_url = $("#hero_cta_secondary_url");
+
+const contact_phone = $("#contact_phone");
+const contact_email = $("#contact_email");
+const contact_city = $("#contact_city");
+const contact_address = $("#contact_address");
+const contact_hours = $("#contact_hours");
+const contact_whatsapp = $("#contact_whatsapp");
+const contact_instagram = $("#contact_instagram");
+const contact_google = $("#contact_google");
+const contact_calendly = $("#contact_calendly");
+
+function defaultSettings() {
+  return {
+    hero: {
+      h1: "Ongles & Cils à Gravelines — résultats nets, tenue durable.",
+      subtitle: "Prestations premium, hygiène irréprochable, produits professionnels. Réservation en quelques secondes.",
+      promise: "Finitions propres, tenue optimisée.",
+      location_badge: "Gravelines",
+      cta_primary_text: "Réserver sur Calendly",
+      cta_primary_url: "", // vide = CTA générique Calendly
+      cta_secondary_text: "Voir les prestations",
+      cta_secondary_url: "#prestations",
+    },
+    contact: {
+      phone: "07 50 12 60 32",
+      email: "",
+      city: "Gravelines",
+      address: "",
+      hours: "Sur rendez-vous\nMe contacter pour les disponibilités",
+      links: {
+        whatsapp: "https://wa.me/33750126032",
+        instagram: "https://instagram.com/manon__behra",
+        google: "https://g.page/r/CTha_eAXpwwcEAE/review",
+        calendly: "",
+      },
+    },
+  };
+}
+
+function mergeSettings(saved) {
+  const d = defaultSettings();
+  const s = saved && typeof saved === "object" ? saved : {};
+  return {
+    hero: { ...d.hero, ...(s.hero || {}) },
+    contact: {
+      ...d.contact,
+      ...(s.contact || {}),
+      links: { ...d.contact.links, ...((s.contact || {}).links || {}) },
+    },
+  };
+}
+
+function fillSettingsForm(settings) {
+  const s = mergeSettings(settings);
+  hero_h1.value = s.hero.h1 || "";
+  hero_subtitle.value = s.hero.subtitle || "";
+  hero_promise.value = s.hero.promise || "";
+  hero_location.value = s.hero.location_badge || "";
+  hero_cta_primary_text.value = s.hero.cta_primary_text || "";
+  hero_cta_primary_url.value = s.hero.cta_primary_url || "";
+  hero_cta_secondary_text.value = s.hero.cta_secondary_text || "";
+  hero_cta_secondary_url.value = s.hero.cta_secondary_url || "";
+
+  contact_phone.value = s.contact.phone || "";
+  contact_email.value = s.contact.email || "";
+  contact_city.value = s.contact.city || "";
+  contact_address.value = s.contact.address || "";
+  contact_hours.value = s.contact.hours || "";
+  contact_whatsapp.value = s.contact.links.whatsapp || "";
+  contact_instagram.value = s.contact.links.instagram || "";
+  contact_google.value = s.contact.links.google || "";
+  contact_calendly.value = s.contact.links.calendly || "";
+}
+
+function isValidUrlMaybe(v) {
+  const s = (v || "").trim();
+  if (!s) return true;
+  try { new URL(s); return true; } catch { return false; }
+}
+
+function collectSettingsFromForm(current) {
+  const base = mergeSettings(current);
+  const next = structuredClone(base);
+  next.hero.h1 = hero_h1.value.trim();
+  next.hero.subtitle = hero_subtitle.value.trim();
+  next.hero.promise = hero_promise.value.trim();
+  next.hero.location_badge = hero_location.value.trim();
+  next.hero.cta_primary_text = hero_cta_primary_text.value.trim();
+  next.hero.cta_primary_url = hero_cta_primary_url.value.trim();
+  next.hero.cta_secondary_text = hero_cta_secondary_text.value.trim();
+  next.hero.cta_secondary_url = hero_cta_secondary_url.value.trim();
+
+  next.contact.phone = contact_phone.value.trim();
+  next.contact.email = contact_email.value.trim();
+  next.contact.city = contact_city.value.trim();
+  next.contact.address = contact_address.value.trim();
+  next.contact.hours = contact_hours.value;
+  next.contact.links.whatsapp = contact_whatsapp.value.trim();
+  next.contact.links.instagram = contact_instagram.value.trim();
+  next.contact.links.google = contact_google.value.trim();
+  next.contact.links.calendly = contact_calendly.value.trim();
+  next.updated_at = new Date().toISOString();
+  if (!next.created_at) next.created_at = next.updated_at;
+  return next;
 }
 
 // ----------------- Services (CRUD + reorder)
@@ -268,6 +412,142 @@ function renderServices() {
 let gallery = [];
 let dragGalleryId = null;
 
+// ----------------- Reviews (CRUD + reorder)
+let reviews = [];
+let dragReviewId = null;
+
+const reviewForm = $("#reviewForm");
+const reviewFormTitle = $("#reviewFormTitle");
+const resetReviewFormBtn = $("#resetReviewFormBtn");
+const cancelReviewEditBtn = $("#cancelReviewEditBtn");
+const reviewsList = $("#reviewsList");
+
+const reviewId = $("#reviewId");
+const review_name = $("#review_name");
+const review_rating = $("#review_rating");
+const review_text = $("#review_text");
+const review_date = $("#review_date");
+
+function normalizeReview(raw, idx) {
+  const rating = Math.max(1, Math.min(5, parseInt(raw.rating, 10) || 5));
+  return {
+    id: raw.id || uuid(),
+    name: (raw.name || "").trim() || "Cliente",
+    rating,
+    text: (raw.text || "").trim(),
+    date: (raw.date || "").trim(),
+    order_index: Number.isFinite(+raw.order_index) ? +raw.order_index : idx * 10,
+    updated_at: new Date().toISOString(),
+    created_at: raw.created_at || new Date().toISOString(),
+  };
+}
+
+function stars(n) {
+  const r = Math.max(1, Math.min(5, +n || 5));
+  return "★".repeat(r) + "☆".repeat(5 - r);
+}
+
+function resetReviewForm() {
+  reviewId.value = "";
+  review_name.value = "";
+  review_rating.value = "5";
+  review_text.value = "";
+  review_date.value = "";
+  reviewFormTitle.textContent = "Ajouter un avis";
+  $("#saveReviewBtn").textContent = "Ajouter";
+  cancelReviewEditBtn.hidden = true;
+}
+
+function fillReviewForm(r) {
+  reviewId.value = r.id;
+  review_name.value = r.name;
+  review_rating.value = String(r.rating || 5);
+  review_text.value = r.text;
+  review_date.value = r.date || "";
+  reviewFormTitle.textContent = "Modifier l’avis";
+  $("#saveReviewBtn").textContent = "Enregistrer";
+  cancelReviewEditBtn.hidden = false;
+}
+
+function renderReviews() {
+  reviewsList.innerHTML = "";
+  const list = reviews.slice().sort((a,b)=>(+a.order_index||0)-(+b.order_index||0));
+  if (!list.length) {
+    reviewsList.innerHTML = `<p class="muted">Aucun avis. Ajoutez-en via le formulaire.</p>`;
+    return;
+  }
+
+  const wrap = document.createElement("div");
+  wrap.className = "admin-dnd-list";
+  wrap.setAttribute("role","list");
+
+  list.forEach(r => {
+    const row = document.createElement("div");
+    row.className = "admin-row";
+    row.draggable = true;
+    row.dataset.id = r.id;
+    row.setAttribute("role","listitem");
+    row.innerHTML = `
+      <div class="admin-row__drag" aria-hidden="true">⋮⋮</div>
+      <div class="admin-row__main">
+        <div class="admin-row__top">
+          <strong>${esc(r.name)}</strong>
+          <span class="admin-stars" aria-label="${r.rating} sur 5">${stars(r.rating)}</span>
+        </div>
+        <div class="admin-row__meta">
+          ${r.date ? `<span class="pill pill--dark">${esc(r.date)}</span>` : ""}
+          <span class="muted">${esc(r.text.slice(0, 120))}${r.text.length > 120 ? "…" : ""}</span>
+        </div>
+      </div>
+      <div class="admin-row__actions">
+        <button class="btn btn--ghost btn--sm" data-action="edit">Modifier</button>
+        <button class="btn btn--ghost btn--sm" data-action="delete">Supprimer</button>
+      </div>
+    `;
+
+    row.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+      if (btn.dataset.action === "edit") {
+        fillReviewForm(r);
+        setStatus(adminStatus, "Mode édition (avis) activé.", "ok");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      if (btn.dataset.action === "delete") {
+        if (!confirm(`Supprimer l’avis de "${r.name}" ?`)) return;
+        reviews = reviews.filter(x => x.id !== r.id);
+        reindex(reviews);
+        saveReviews(reviews);
+        renderReviews();
+        setStatus(adminStatus, "Avis supprimé.", "ok");
+      }
+    });
+
+    row.addEventListener("dragstart", () => { dragReviewId = r.id; row.classList.add("is-dragging"); });
+    row.addEventListener("dragend", () => { dragReviewId = null; row.classList.remove("is-dragging"); row.classList.remove("is-over"); });
+    row.addEventListener("dragover", (e) => { e.preventDefault(); row.classList.add("is-over"); });
+    row.addEventListener("dragleave", () => row.classList.remove("is-over"));
+    row.addEventListener("drop", (e) => {
+      e.preventDefault();
+      row.classList.remove("is-over");
+      if (!dragReviewId || dragReviewId === r.id) return;
+      const from = reviews.findIndex(x => x.id === dragReviewId);
+      const to = reviews.findIndex(x => x.id === r.id);
+      if (from < 0 || to < 0) return;
+      const [moved] = reviews.splice(from, 1);
+      reviews.splice(to, 0, moved);
+      reindex(reviews);
+      saveReviews(reviews);
+      renderReviews();
+      setStatus(adminStatus, "Ordre des avis mis à jour.", "ok");
+    });
+
+    wrap.appendChild(row);
+  });
+
+  reviewsList.appendChild(wrap);
+}
+
 const dropZone = $("#dropZone");
 const fileInput = $("#fileInput");
 const galleryList = $("#galleryList");
@@ -403,7 +683,14 @@ const importFile = $("#importFile");
 const importBtn = $("#importBtn");
 
 function doExport() {
-  const payload = { version: 1, exported_at: new Date().toISOString(), services, gallery };
+  const payload = {
+    version: 2,
+    exported_at: new Date().toISOString(),
+    settings: loadSettings(),
+    services,
+    gallery,
+    reviews,
+  };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -419,13 +706,19 @@ async function doImport() {
   if (!file) { setStatus(adminStatus, "Choisissez un fichier JSON.", "err"); return; }
   try {
     const data = JSON.parse(await file.text());
+    const incomingSettings = data.settings || null;
     const s = Array.isArray(data.services) ? data.services : [];
     const g = Array.isArray(data.gallery) ? data.gallery : [];
+    const r = Array.isArray(data.reviews) ? data.reviews : [];
     services = s.map((x,i)=>normalizeService(x,i));
     gallery = g.map((x,i)=>({ id: x.id || uuid(), dataUrl: x.dataUrl || "", alt: (x.alt||"").trim(), order_index: Number.isFinite(+x.order_index)?+x.order_index:i*10, created_at: x.created_at || new Date().toISOString(), updated_at: new Date().toISOString() }));
+    reviews = r.map((x,i)=>normalizeReview(x,i));
     reindex(services); reindex(gallery);
-    saveServices(services); saveGallery(gallery);
-    renderServices(); renderGallery();
+    reindex(reviews);
+    saveServices(services); saveGallery(gallery); saveReviews(reviews);
+    if (incomingSettings) saveSettings(mergeSettings(incomingSettings));
+    renderServices(); renderGallery(); renderReviews();
+    fillSettingsForm(loadSettings());
     setStatus(adminStatus, "Import réussi.", "ok");
   } catch {
     setStatus(adminStatus, "Import impossible : fichier invalide.", "err");
@@ -454,6 +747,62 @@ logoutBtn?.addEventListener("click", () => {
 });
 
 tabBtns.forEach(b => b.addEventListener("click", () => setTab(b.dataset.adminTab)));
+
+heroForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const current = loadSettings();
+  const next = collectSettingsFromForm(current);
+
+  // validations
+  const email = (next.contact.email || "").trim();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    setStatus(adminStatus, "Email invalide.", "err");
+    return;
+  }
+  const urls = [
+    { label: "Lien du CTA principal", v: next.hero.cta_primary_url },
+    { label: "WhatsApp", v: next.contact.links.whatsapp },
+    { label: "Instagram", v: next.contact.links.instagram },
+    { label: "Avis Google", v: next.contact.links.google },
+    { label: "Calendly", v: next.contact.links.calendly },
+  ];
+  for (const u of urls) {
+    if (!isValidUrlMaybe(u.v) && !(u.label.includes("CTA") && (u.v || "").trim() === "")) {
+      setStatus(adminStatus, `${u.label} : URL invalide.`, "err");
+      return;
+    }
+  }
+
+  saveSettings(next);
+  setStatus(adminStatus, "Hero enregistré.", "ok");
+});
+
+contactForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const current = loadSettings();
+  const next = collectSettingsFromForm(current);
+
+  const email = (next.contact.email || "").trim();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    setStatus(adminStatus, "Email invalide.", "err");
+    return;
+  }
+  const urls = [
+    { label: "WhatsApp", v: next.contact.links.whatsapp },
+    { label: "Instagram", v: next.contact.links.instagram },
+    { label: "Avis Google", v: next.contact.links.google },
+    { label: "Calendly", v: next.contact.links.calendly },
+  ];
+  for (const u of urls) {
+    if (!isValidUrlMaybe(u.v)) {
+      setStatus(adminStatus, `${u.label} : URL invalide.`, "err");
+      return;
+    }
+  }
+
+  saveSettings(next);
+  setStatus(adminStatus, "Contact & infos enregistrés.", "ok");
+});
 
 resetServiceFormBtn?.addEventListener("click", resetServiceForm);
 cancelEditBtn?.addEventListener("click", () => { resetServiceForm(); setStatus(adminStatus, "Édition annulée.", "ok"); });
@@ -536,6 +885,40 @@ clearGalleryBtn?.addEventListener("click", () => {
   setStatus(adminStatus, "Galerie vidée.", "ok");
 });
 
+resetReviewFormBtn?.addEventListener("click", resetReviewForm);
+cancelReviewEditBtn?.addEventListener("click", () => { resetReviewForm(); setStatus(adminStatus, "Édition (avis) annulée.", "ok"); });
+
+reviewForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const isEdit = !!reviewId.value;
+  const base = isEdit ? (reviews.find(r=>r.id===reviewId.value) || {}) : {};
+
+  const raw = {
+    id: isEdit ? reviewId.value : uuid(),
+    name: review_name.value,
+    rating: review_rating.value,
+    text: review_text.value,
+    date: review_date.value,
+    order_index: base.order_index ?? (reviews.length * 10),
+    created_at: base.created_at,
+  };
+  const norm = normalizeReview(raw, reviews.length);
+  if (!norm.text) { setStatus(adminStatus, "Le texte de l’avis est obligatoire.", "err"); return; }
+
+  if (isEdit) {
+    reviews = reviews.map(r => r.id === norm.id ? { ...r, ...norm } : r);
+    setStatus(adminStatus, "Avis modifié.", "ok");
+  } else {
+    reviews.push(norm);
+    reindex(reviews);
+    setStatus(adminStatus, "Avis ajouté.", "ok");
+  }
+
+  saveReviews(reviews);
+  renderReviews();
+  resetReviewForm();
+});
+
 exportBtn?.addEventListener("click", doExport);
 importBtn?.addEventListener("click", doImport);
 
@@ -544,11 +927,18 @@ document.addEventListener("DOMContentLoaded", () => {
   if (isAuthed()) showApp(); else showLogin();
   services = loadServices();
   gallery = loadGallery();
+  reviews = loadReviews();
+  const settings = mergeSettings(loadSettings());
+  saveSettings(settings);
+  fillSettingsForm(settings);
   // ensure order indexes
   reindex(services); reindex(gallery);
-  saveServices(services); saveGallery(gallery);
+  reindex(reviews);
+  saveServices(services); saveGallery(gallery); saveReviews(reviews);
   renderServices();
   renderGallery();
+  renderReviews();
   resetServiceForm();
-  setTab("services");
+  resetReviewForm();
+  setTab("settings");
 });
