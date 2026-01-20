@@ -78,6 +78,14 @@ function defaultSettings() {
         calendly: "",
       },
     },
+    reservation: {
+      image_data_url: "",
+      badge: "Réservation en 30 secondes",
+      title: "Réserver votre créneau",
+      text: "Choisissez un créneau disponible en quelques secondes. Confirmation immédiate.",
+      cta_text: "Voir les créneaux",
+      cta_url: "", // vide = CTA générique Calendly
+    },
   };
 }
 
@@ -91,6 +99,7 @@ function mergeSettings(saved) {
       ...(s.contact || {}),
       links: { ...d.contact.links, ...((s.contact || {}).links || {}) },
     },
+    reservation: { ...d.reservation, ...((s.reservation || {})) },
   };
 }
 
@@ -199,6 +208,50 @@ function applyHero() {
       navPrimary.removeAttribute("target");
       navPrimary.removeAttribute("rel");
     }
+  }
+}
+
+function applyReservation() {
+  const r = settings.reservation || {};
+  const card = document.querySelector("#reservationCard");
+  if (!card) return;
+
+  const img = document.querySelector("#reservationImage");
+  const badge = document.querySelector("#reservationBadge");
+  const title = document.querySelector("#reservationTitle");
+  const text = document.querySelector("#reservationText");
+  const cta = document.querySelector("#reservationCta");
+
+  const dataUrl = (r.image_data_url || "").trim();
+  if (img && dataUrl) img.src = dataUrl;
+
+  const badgeTxt = (r.badge || "").trim();
+  if (badge) {
+    badge.textContent = badgeTxt || "";
+    badge.hidden = !badgeTxt;
+  }
+
+  if (title && (r.title || "").trim()) title.textContent = r.title;
+  if (text && (r.text || "").trim()) text.textContent = r.text;
+
+  const ctaText = (r.cta_text || "").trim();
+  const ctaUrl = (r.cta_url || "").trim();
+
+  if (ctaText) cta.textContent = ctaText;
+
+  if (ctaUrl) {
+    cta.setAttribute("href", ctaUrl);
+    cta.removeAttribute("data-cta");
+    if (/^https?:\/\//i.test(ctaUrl)) {
+      cta.setAttribute("target", "_blank");
+      cta.setAttribute("rel", "noopener");
+    }
+  } else {
+    // URL vide = CTA générique Calendly (admin ou fallback)
+    cta.setAttribute("href", "#");
+    cta.setAttribute("data-cta", "book-generic");
+    cta.removeAttribute("target");
+    cta.removeAttribute("rel");
   }
 }
 
@@ -321,13 +374,19 @@ function renderServices() {
     const card = document.createElement("article");
     card.className = "service-card";
     const bookUrl = getBookUrl(s);
+    const priceVal = Number.isFinite(+s.price) ? Math.round(+s.price) : 0;
+    const durVal = (s.duration == null || s.duration === "" || +s.duration <= 0) ? null : Math.round(+s.duration);
 
     card.innerHTML = `
       <div class="service-card__top">
         <h3 class="service-card__title">${esc(s.title || "")}</h3>
         ${s.featured ? `<span class="badge">Populaire</span>` : ""}
       </div>
-      <p class="service-card__meta">${esc(s.category || "")} • ${esc(formatPriceDuration(s.price, s.duration))}</p>
+      <div class="service-card__meta">
+        <span class="pill pill--dark">${esc(s.category || "")}</span>
+        <span class="service-chip">${esc(priceVal)}€</span>
+        ${durVal ? `<span class="service-chip">${esc(durVal)} min</span>` : ``}
+      </div>
       ${s.description ? `<p class="service-card__desc">${esc(s.description)}</p>` : ""}
       <div class="service-card__actions">
         <a class="btn btn--primary btn--sm" href="${esc(bookUrl)}" target="_blank" rel="noopener">Réserver</a>
@@ -433,6 +492,7 @@ toggle?.addEventListener("click", () => {
 document.addEventListener("DOMContentLoaded", () => {
   settings = mergeSettings(loadSettings());
   applyHero();
+  applyReservation();
   applyContact();
   renderReviews();
   services = loadServices();

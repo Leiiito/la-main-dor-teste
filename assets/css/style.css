@@ -713,3 +713,141 @@ input:focus-visible, textarea:focus-visible, select:focus-visible{
 .contact-hours{margin-top:.35rem}
 .contact__card--infos a{color: inherit}
 
+
+
+/* Soft Premium — Prestations + Réservation
+   (Ajouts incrémentaux : ne casse pas le design existant) */
+:root{
+  --card-radius-lg: 24px;
+  --card-border-soft: rgba(255,255,255,.12);
+  --card-bg-soft: rgba(255,255,255,.06);
+  --card-bg-soft-2: rgba(255,255,255,.09);
+  --card-shadow-soft: 0 20px 60px rgba(0,0,0,.35);
+}
+
+/* Prestations */
+.service-card{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:.75rem;
+  padding: 1.05rem 1.05rem;
+  border-radius: var(--card-radius-lg);
+  border: 1px solid var(--card-border-soft);
+  background: linear-gradient(180deg, var(--card-bg-soft), rgba(255,255,255,.04));
+  box-shadow: 0 10px 30px rgba(0,0,0,.22);
+  transition: transform var(--speed) ease, box-shadow var(--speed) ease, border-color var(--speed) ease;
+}
+.service-card:hover{
+  transform: translateY(-2px);
+  border-color: rgba(201,162,39,.22);
+  box-shadow: var(--card-shadow-soft);
+}
+.service-card:focus-within{
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.service-card__top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:.75rem;
+}
+.service-card__title{
+  margin:0;
+  font-size: 1.1rem;
+  letter-spacing: -.01em;
+  line-height: 1.15;
+}
+
+.service-card__meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+  align-items:center;
+}
+.service-chip{
+  display:inline-flex;
+  align-items:center;
+  padding:.22rem .6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.12);
+  color: rgba(255,255,255,.88);
+  font-size: .9rem;
+}
+
+.service-card__desc{
+  margin:0;
+  color: rgba(255,255,255,.78);
+  line-height: 1.55;
+}
+.service-card__actions{
+  margin-top: auto;
+  display:flex;
+}
+.service-card__actions .btn{
+  width:100%;
+  justify-content:center;
+  border-radius: 16px;
+}
+
+/* Badge "Populaire" un peu plus premium */
+.service-card .badge{
+  border-color: rgba(201,162,39,.24);
+  background: rgba(201,162,39,.10);
+  color: rgba(255,255,255,.92);
+}
+
+/* Booking card (à côté du Hero) */
+.booking-card{
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  box-shadow: 0 16px 60px rgba(0,0,0,.45);
+  overflow:hidden;
+}
+.booking-card__media img{
+  width:100%;
+  height:auto;
+  display:block;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  filter: saturate(1.02) contrast(1.02);
+}
+.booking-card__body{
+  padding: 1rem 1rem 1.1rem;
+  display:flex;
+  flex-direction:column;
+  gap:.6rem;
+}
+.booking-card__body h3{
+  margin:0;
+  font-size: 1.05rem;
+  letter-spacing: -.01em;
+}
+.booking-card__body .btn{
+  width:100%;
+  justify-content:center;
+  margin-top:.2rem;
+}
+
+/* Admin — preview image réservation */
+.image-preview{
+  margin-top:.6rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.18);
+  padding:.6rem;
+  display:flex;
+  flex-direction:column;
+  gap:.6rem;
+}
+.image-preview img{
+  width:100%;
+  height:auto;
+  border-radius: 14px;
+  object-fit: cover;
+  max-height: 220px;
+}

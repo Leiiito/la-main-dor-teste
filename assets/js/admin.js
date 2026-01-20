@@ -4,6 +4,8 @@
 // - Galerie : drag&drop + Ctrl+V + thumbnails + delete + reorder
 // - Export/Import JSON
 
+import { compressImageFileToDataUrl, estimateDataUrlBytes } from "./image-utils.js";
+
 const LS = {
   SESSION: "lmd_admin_authed",
   SERVICES: "lmd_services",
@@ -155,6 +157,21 @@ const contact_instagram = $("#contact_instagram");
 const contact_google = $("#contact_google");
 const contact_calendly = $("#contact_calendly");
 
+// Section réservation (à côté du Hero)
+const reservationForm = $("#reservationForm");
+const reservation_image = $("#reservation_image");
+const reservation_image_wrap = $("#reservation_image_wrap");
+const reservation_image_preview = $("#reservation_image_preview");
+const reservation_image_remove = $("#reservation_image_remove");
+
+const reservation_badge = $("#reservation_badge");
+const reservation_title = $("#reservation_title");
+const reservation_text = $("#reservation_text");
+const reservation_cta_text = $("#reservation_cta_text");
+const reservation_cta_url = $("#reservation_cta_url");
+
+let reservationImageDataUrl = "";
+
 function defaultSettings() {
   return {
     hero: {
@@ -180,6 +197,16 @@ function defaultSettings() {
         calendly: "",
       },
     },
+    reservation: {
+      // Image DataURL (optimisée) — vide = fallback (image du site)
+      image_data_url: "",
+      badge: "Réservation en 30 secondes",
+      title: "Réserver votre créneau",
+      text: "Choisissez un créneau disponible en quelques secondes. Confirmation immédiate.",
+      cta_text: "Voir les créneaux",
+      // vide = CTA générique Calendly
+      cta_url: "",
+    },
   };
 }
 
@@ -193,6 +220,7 @@ function mergeSettings(saved) {
       ...(s.contact || {}),
       links: { ...d.contact.links, ...((s.contact || {}).links || {}) },
     },
+    reservation: { ...d.reservation, ...((s.reservation || {})) },
   };
 }
 
@@ -216,7 +244,26 @@ function fillSettingsForm(settings) {
   contact_instagram.value = s.contact.links.instagram || "";
   contact_google.value = s.contact.links.google || "";
   contact_calendly.value = s.contact.links.calendly || "";
+
+  // Réservation
+  reservation_badge.value = s.reservation.badge || "";
+  reservation_title.value = s.reservation.title || "";
+  reservation_text.value = s.reservation.text || "";
+  reservation_cta_text.value = s.reservation.cta_text || "";
+  reservation_cta_url.value = s.reservation.cta_url || "";
+
+  reservationImageDataUrl = (s.reservation.image_data_url || "").trim();
+  if (reservation_image_wrap && reservation_image_preview) {
+    if (reservationImageDataUrl) {
+      reservation_image_preview.src = reservationImageDataUrl;
+      reservation_image_wrap.hidden = false;
+    } else {
+      reservation_image_preview.src = "";
+      reservation_image_wrap.hidden = true;
+    }
+  }
 }
+
 
 function isValidUrlMaybe(v) {
   const s = (v || "").trim();
@@ -245,6 +292,15 @@ function collectSettingsFromForm(current) {
   next.contact.links.instagram = contact_instagram.value.trim();
   next.contact.links.google = contact_google.value.trim();
   next.contact.links.calendly = contact_calendly.value.trim();
+
+  // Réservation
+  next.reservation.badge = reservation_badge.value.trim();
+  next.reservation.title = reservation_title.value.trim();
+  next.reservation.text = reservation_text.value.trim();
+  next.reservation.cta_text = reservation_cta_text.value.trim();
+  next.reservation.cta_url = reservation_cta_url.value.trim();
+  next.reservation.image_data_url = (reservationImageDataUrl || "").trim();
+
   next.updated_at = new Date().toISOString();
   if (!next.created_at) next.created_at = next.updated_at;
   return next;
@@ -802,6 +858,69 @@ contactForm?.addEventListener("submit", (e) => {
 
   saveSettings(next);
   setStatus(adminStatus, "Contact & infos enregistrés.", "ok");
+});
+
+// Section réservation (à côté du Hero)
+reservation_image?.addEventListener("change", async () => {
+  const file = reservation_image.files?.[0];
+  if (!file) return;
+  try {
+    setStatus(adminStatus, "Optimisation de l\u2019image en cours…");
+    const { dataUrl, width, height, bytes } = await compressImageFileToDataUrl(file, {
+      maxW: 900,
+      maxH: 900,
+      quality: 0.82,
+      format: "image/jpeg",
+    });
+
+    reservationImageDataUrl = dataUrl;
+    if (reservation_image_preview && reservation_image_wrap) {
+      reservation_image_preview.src = dataUrl;
+      reservation_image_wrap.hidden = false;
+    }
+
+    // Avertissement poids (localStorage + export)
+    if (bytes > 1_200_000) {
+      setStatus(
+        adminStatus,
+        `Image enregistr\u00e9e (\u2248 ${Math.round(bytes / 1024)} Ko, ${width}×${height}). Conseil : utilise une image plus l\u00e9g\u00e8re pour \u00e9viter un localStorage plein.`,
+        "err"
+      );
+    } else {
+      setStatus(
+        adminStatus,
+        `Image enregistr\u00e9e (\u2248 ${Math.round(bytes / 1024)} Ko, ${width}×${height}).`,
+        "ok"
+      );
+    }
+  } catch (err) {
+    console.error(err);
+    setStatus(adminStatus, "Impossible de traiter l\u2019image.", "err");
+  }
+});
+
+reservation_image_remove?.addEventListener("click", () => {
+  reservationImageDataUrl = "";
+  if (reservation_image) reservation_image.value = "";
+  if (reservation_image_preview) reservation_image_preview.src = "";
+  if (reservation_image_wrap) reservation_image_wrap.hidden = true;
+  setStatus(adminStatus, "Photo retir\u00e9e.", "ok");
+});
+
+reservationForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const current = loadSettings();
+  const next = collectSettingsFromForm(current);
+
+  // validations (URL optionnelle)
+  const url = (next.reservation?.cta_url || "").trim();
+  if (url && !isValidUrlMaybe(url)) {
+    setStatus(adminStatus, "Lien du bouton : URL invalide.", "err");
+    return;
+  }
+
+  saveSettings(next);
+  setStatus(adminStatus, "Section r\u00e9servation enregistr\u00e9e.", "ok");
 });
 
 resetServiceFormBtn?.addEventListener("click", resetServiceForm);
