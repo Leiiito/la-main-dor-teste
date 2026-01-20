@@ -732,3 +732,144 @@ blockquote{
 .lightbox__panel { position:relative; max-width: 920px; margin: 5vh auto; padding: 1rem; }
 .lightbox__panel img { width:100%; height:auto; display:block; border-radius: 16px; }
 .lightbox__close { position:absolute; top: .5rem; right: .5rem; }
+/* =========================================================
+   THEME BLANC + TOUCHES MAUVE & ORANGE (override)
+   Colle ce bloc tout en bas du fichier
+========================================================= */
+
+:root{
+  /* Base */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f6f6fb;
+  --text: #16161d;
+  --muted: #5b5b6a;
+  --border: rgba(20,20,30,.10);
+
+  /* Accents */
+  --mauve: #7c3aed;        /* violet/mauve */
+  --mauve-2: #a78bfa;      /* lavande */
+  --orange: #f97316;       /* orange */
+  --orange-2: #fb923c;
+
+  /* Focus */
+  --focus: rgba(124,58,237,.35);
+
+  /* Shadow */
+  --shadow: 0 18px 50px rgba(12, 12, 20, .10);
+}
+
+/* Fond global */
+body{
+  background:
+    radial-gradient(900px 600px at 15% 10%, rgba(124,58,237,.08), transparent 55%),
+    radial-gradient(900px 600px at 90% 20%, rgba(249,115,22,.08), transparent 55%),
+    var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* Liens */
+a{ color: var(--mauve); }
+a:hover{ color: #5b21b6; }
+
+/* Sections / Cards */
+.card,
+.admin-card,
+.service-card,
+.review,
+.contact__card{
+  background: rgba(255,255,255,.86) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow);
+}
+
+/* Texte muted (si ton CSS utilise .muted) */
+.muted, .fineprint{ color: var(--muted) !important; }
+
+/* Navbar sticky */
+.nav-wrap{
+  background: rgba(255,255,255,.75) !important;
+  border-bottom: 1px solid var(--border) !important;
+  backdrop-filter: blur(10px);
+}
+
+/* Pills / badges */
+.pill{
+  background: rgba(124,58,237,.10) !important;
+  border: 1px solid rgba(124,58,237,.18) !important;
+  color: #4c1d95 !important;
+}
+.pill--dark{
+  background: rgba(124,58,237,.12) !important;
+  border: 1px solid rgba(124,58,237,.20) !important;
+  color: #4c1d95 !important;
+}
+.badge{
+  background: rgba(249,115,22,.12) !important;
+  border: 1px solid rgba(249,115,22,.22) !important;
+  color: #9a3412 !important;
+}
+
+/* Boutons */
+.btn{
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  background: #fff !important;
+  box-shadow: 0 10px 24px rgba(12,12,20,.08);
+}
+.btn:hover{ transform: translateY(-1px); }
+
+/* CTA principal (orange) */
+.btn--primary{
+  background: linear-gradient(135deg, var(--orange), var(--orange-2)) !important;
+  color: white !important;
+  border-color: rgba(249,115,22,.35) !important;
+}
+.btn--primary:hover{
+  filter: brightness(0.98);
+}
+
+/* Bouton ghost (mauve) */
+.btn--ghost{
+  background: rgba(124,58,237,.06) !important;
+  border-color: rgba(124,58,237,.18) !important;
+  color: #4c1d95 !important;
+}
+
+/* Tabs */
+.tab{
+  background: rgba(124,58,237,.06) !important;
+  border: 1px solid rgba(124,58,237,.16) !important;
+  color: #4c1d95 !important;
+}
+.tab.is-active{
+  background: rgba(124,58,237,.12) !important;
+  border-color: rgba(124,58,237,.28) !important;
+}
+
+/* Inputs */
+input, select, textarea{
+  background: #fff !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(20,20,30,.14) !important;
+}
+input::placeholder, textarea::placeholder{ color: rgba(22,22,29,.45); }
+
+/* Focus accessible */
+:focus-visible{
+  outline: 3px solid var(--focus) !important;
+  outline-offset: 2px;
+}
+
+/* Upload zone admin */
+.upload-zone{
+  background: rgba(255,255,255,.85) !important;
+  border: 1px dashed rgba(124,58,237,.30) !important;
+}
+.upload-zone.is-over{
+  outline: 3px dashed rgba(249,115,22,.45) !important;
+  outline-offset: 3px;
+}
+
+/* Lightbox */
+.lightbox__backdrop{ background: rgba(10,10,15,.70) !important; }
