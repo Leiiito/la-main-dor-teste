@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Onglerie Pro — Produits premium & inspirations</title>
+  <meta name="description" content="Une sélection premium pour une pose impeccable : nouveautés, best-sellers, tendances couleur et tutoriels. Livraison rapide, conseils clairs, rendu pro." />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Onglerie Pro — Produits premium & inspirations" />
+  <meta property="og:description" content="Nouveautés, best-sellers, tendances et tutoriels. Une expérience premium, claire et efficace." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:image" content="assets/img/og-cover.jpg" />
+
+  <!-- Favicon (optionnel) -->
+  <link rel="icon" href="assets/img/favicon.png" />
+
+  <link rel="preload" href="style.css" as="style" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Perf: préconnect (optionnel si tu utilises des polices web ensuite) -->
+  <!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
+  <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
+
+  <script defer src="main.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Onglerie Pro",
+    "url": "",
+    "logo": "assets/img/logo.png",
+    "sameAs": []
+  }
+  </script>
+</head>
+
+<body>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+
+  <!-- Header -->
+  <header class="site-header" data-header>
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="Retour en haut de page">
+        <img src="assets/img/logo.png" width="120" height="28" alt="Logo Onglerie Pro" />
+      </a>
+
+      <nav class="nav" aria-label="Navigation principale">
+        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="nav-menu">
+          <span class="nav-toggle__lines" aria-hidden="true"></span>
+          <span class="sr-only">Ouvrir le menu</span>
+        </button>
+
+        <div class="nav-menu" id="nav-menu" data-nav-menu>
+          <a class="nav-link" href="#produits">Produits</a>
+          <a class="nav-link" href="#tendances">Tendances</a>
+          <a class="nav-link" href="#tutos">Tutoriels</a>
+          <a class="nav-link" href="#faq">FAQ</a>
+          <a class="nav-cta btn btn--primary" href="#contact">Recevoir un conseil</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+
+    <!-- HERO -->
+    <section class="hero" id="top" aria-label="Présentation">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="kicker">Sélection premium • Rendu pro • Simple à choisir</p>
+          <h1 class="hero-title">
+            La pose impeccable, <span class="accent">sans surcharge</span> : produits, teintes et tutos au même endroit.
+          </h1>
+          <p class="hero-subtitle">
+            Une expérience claire et moderne pour trouver l’essentiel, découvrir les nouveautés et suivre les tendances couleur.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn--primary" href="#nouveautes">Voir les nouveautés</a>
+            <a class="btn btn--ghost" href="#bestsellers">Voir les best-sellers</a>
+          </div>
+
+          <ul class="trust-row" aria-label="Arguments de confiance">
+            <li class="trust-pill">
+              <span class="trust-dot" aria-hidden="true"></span>
+              Sans HEMA (sélection)
+            </li>
+            <li class="trust-pill">
+              <span class="trust-dot" aria-hidden="true"></span>
+              Conseils simples
+            </li>
+            <li class="trust-pill">
+              <span class="trust-dot" aria-hidden="true"></span>
+              Livraison rapide*
+            </li>
+          </ul>
+
+          <p class="hero-note">*À adapter selon tes conditions réelles.</p>
+        </div>
+
+        <div class="hero-media" aria-label="Visuels produits">
+          <div class="hero-card hero-card--main">
+            <img
+              src="assets/img/hero-main.jpg"
+              width="920"
+              height="980"
+              alt="Sélection premium : gels, vernis et teintes tendance"
+              loading="eager"
+              decoding="async"
+            />
+            <div class="hero-card__overlay">
+              <p class="hero-card__title">Collection du moment</p>
+              <p class="hero-card__desc">Teintes profondes & finis ultra nets.</p>
+            </div>
+          </div>
+
+          <div class="hero-mini">
+            <div class="hero-card hero-card--mini">
+              <img src="assets/img/hero-mini-1.jpg" width="520" height="420" alt="Détail de texture gel" loading="lazy" decoding="async" />
+            </div>
+            <div class="hero-card hero-card--mini">
+              <img src="assets/img/hero-mini-2.jpg" width="520" height="420" alt="Palette couleurs élégante" loading="lazy" decoding="async" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UNIVERS / CATEGORIES -->
+    <section class="section" id="produits" aria-label="Univers produits">
+      <div class="container">
+        <header class="section-head">
+          <h2 class="section-title">Choisir par univers</h2>
+          <p class="section-subtitle">4 à 6 catégories claires pour aller droit au bon choix.</p>
+        </header>
+
+        <div class="grid cards-6">
+          <a class="card card-link" href="#essentiels" aria-label="Aller aux essentiels">
+            <div class="card-media">
+              <img src="assets/img/cat-essentiels.jpg" width="560" height="420" alt="Kits essentiels" loading="lazy" decoding="async" />
+            </div>
+            <div class="card-body">
+              <p class="card-eyebrow">Pour démarrer</p>
+              <h3 class="card-title">Essentiels</h3>
+              <p class="card-text">Les indispensables pour une routine simple et fiable.</p>
+            </div>
+          </a>
+
+          <a class="card card-link" href="#nouveautes" aria-label="Aller aux nouveautés">
+            <div class="card-media">
+              <img src="assets/img/cat-nouveautes.jpg" width="560" height="420" alt="Nouveautés ongles" loading="lazy" decoding="async" />
+            </div>
+            <div class="card-body">
+              <p class="card-eyebrow">Nouveaux arrivages</p>
+              <h3 class="card-title">Nouveautés</h3>
+              <p class="card-text">Teintes, gels et finitions fraîchement ajoutés.</p>
+            </div>
+          </a>
+
+          <a class="card card-link" href="#bestsellers" aria-label="Aller aux best-sellers">
+            <div class="card-media">
+              <img src="assets/img/cat-bestsellers.jpg" width="560" height="420" alt="Produits best-sellers" loading="lazy" decoding="async" />
+            </div>
+            <div class="card-body">
+              <p class="card-eyebrow">Valeurs sûres</p>
+              <h3 class="card-title">Best-sellers</h3>
+              <p class="card-text">Les favoris pour un rendu pro, sans prise de tête.</p>
+            </div>
+          </a>
+
+          <a class="card card-link" href="#tendances" aria-label="Aller aux tendances">
+            <div class="card-media">
+              <img src="assets/img/cat-tendances.jpg" width="560" height="420" alt="Inspiration tendances couleurs" loading="lazy" decoding="async" />
+            </div>
+            <div class="card-body">
+              <p class="card-eyebrow">Saison</p>
+              <h3 class="card-title">Tendances</h3>
+              <p class="card-text">Sélections couleur et styles inspirants.</p>
+            </div>
+          </a>
+
+          <a class="card card-link" href="#tutos" aria-label="Aller aux tutoriels">
+            <div class="card-media">
+              <img src="assets/img/cat-tutos.jpg" width="560" height="420" alt="Tutoriels ongles" loading="lazy" decoding="async" />
+            </div>
+            <div class="card-body">
+              <p class="card-eyebrow">Guides</p>
+              <h3 class="card-title">Tutoriels</h3>
+              <p class="card-text">Des étapes claires pour progresser vite.</p>
+            </div>
+          </a>
+
+          <a class="card card-link" href="#contact" aria-label="Aller au contact">
+            <div class="card-media">
+              <img src="assets/img/cat-conseil.jpg" width="560" height="420" alt="Conseil personnalisé" loading="lazy" decoding="async" />
+            </div>
+            <div class="card-body">
+              <p class="card-eyebrow">Accompagnement</p>
+              <h3 class="card-title">Conseil</h3>
+              <p class="card-text">On t’aide à choisir selon ton niveau et ton objectif.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESSENTIELS (mini sélection) -->
+    <section class="section section--alt" id="essentiels" aria-label="Essentiels recommandés">
+      <div class="container">
+        <header class="section-head section-head--split">
+          <div>
+            <h2 class="section-title">Les essentiels recommandés</h2>
+            <p class="section-subtitle">Un trio simple : préparation, couleur, finition. Parfait pour commencer.</p>
+          </div>
+          <a class="btn btn--ghost" href="#contact">Je veux un avis</a>
+        </header>
+
+        <div class="grid cards-3">
+          <article class="product">
+            <div class="product-media">
+              <img src="assets/img/p-essentiel-1.jpg" width="640" height="640" alt="Base de préparation" loading="lazy" decoding="async" />
+              <span class="badge">Base</span>
+            </div>
+            <div class="product-body">
+              <h3 class="product-title">Préparation & adhérence</h3>
+              <p class="product-text">Pour une tenue nette et régulière, sans sur-couches.</p>
+              <div class="product-actions">
+                <a class="btn btn--primary btn--sm" href="#contact">En savoir plus</a>
+                <a class="btn btn--link" href="#faq">Questions fréquentes</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product">
+            <div class="product-media">
+              <img src="assets/img/p-essentiel-2.jpg" width="640" height="640" alt="Couleur semi-permanente" loading="lazy" decoding="async" />
+              <span class="badge">Couleur</span>
+            </div>
+            <div class="product-body">
+              <h3 class="product-title">Couleur facile à poser</h3>
+              <p class="product-text">Une sélection de teintes “go-to” pour un rendu propre.</p>
+              <div class="product-actions">
+                <a class="btn btn--primary btn--sm" href="#palette">Voir les teintes</a>
+                <a class="btn btn--link" href="#tendances">Inspiration</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product">
+            <div class="product-media">
+              <img src="assets/img/p-essentiel-3.jpg" width="640" height="640" alt="Top coat finition brillante" loading="lazy" decoding="async" />
+              <span class="badge">Finition</span>
+            </div>
+            <div class="product-body">
+              <h3 class="product-title">Top coat finition</h3>
+              <p class="product-text">Brillance (ou mat) avec une protection durable.</p>
+              <div class="product-actions">
+                <a class="btn btn--primary btn--sm" href="#bestsellers">Voir les favoris</a>
+                <a class="btn btn--link" href="#tutos">Mode d’emploi</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOUVEAUTES (carousel) -->
+    <section class="section" id="nouveautes" aria-label="Nouveautés">
+      <div class="container">
+        <header class="section-head section-head--split">
+          <div>
+            <h2 class="section-title">Nouveautés</h2>
+            <p class="section-subtitle">Des teintes et finitions actuelles, sélectionnées pour un rendu premium.</p>
+          </div>
+          <div class="slider-controls" aria-label="Contrôles du carrousel nouveautés">
+            <button class="icon-btn" type="button" data-slider-prev aria-label="Précédent">‹</button>
+            <button class="icon-btn" type="button" data-slider-next aria-label="Suivant">›</button>
+          </div>
+        </header>
+
+        <div class="slider" data-slider>
+          <div class="slider-track" data-slider-track>
+            <!-- Item -->
+            <article class="tile">
+              <div class="tile-media">
+                <img src="assets/img/n-1.jpg" width="640" height="760" alt="Nouveauté : teinte profonde" loading="lazy" decoding="async" />
+                <span class="badge badge--soft">Sans HEMA*</span>
+              </div>
+              <div class="tile-body">
+                <h3 class="tile-title">Teinte “Velours Nuit”</h3>
+                <p class="tile-text">Couverture uniforme, résultat net dès la 2e couche.</p>
+                <a class="btn btn--link" href="#contact">Demander conseil</a>
+              </div>
+            </article>
+
+            <article class="tile">
+              <div class="tile-media">
+                <img src="assets/img/n-2.jpg" width="640" height="760" alt="Nouveauté : finition nacrée" loading="lazy" decoding="async" />
+                <span class="badge badge--soft">Nacré</span>
+              </div>
+              <div class="tile-body">
+                <h3 class="tile-title">Finition “Perle Fine”</h3>
+                <p class="tile-text">Reflets subtils, parfait pour un look élégant.</p>
+                <a class="btn btn--link" href="#tendances">Voir l’inspiration</a>
+              </div>
+            </article>
+
+            <article class="tile">
+              <div class="tile-media">
+                <img src="assets/img/n-3.jpg" width="640" height="760" alt="Nouveauté : gel construction" loading="lazy" decoding="async" />
+                <span class="badge badge--soft">Construction</span>
+              </div>
+              <div class="tile-body">
+                <h3 class="tile-title">Gel “Structure Clean”</h3>
+                <p class="tile-text">Application précise, limage facilité, rendu pro.</p>
+                <a class="btn btn--link" href="#faq">Compatibilité & lampes</a>
+              </div>
+            </article>
+
+            <article class="tile">
+              <div class="tile-media">
+                <img src="assets/img/n-4.jpg" width="640" height="760" alt="Nouveauté : accessoire nail art" loading="lazy" decoding="async" />
+                <span class="badge badge--soft">Nail art</span>
+              </div>
+              <div class="tile-body">
+                <h3 class="tile-title">Détails “Ligne Parfaite”</h3>
+                <p class="tile-text">Pour des traits fins et des finitions ultra propres.</p>
+                <a class="btn btn--link" href="#tutos">Voir un tuto</a>
+              </div>
+            </article>
+
+            <article class="tile">
+              <div class="tile-media">
+                <img src="assets/img/n-5.jpg" width="640" height="760" alt="Nouveauté : kit" loading="lazy" decoding="async" />
+                <span class="badge badge--soft">Kit</span>
+              </div>
+              <div class="tile-body">
+                <h3 class="tile-title">Kit “Départ Simple”</h3>
+                <p class="tile-text">Les étapes essentielles, sans superflu.</p>
+                <a class="btn btn--link" href="#essentiels">Voir les essentiels</a>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <p class="muted-note">*À adapter selon les produits réels de ta sélection.</p>
+      </div>
+    </section>
+
+    <!-- BESTSELLERS (sélection premium) -->
+    <section class="section section--alt" id="bestsellers" aria-label="Best-sellers">
+      <div class="container">
+        <header class="section-head">
+          <h2 class="section-title">Best-sellers</h2>
+          <p class="section-subtitle">Les valeurs sûres : tenue, rendu et facilité d’application.</p>
+        </header>
+
+        <div class="grid feature-grid">
+          <article class="feature">
+            <div class="feature-media">
+              <img src="assets/img/b-1.jpg" width="860" height="860" alt="Best-seller 1" loading="lazy" decoding="async" />
+              <span class="badge">Best</span>
+            </div>
+            <div class="feature-body">
+              <h3 class="feature-title">Top coat “Glass Finish”</h3>
+              <p class="feature-text">Brillance miroir, protection durable, fini très net.</p>
+              <ul class="checklist">
+                <li>Application régulière</li>
+                <li>Rendu premium</li>
+                <li>Facile à entretenir</li>
+              </ul>
+              <a class="btn btn--primary btn--sm" href="#contact">Je le veux</a>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature-media">
+              <img src="assets/img/b-2.jpg" width="860" height="860" alt="Best-seller 2" loading="lazy" decoding="async" />
+              <span class="badge">Favori</span>
+            </div>
+            <div class="feature-body">
+              <h3 class="feature-title">Teinte “Nude Signature”</h3>
+              <p class="feature-text">Le nude qui va avec tout : naturel, propre, élégant.</p>
+              <ul class="checklist">
+                <li>Polyvalent</li>
+                <li>Idéal débutant</li>
+                <li>Look pro</li>
+              </ul>
+              <a class="btn btn--primary btn--sm" href="#palette">Voir les teintes</a>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature-media">
+              <img src="assets/img/b-3.jpg" width="860" height="860" alt="Best-seller 3" loading="lazy" decoding="async" />
+              <span class="badge">Pro</span>
+            </div>
+            <div class="feature-body">
+              <h3 class="feature-title">Gel “Builder Soft”</h3>
+              <p class="feature-text">Pour une structure propre, un bombé maîtrisé, un limage simple.</p>
+              <ul class="checklist">
+                <li>Bonne tenue</li>
+                <li>Travail précis</li>
+                <li>Finition nette</li>
+              </ul>
+              <a class="btn btn--primary btn--sm" href="#faq">Voir la FAQ</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- TENDANCES (éditorial) -->
+    <section class="section" id="tendances" aria-label="Tendances">
+      <div class="container">
+        <div class="editorial">
+          <div class="editorial-media">
+            <img src="assets/img/trend-cover.jpg" width="1200" height="900" alt="Tendance du moment : palette élégante" loading="lazy" decoding="async" />
+          </div>
+
+          <div class="editorial-body">
+            <p class="kicker">Tendance du moment</p>
+            <h2 class="section-title">Palette élégante, profonde, facile à porter</h2>
+            <p class="section-subtitle">
+              Trois directions : nude raffiné, rouge profond, reflets nacrés. À mixer selon ton style.
+            </p>
+
+            <div class="pill-row" aria-label="Sélection tendance">
+              <span class="pill">Nude soyeux</span>
+              <span class="pill">Rouge velours</span>
+              <span class="pill">Perle subtile</span>
+            </div>
+
+            <div class="editorial-actions">
+              <a class="btn btn--primary" href="#palette">Explorer les teintes</a>
+              <a class="btn btn--ghost" href="#tutos">Voir comment faire</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PALETTE / FILTRE COULEURS -->
+    <section class="section section--alt" id="palette" aria-label="Filtrer par couleur">
+      <div class="container">
+        <header class="section-head section-head--split">
+          <div>
+            <h2 class="section-title">Filtrer par couleur</h2>
+            <p class="section-subtitle">Clique sur une teinte pour afficher une mini sélection cohérente.</p>
+          </div>
+          <div class="hint">
+            <span class="hint-dot" aria-hidden="true"></span>
+            <span>Interaction légère, sans rechargement</span>
+          </div>
+        </header>
+
+        <div class="palette" role="group" aria-label="Choix de couleurs">
+          <button class="swatch is-active" type="button" data-color="all" aria-pressed="true">
+            <span class="swatch-dot" aria-hidden="true"></span>
+            <span class="swatch-label">Tout</span>
+          </button>
+
+          <button class="swatch" type="button" data-color="nude" aria-pressed="false">
+            <span class="swatch-dot" data-swatch="nude" aria-hidden="true"></span>
+            <span class="swatch-label">Nude</span>
+          </button>
+
+          <button class="swatch" type="button" data-color="rouge" aria-pressed="false">
+            <span class="swatch-dot" data-swatch="rouge" aria-hidden="true"></span>
+            <span class="swatch-label">Rouge</span>
+          </button>
+
+          <button class="swatch" type="button" data-color="noir" aria-pressed="false">
+            <span class="swatch-dot" data-swatch="noir" aria-hidden="true"></span>
+            <span class="swatch-label">Noir</span>
+          </button>
+
+          <button class="swatch" type="button" data-color="blanc" aria-pressed="false">
+            <span class="swatch-dot" data-swatch="blanc" aria-hidden="true"></span>
+            <span class="swatch-label">Blanc</span>
+          </button>
+
+          <button class="swatch" type="button" data-color="bleu" aria-pressed="false">
+            <span class="swatch-dot" data-swatch="bleu" aria-hidden="true"></span>
+            <span class="swatch-label">Bleu</span>
+          </button>
+
+          <button class="swatch" type="button" data-color="vert" aria-pressed="false">
+            <span class="swatch-dot" data-swatch="vert" aria-hidden="true"></span>
+            <span class="swatch-label">Vert</span>
+          </button>
+
+          <button class="swatch" type="button" data-color="nacre" aria-pressed="false">
+            <span class="swatch-dot" data-swatch="nacre" aria-hidden="true"></span>
+            <span class="swatch-label">Nacré</span>
+          </button>
+        </div>
+
+        <div class="grid cards-4 gallery" data-color-gallery>
+          <figure class="gallery-item" data-color-item="nude">
+            <img src="assets/img/g-nude-1.jpg" width="720" height="720" alt="Teinte nude 1" loading="lazy" decoding="async" />
+            <figcaption>Nude soyeux</figcaption>
+          </figure>
+
+          <figure class="gallery-item" data-color-item="rouge">
+            <img src="assets/img/g-rouge-1.jpg" width="720" height="720" alt="Teinte rouge 1" loading="lazy" decoding="async" />
+            <figcaption>Rouge velours</figcaption>
+          </figure>
+
+          <figure class="gallery-item" data-color-item="noir">
+            <img src="assets/img/g-noir-1.jpg" width="720" height="720" alt="Teinte noire 1" loading="lazy" decoding="async" />
+            <figcaption>Noir intense</figcaption>
+          </figure>
+
+          <figure class="gallery-item" data-color-item="nacre">
+            <img src="assets/img/g-nacre-1.jpg" width="720" height="720" alt="Finition nacrée 1" loading="lazy" decoding="async" />
+            <figcaption>Perle fine</figcaption>
+          </figure>
+
+          <figure class="gallery-item" data-color-item="bleu">
+            <img src="assets/img/g-bleu-1.jpg" width="720" height="720" alt="Teinte bleue 1" loading="lazy" decoding="async" />
+            <figcaption>Bleu profond</figcaption>
+          </figure>
+
+          <figure class="gallery-item" data-color-item="vert">
+            <img src="assets/img/g-vert-1.jpg" width="720" height="720" alt="Teinte verte 1" loading="lazy" decoding="async" />
+            <figcaption>Vert forêt</figcaption>
+          </figure>
+
+          <figure class="gallery-item" data-color-item="blanc">
+            <img src="assets/img/g-blanc-1.jpg" width="720" height="720" alt="Teinte blanche 1" loading="lazy" decoding="async" />
+            <figcaption>Blanc propre</figcaption>
+          </figure>
+
+          <figure class="gallery-item" data-color-item="nude">
+            <img src="assets/img/g-nude-2.jpg" width="720" height="720" alt="Teinte nude 2" loading="lazy" decoding="async" />
+            <figcaption>Nude rosé</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- TUTORIELS -->
+    <section class="section" id="tutos" aria-label="Tutoriels">
+      <div class="container">
+        <header class="section-head">
+          <h2 class="section-title">Tutoriels & inspirations</h2>
+          <p class="section-subtitle">Des guides clairs pour gagner en précision, étape par étape.</p>
+        </header>
+
+        <div class="grid cards-3">
+          <article class="guide">
+            <div class="guide-media">
+              <img src="assets/img/tuto-1.jpg" width="860" height="560" alt="Tutoriel débutant : routine simple" loading="lazy" decoding="async" />
+            </div>
+            <div class="guide-body">
+              <p class="card-eyebrow">Débutant</p>
+              <h3 class="card-title">Routine simple en 30 minutes</h3>
+              <p class="card-text">Préparation, pose, finition : l’essentiel sans se perdre.</p>
+              <button class="btn btn--link" type="button" data-modal-open="tuto1">Voir les étapes</button>
+            </div>
+          </article>
+
+          <article class="guide">
+            <div class="guide-media">
+              <img src="assets/img/tuto-2.jpg" width="860" height="560" alt="Tutoriel : bombé et structure" loading="lazy" decoding="async" />
+            </div>
+            <div class="guide-body">
+              <p class="card-eyebrow">Intermédiaire</p>
+              <h3 class="card-title">Structure propre & bombé maîtrisé</h3>
+              <p class="card-text">Les bons repères pour un rendu net et durable.</p>
+              <button class="btn btn--link" type="button" data-modal-open="tuto2">Voir les étapes</button>
+            </div>
+          </article>
+
+          <article class="guide">
+            <div class="guide-media">
+              <img src="assets/img/tuto-3.jpg" width="860" height="560" alt="Tutoriel : lignes fines et finitions" loading="lazy" decoding="async" />
+            </div>
+            <div class="guide-body">
+              <p class="card-eyebrow">Nail art</p>
+              <h3 class="card-title">Finitions : lignes fines & détails</h3>
+              <p class="card-text">De petites touches qui changent tout, sans complexité.</p>
+              <button class="btn btn--link" type="button" data-modal-open="tuto3">Voir les étapes</button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PREUVES SOCIALES / UGC -->
+    <section class="section section--alt" id="communaute" aria-label="Communauté">
+      <div class="container">
+        <header class="section-head section-head--split">
+          <div>
+            <h2 class="section-title">La communauté s’inspire</h2>
+            <p class="section-subtitle">Un aperçu des rendus : propres, élégants, actuels.</p>
+          </div>
+          <a class="btn btn--ghost" href="#contact">Partager un rendu</a>
+        </header>
+
+        <div class="ugc" aria-label="Galerie inspiration">
+          <img src="assets/img/ugc-1.jpg" width="520" height="520" alt="Inspiration ongles 1" loading="lazy" decoding="async" />
+          <img src="assets/img/ugc-2.jpg" width="520" height="520" alt="Inspiration ongles 2" loading="lazy" decoding="async" />
+          <img src="assets/img/ugc-3.jpg" width="520" height="520" alt="Inspiration ongles 3" loading="lazy" decoding="async" />
+          <img src="assets/img/ugc-4.jpg" width="520" height="520" alt="Inspiration ongles 4" loading="lazy" decoding="async" />
+          <img src="assets/img/ugc-5.jpg" width="520" height="520" alt="Inspiration ongles 5" loading="lazy" decoding="async" />
+          <img src="assets/img/ugc-6.jpg" width="520" height="520" alt="Inspiration ongles 6" loading="lazy" decoding="async" />
+          <img src="assets/img/ugc-7.jpg" width="520" height="520" alt="Inspiration ongles 7" loading="lazy" decoding="async" />
+          <img src="assets/img/ugc-8.jpg" width="520" height="520" alt="Inspiration ongles 8" loading="lazy" decoding="async" />
+          <img src="assets/img/ugc-9.jpg" width="520" height="520" alt="Inspiration ongles 9" loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq" aria-label="Questions fréquentes">
+      <div class="container">
+        <header class="section-head">
+          <h2 class="section-title">FAQ</h2>
+          <p class="section-subtitle">Les réponses les plus utiles, sans blabla.</p>
+        </header>
+
+        <div class="accordion" data-accordion>
+          <details class="acc-item">
+            <summary class="acc-summary">Je débute : par quoi commencer ?</summary>
+            <div class="acc-panel">
+              <p>Commence par une routine simple : préparation, une couleur facile à poser, puis une finition. Si tu veux, on peut te recommander un trio adapté à ton niveau.</p>
+            </div>
+          </details>
+
+          <details class="acc-item">
+            <summary class="acc-summary">Combien de temps ça tient ?</summary>
+            <div class="acc-panel">
+              <p>La tenue dépend surtout de la préparation et de la technique. Sur une routine bien faite, tu peux viser une tenue nette et durable. (À adapter selon tes produits.)</p>
+            </div>
+          </details>
+
+          <details class="acc-item">
+            <summary class="acc-summary">C’est compatible avec ma lampe ?</summary>
+            <div class="acc-panel">
+              <p>La plupart des produits UV/LED fonctionnent avec les lampes standards. L’idéal : vérifier la puissance et respecter le temps de catalysation recommandé.</p>
+            </div>
+          </details>
+
+          <details class="acc-item">
+            <summary class="acc-summary">“Sans HEMA”, ça veut dire quoi ?</summary>
+            <div class="acc-panel">
+              <p>Certains produits sont formulés sans HEMA. Cela peut aider certaines personnes sensibles, mais il reste important de suivre les précautions d’usage.</p>
+            </div>
+          </details>
+
+          <details class="acc-item">
+            <summary class="acc-summary">Livraison, retours, service client ?</summary>
+            <div class="acc-panel">
+              <p>Ajoute ici tes conditions : délais, frais, suivi, retours. Je peux te rédiger une version courte + une version détaillée si besoin.</p>
+            </div>
+          </details>
+
+          <details class="acc-item">
+            <summary class="acc-summary">Je ne sais pas choisir : vous pouvez m’aider ?</summary>
+            <div class="acc-panel">
+              <p>Oui. Dis-nous ton niveau, ton objectif (naturel, nail art, tenue max) et ton style de teintes. On te propose une sélection cohérente.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT / CTA FINAL -->
+    <section class="section section--alt" id="contact" aria-label="Contact">
+      <div class="container">
+        <div class="contact">
+          <div class="contact-copy">
+            <p class="kicker">Conversion</p>
+            <h2 class="section-title">Besoin d’un conseil rapide ?</h2>
+            <p class="section-subtitle">
+              Dis ton niveau, le rendu souhaité et 2 teintes que tu aimes. On te répond avec une mini sélection claire.
+            </p>
+
+            <ul class="contact-list">
+              <li><strong>Réponse :</strong> sous 24–48h (à adapter)</li>
+              <li><strong>Format :</strong> 3 produits + 1 alternative</li>
+              <li><strong>Bonus :</strong> un mini guide de pose</li>
+            </ul>
+          </div>
+
+          <form class="form" action="#" method="post" aria-label="Formulaire de contact" data-fake-form>
+            <div class="form-row">
+              <label class="label" for="nom">Nom</label>
+              <input class="input" id="nom" name="nom" type="text" autocomplete="name" placeholder="Ton nom" required />
+            </div>
+
+            <div class="form-row">
+              <label class="label" for="email">Email</label>
+              <input class="input" id="email" name="email" type="email" autocomplete="email" placeholder="ton@email.fr" required />
+            </div>
+
+            <div class="form-row">
+              <label class="label" for="niveau">Ton niveau</label>
+              <select class="input" id="niveau" name="niveau" required>
+                <option value="" selected disabled>Choisir…</option>
+                <option>Débutant</option>
+                <option>Intermédiaire</option>
+                <option>Confirmé</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label class="label" for="message">Message</label>
+              <textarea class="input input--textarea" id="message" name="message" rows="5" placeholder="Ex : je veux un rendu nude élégant, tenue max, et une option nacrée." required></textarea>
+            </div>
+
+            <button class="btn btn--primary" type="submit">Envoyer ma demande</button>
+            <p class="form-note">Ce formulaire est prêt pour une intégration backend (ou envoi via service type Formspree). En l’état, il peut afficher un message “envoyé” en JS.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" aria-label="Pied de page">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <img src="assets/img/logo.png" width="120" height="28" alt="Logo Onglerie Pro" loading="lazy" decoding="async" />
+        <p class="footer-text">Une vitrine premium : sélection, tendances, tutoriels. Clair, moderne, efficace.</p>
+      </div>
+
+      <div class="footer-links">
+        <p class="footer-title">Navigation</p>
+        <a href="#produits">Produits</a>
+        <a href="#tendances">Tendances</a>
+        <a href="#tutos">Tutoriels</a>
+        <a href="#faq">FAQ</a>
+      </div>
+
+      <div class="footer-links">
+        <p class="footer-title">Infos</p>
+        <a href="#contact">Contact</a>
+        <a href="#communaute">Communauté</a>
+        <a href="#top">Haut de page</a>
+      </div>
+
+      <div class="footer-mini">
+        <p class="footer-title">Newsletter</p>
+        <p class="footer-text">1 email / semaine : tendances, astuces, nouveautés.</p>
+        <form class="mini-form" action="#" method="post" data-fake-form>
+          <label class="sr-only" for="nl">Email</label>
+          <input class="input" id="nl" name="nl" type="email" placeholder="ton@email.fr" required />
+          <button class="btn btn--ghost btn--sm" type="submit">S’inscrire</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>© <span data-year></span> Onglerie Pro. Tous droits réservés.</p>
+      <p class="footer-muted">Mentions légales • CGV • Politique de confidentialité (à ajouter)</p>
+    </div>
+  </footer>
+
+  <!-- Modals tutoriels (simples, accessibles) -->
+  <dialog class="modal" id="tuto1" aria-label="Tutoriel débutant">
+    <div class="modal-inner">
+      <button class="icon-btn modal-close" type="button" data-modal-close aria-label="Fermer">×</button>
+      <h3>Routine simple</h3>
+      <ol>
+        <li>Préparer l’ongle : limage doux + dégraissage.</li>
+        <li>Appliquer une base fine, catalyser.</li>
+        <li>2 couches de couleur, catalyser entre chaque.</li>
+        <li>Top coat, catalyser puis nettoyer si nécessaire.</li>
+      </ol>
+      <p class="muted-note">Conseil : privilégie des couches fines pour un rendu plus net.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="tuto2" aria-label="Tutoriel structure">
+    <div class="modal-inner">
+      <button class="icon-btn modal-close" type="button" data-modal-close aria-label="Fermer">×</button>
+      <h3>Structure & bombé</h3>
+      <ol>
+        <li>Préparation + base d’adhérence.</li>
+        <li>Placer la matière au centre (apex) et étirer vers les bords.</li>
+        <li>Contrôler l’épaisseur : moins c’est lourd, plus c’est premium.</li>
+        <li>Limer légèrement si besoin, puis finition.</li>
+      </ol>
+      <p class="muted-note">Astuce : travaille avec une lumière rasante pour repérer les zones.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="tuto3" aria-label="Tutoriel finitions">
+    <div class="modal-inner">
+      <button class="icon-btn modal-close" type="button" data-modal-close aria-label="Fermer">×</button>
+      <h3>Lignes fines & détails</h3>
+      <ol>
+        <li>Choisir un pinceau fin et une matière fluide.</li>
+        <li>Tracer en plusieurs petites sections plutôt qu’un trait long.</li>
+        <li>Sceller avec un top coat pour un rendu propre.</li>
+        <li>Nettoyer les bords pour une finition “salon”.</li>
+      </ol>
+      <p class="muted-note">Moins de détails, mais mieux placés : c’est l’effet premium.</p>
+    </div>
+  </dialog>
+
+</body>
+</html>
