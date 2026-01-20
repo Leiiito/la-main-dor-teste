@@ -1,375 +1,410 @@
 /* =========================================
-   La Main d’Or — main.js (vanilla)
-   - Menu mobile
-   - Prestations: tabs + recherche + rendu dynamique
-   - WhatsApp pré-rempli: inclut Nom + Prix + Durée
-   - Galerie: lightbox (dialog)
-   - Scroll reveal
-   - Formulaire: validation + fallback WhatsApp
+   La Main d'Or — main.js (vanilla)
+   - Prestations: tabs + recherche + rendu cards
+   - WhatsApp: message pré-rempli (nom + prix + durée)
+   - Galerie: filtres + lightbox
+   - FAQ: accordéon
+   - Active links nav + reveal
+   - Background: micro-parallax ultra léger
    ========================================= */
 
 (() => {
   "use strict";
 
+  // --- constants
   const WA_BASE = "https://wa.me/33750126032";
+  const IG_URL = "https://www.instagram.com/manon__behra";
+  const GOOGLE_REVIEW_URL = "https://g.page/r/CTha_eAXpwwcEAE/review";
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  // Year
-  const yearEl = document.querySelector("[data-year]");
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+  // ---------- utils
+  const normalize = (s) => (s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .trim();
 
-  // Mobile nav
-  const navToggle = document.querySelector("[data-nav-toggle]");
-  const navMenu = document.querySelector("[data-nav-menu]");
+  const fmtEuro = (v) => (typeof v === "number" ? `${v}€` : "—");
+  const fmtMin = (v) => (typeof v === "number" ? `${v} min` : "—");
 
-  const closeNav = () => {
-    if (!navToggle || !navMenu) return;
-    navMenu.classList.remove("is-open");
-    navToggle.setAttribute("aria-expanded", "false");
+  const buildWALink = (service) => {
+    const price = fmtEuro(service.price).replace("€", ""); // keep number in text below
+    const pText = typeof service.price === "number" ? `${service.price}€` : "—€";
+    const dText = typeof service.duration === "number" ? `${service.duration} min` : "— min";
+    const msg = `Bonjour, je souhaite réserver : ${service.title} (${pText} / ${dText}). Merci !`;
+    return `${WA_BASE}?text=${encodeURIComponent(msg)}`;
   };
 
-  const openNav = () => {
-    if (!navToggle || !navMenu) return;
-    navMenu.classList.add("is-open");
-    navToggle.setAttribute("aria-expanded", "true");
-  };
-
-  if (navToggle && navMenu) {
-    navToggle.addEventListener("click", () => {
-      const isOpen = navMenu.classList.contains("is-open");
-      isOpen ? closeNav() : openNav();
-    });
-
-    $$(".nav-link, .nav-cta", navMenu).forEach((a) => {
-      a.addEventListener("click", () => closeNav());
-    });
-
-    document.addEventListener("click", (e) => {
-      const t = e.target;
-      if (!navMenu.contains(t) && !navToggle.contains(t)) closeNav();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeNav();
-    });
-
-    window.addEventListener(
-      "resize",
-      () => {
-        if (window.matchMedia("(min-width: 920px)").matches) closeNav();
-      },
-      { passive: true }
-    );
-  }
-
-  // Quick help CTA
-  const quickBtns = $$('[data-quick-help]');
-  const quickMsg = `Bonjour, je ne sais pas quoi choisir. Je voudrais un RDV à Gravelines. Peux-tu me conseiller ? Merci !`;
-  quickBtns.forEach((b) => {
-    b.addEventListener('click', () => {
-      const url = `${WA_BASE}?text=${encodeURIComponent(quickMsg)}`;
-      window.open(url, '_blank', 'noopener,noreferrer');
-    });
-  });
-
-  // -----------------------------
-  // Prestations data (33)
-  // Rule applied: first number = price, second number = duration
-  // -----------------------------
+  // ---------- PRESTATIONS DATA (33)
+  // Règle respectée: 1er nombre = prix, 2e nombre = durée.
+  // Si valeur manquante => null => affichage "—" + liste À vérifier.
   const SERVICES = [
     // Ongles pieds
-    { title: "Semi-permanent pieds", price: 25, duration: 45, category: "Ongles pieds", featured: true, tag: "Populaire" },
+    { title: "Semi-permanent pieds", price: 25, duration: 45, category: "Ongles pieds", tag: "Pieds" },
 
     // Manucure
-    { title: "Gainage / renfort", price: 40, duration: 75, category: "Manucure", featured: true, tag: "Populaire" },
+    { title: "Gainage / renfort", price: 40, duration: 75, category: "Manucure", featured: true, tag: "Renfort" },
 
     // Ongles mains
-    { title: "Semi-permanent mains", price: 25, duration: 45, category: "Ongles mains", featured: true, tag: "Populaire" },
+    { title: "Semi-permanent mains", price: 25, duration: 45, category: "Ongles mains", featured: true },
     { title: "Dépose semi-permanent", price: 15, duration: 20, category: "Ongles mains", tag: "Dépose" },
     { title: "Pack dépose semi + nouvelle pose semi", price: 35, duration: 60, category: "Ongles mains", tag: "Pack" },
-    { title: "Pose américaine", price: 35, duration: 90, category: "Ongles mains", featured: true, tag: "Populaire" },
+    { title: "Pose américaine", price: 35, duration: 90, category: "Ongles mains", featured: true, tag: "Capsules" },
     { title: "Dépose pose américaine", price: 15, duration: 30, category: "Ongles mains", tag: "Dépose" },
     { title: "Pack dépose capsule + nouvelle pose capsule", price: 45, duration: 90, category: "Ongles mains", tag: "Pack" },
     { title: "Dépose gel", price: 20, duration: 45, category: "Ongles mains", tag: "Dépose" },
     { title: "Remplissage gel", price: 35, duration: 90, category: "Ongles mains", tag: "Remplissage" },
-    { title: "Rallongement chablon", price: 50, duration: 120, category: "Ongles mains" },
+    { title: "Rallongement chablon", price: 50, duration: 120, category: "Ongles mains", tag: "Chablon" },
     { title: "Pack semi mains + pieds", price: 45, duration: 105, category: "Ongles mains", tag: "Pack" },
     { title: "Pack pose américaine + semi pieds", price: 55, duration: 105, category: "Ongles mains", tag: "Pack" },
 
     // Cils
-    { title: "Rehaussement de cils", price: 45, duration: 70, category: "Cils" },
-    { title: "Rehaussement de cils + teinture", price: 55, duration: 75, category: "Cils" },
+    { title: "Rehaussement de cils", price: 45, duration: 70, category: "Cils", tag: "Rehaussement" },
+    { title: "Rehaussement de cils + teinture", price: 55, duration: 75, category: "Cils", tag: "Rehaussement" },
     { title: "Dépose extensions de cils (pose extérieure)", price: 15, duration: 15, category: "Cils", tag: "Dépose" },
     { title: "Dépose extensions de cils (réalisée par mes soins)", price: 10, duration: null, category: "Cils", tag: "Dépose" },
 
-    { title: "Extensions de cils — cils à cils", price: 40, duration: 90, category: "Cils", featured: true, tag: "Populaire" },
-    { title: "Remplissage cils à cils — 2 semaines", price: 30, duration: 60, category: "Cils", tag: "Remplissage 2 sem" },
-    { title: "Remplissage cils à cils — 3 semaines", price: 35, duration: 75, category: "Cils", tag: "Remplissage 3 sem" },
+    { title: "Extensions de cils — cils à cils", price: 40, duration: 90, category: "Cils", featured: true },
+    { title: "Remplissage cils à cils — 2 semaines", price: 30, duration: 60, category: "Cils", tag: "2 semaines" },
+    { title: "Remplissage cils à cils — 3 semaines", price: 35, duration: 75, category: "Cils", tag: "3 semaines" },
 
     { title: "Extensions de cils — volume mixte naturel", price: 50, duration: 90, category: "Cils" },
-    { title: "Remplissage mixte naturel — 2 semaines", price: 40, duration: 60, category: "Cils", tag: "Remplissage 2 sem" },
-    { title: "Remplissage mixte naturel — 3 semaines", price: 45, duration: 75, category: "Cils", tag: "Remplissage 3 sem" },
+    { title: "Remplissage mixte naturel — 2 semaines", price: 40, duration: 60, category: "Cils", tag: "2 semaines" },
+    { title: "Remplissage mixte naturel — 3 semaines", price: 45, duration: 75, category: "Cils", tag: "3 semaines" },
 
     { title: "Extensions de cils — volume mixte fourni", price: 55, duration: 90, category: "Cils" },
-    { title: "Remplissage mixte fourni — 2 semaines", price: 45, duration: 60, category: "Cils", tag: "Remplissage 2 sem" },
-    { title: "Remplissage mixte fourni — 3 semaines", price: 50, duration: 75, category: "Cils", tag: "Remplissage 3 sem" },
+    { title: "Remplissage mixte fourni — 2 semaines", price: 45, duration: 60, category: "Cils", tag: "2 semaines" },
+    { title: "Remplissage mixte fourni — 3 semaines", price: 50, duration: 75, category: "Cils", tag: "3 semaines" },
 
     { title: "Extensions de cils — volume russe", price: 60, duration: 90, category: "Cils" },
-    { title: "Remplissage volume russe — 2 semaines", price: 45, duration: 60, category: "Cils", tag: "Remplissage 2 sem" },
-    { title: "Remplissage volume russe — 3 semaines", price: 50, duration: 75, category: "Cils", tag: "Remplissage 3 sem" },
+    { title: "Remplissage volume russe — 2 semaines", price: 45, duration: 60, category: "Cils", tag: "2 semaines" },
+    { title: "Remplissage volume russe — 3 semaines", price: 50, duration: 75, category: "Cils", tag: "3 semaines" },
 
     { title: "Extensions de cils — volume mega russe", price: 70, duration: 90, category: "Cils" },
-    { title: "Remplissage mega russe — 2 semaines", price: 55, duration: 60, category: "Cils", tag: "Remplissage 2 sem" },
-    { title: "Remplissage mega russe — 3 semaines", price: 60, duration: 75, category: "Cils", tag: "Remplissage 3 sem" }
+    { title: "Remplissage mega russe — 2 semaines", price: 55, duration: 60, category: "Cils", tag: "2 semaines" },
+    { title: "Remplissage mega russe — 3 semaines", price: 60, duration: 75, category: "Cils", tag: "3 semaines" }
   ];
 
-  const normalize = (str) =>
-    (str || "")
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .trim();
+  const CATEGORIES = ["Manucure", "Ongles mains", "Ongles pieds", "Cils"];
 
-  const formatEuro = (n) => (typeof n === "number" ? `${n}€` : "—");
-  const formatMin = (n) => (typeof n === "number" ? `${n} min` : "—");
-
-  const buildWhatsApp = (service) => {
-    const p = typeof service.price === "number" ? `${service.price}€` : "—€";
-    const d = typeof service.duration === "number" ? `${service.duration} min` : "— min";
-    const msg = `Bonjour, je souhaite réserver : ${service.title} (${p} / ${d}). Merci !`;
-    return `${WA_BASE}?text=${encodeURIComponent(msg)}`;
-  };
-
-  const descFromTitle = (title) => {
-    const t = normalize(title);
-    if (t.includes('semi-permanent')) return "Couleur nette, finition brillante.";
-    if (t.includes('pose americaine')) return "Pose soignée, rendu élégant.";
-    if (t.includes('remplissage')) return "Entretien pour une tenue optimale.";
-    if (t.includes('depose')) return "Retrait en douceur (selon prestation).";
-    if (t.includes('rehaussement')) return "Courbure naturelle, regard ouvert.";
-    if (t.includes('cils a cils')) return "Effet naturel, regard lumineux.";
-    if (t.includes('volume')) return "Regard plus intense, effet travaillé.";
-    if (t.includes('gainage')) return "Renfort naturel, finition propre.";
-    if (t.includes('chablon')) return "Allongement et construction.";
-    if (t.includes('pack')) return "Offre combinée, pratique et complète.";
-    return "Prestation professionnelle, sur rendez-vous.";
-  };
-
-  // DOM refs
-  const tabsRoot = document.querySelector("[data-tabs]");
+  // ---------- PRESTATIONS RENDER
+  const tabsRoot = $("[data-tabs]");
   const tabButtons = tabsRoot ? $$('[data-tab]', tabsRoot) : [];
-  const searchInput = document.querySelector("[data-search]");
-  const listRoot = document.querySelector("[data-prestations]");
-  const featuredRoot = document.querySelector("[data-featured]");
-  const toCheckBox = document.querySelector("[data-to-check]");
-  const toCheckList = document.querySelector("[data-to-check-list]");
+  const searchInput = $("[data-search]");
+  const featuredRoot = $("[data-featured]");
+  const listRoot = $("[data-prestations]");
+  const toCheckBox = $("[data-to-check]");
+  const toCheckList = $("[data-to-check-list]");
 
   let activeCategory = "Ongles mains";
 
-  const renderCard = (service, isFeatured = false) => {
-    const price = formatEuro(service.price);
-    const duration = formatMin(service.duration);
+  const renderServiceCard = (s, opts = {}) => {
+    const isFeatured = !!s.featured;
+    const tag = s.tag ? `<span class="badge badge--ghost">${s.tag}</span>` : "";
+    const featuredBadge = isFeatured ? `<span class="badge badge--pop">Populaire</span>` : "";
 
-    const rightBadge = isFeatured ? 'Populaire' : (service.tag || '');
-    const leftBadge = !isFeatured && service.tag && service.tag !== 'Populaire' ? service.tag : '';
+    const waUrl = buildWALink(s);
 
     return `
-      <article class="prestation" data-title="${service.title}" data-category="${service.category}">
-        ${isFeatured ? `<span class="badge">Populaire</span>` : (rightBadge ? `<span class="badge">${rightBadge}</span>` : '')}
-        ${(!isFeatured && leftBadge && leftBadge !== rightBadge) ? `<span class="badge badge-left">${leftBadge}</span>` : ''}
-        <h3>${service.title}</h3>
-        <p class="desc">${descFromTitle(service.title)}</p>
-        <div class="meta-row">
-          <span class="meta-pill"><strong>Prix</strong> ${price}</span>
-          <span class="meta-pill ${service.duration == null ? 'meta-pill--warn' : ''}"><strong>Durée</strong> ${duration}</span>
+      <article class="svc ${isFeatured ? "svc--featured" : ""}" data-title="${s.title}">
+        <header class="svc__hd">
+          <div class="svc__badges">${featuredBadge}${tag}</div>
+          <h3 class="svc__title">${s.title}</h3>
+        </header>
+
+        <div class="svc__meta">
+          <span class="pill"><strong>Prix</strong> ${fmtEuro(s.price)}</span>
+          <span class="pill ${s.duration == null ? "pill--warn" : ""}"><strong>Durée</strong> ${fmtMin(s.duration)}</span>
         </div>
-        <button class="btn btn--primary" type="button" data-book="${encodeURIComponent(service.title)}">Réserver</button>
+
+        <div class="svc__cta">
+          <a class="btn btn--outline" href="${waUrl}" target="_blank" rel="noopener noreferrer" data-wa>
+            Réserver
+          </a>
+        </div>
       </article>
-    `;
+    `.trim();
   };
 
-  const wireBooking = () => {
-    $$('[data-book]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const title = decodeURIComponent(btn.getAttribute('data-book') || '');
-        const service = SERVICES.find((s) => s.title === title);
-        if (!service) return;
-        window.open(buildWhatsApp(service), '_blank', 'noopener,noreferrer');
-      });
-    });
-  };
-
-  const render = () => {
+  const applyServices = () => {
     if (!listRoot) return;
 
     const q = normalize(searchInput?.value);
 
-    const inCat = SERVICES.filter((s) => s.category === activeCategory);
-    const featured = inCat.filter((s) => !!s.featured);
-    const filtered = inCat.filter((s) => {
-      if (!q) return true;
-      return normalize(s.title).includes(q) || normalize(descFromTitle(s.title)).includes(q) || normalize(s.tag || '').includes(q);
-    });
+    const inCat = SERVICES.filter(s => s.category === activeCategory);
+    const filtered = inCat.filter(s => !q || normalize(s.title).includes(q));
 
+    // featured first (max 3)
     if (featuredRoot) {
-      featuredRoot.innerHTML = featured.length ? featured.map((s) => renderCard(s, true)).join('') : '';
+      const featured = filtered.filter(s => s.featured).slice(0, 3);
+      featuredRoot.innerHTML = featured.length
+        ? `<div class="svc-grid">${featured.map(s => renderServiceCard(s)).join("")}</div>`
+        : "";
     }
 
-    // Avoid duplicates: remove featured from main list
-    const nonFeatured = filtered.filter((s) => !s.featured);
-    listRoot.innerHTML = nonFeatured.map((s) => renderCard(s, false)).join('');
+    const rest = filtered.filter(s => !s.featured);
+    listRoot.innerHTML = rest.length
+      ? `<div class="svc-grid">${rest.map(s => renderServiceCard(s)).join("")}</div>`
+      : `<p class="empty">Aucune prestation trouvée. Essaie un autre mot-clé.</p>`;
 
-    wireBooking();
+    buildToCheck();
   };
 
   const setActiveTab = (cat) => {
     activeCategory = cat;
-    tabButtons.forEach((b) => b.classList.toggle('active', b.getAttribute('data-tab') === cat));
-    render();
+    tabButtons.forEach(b => b.classList.toggle("active", b.dataset.tab === cat));
+    applyServices();
   };
 
-  if (tabButtons.length) {
-    tabButtons.forEach((btn) => {
-      btn.addEventListener('click', () => setActiveTab(btn.getAttribute('data-tab')));
-    });
-  }
-
-  if (searchInput) searchInput.addEventListener('input', render);
-
-  // To-check list
   const buildToCheck = () => {
     if (!toCheckBox || !toCheckList) return;
-    const issues = SERVICES.filter((s) => s.price == null || s.duration == null);
+
+    const issues = SERVICES.filter(s => s.price == null || s.duration == null);
     if (!issues.length) {
       toCheckBox.hidden = true;
       return;
     }
-    toCheckList.innerHTML = issues
-      .map((s) => {
-        const missing = [s.price == null ? 'prix' : null, s.duration == null ? 'durée' : null].filter(Boolean).join(' + ');
-        return `<li><strong>${s.title}</strong> — ${missing} manquant(s)</li>`;
-      })
-      .join('');
+
+    toCheckList.innerHTML = issues.map(s => {
+      const missing = [s.price == null ? "prix" : null, s.duration == null ? "durée" : null].filter(Boolean).join(" + ");
+      return `<li><strong>${s.title}</strong> — ${missing} manquant(s)</li>`;
+    }).join("");
+
     toCheckBox.hidden = false;
   };
 
-  // Init
-  setActiveTab('Ongles mains');
-  buildToCheck();
+  if (tabButtons.length) {
+    tabButtons.forEach(btn => btn.addEventListener("click", () => setActiveTab(btn.dataset.tab)));
+  }
+  if (searchInput) {
+    searchInput.addEventListener("input", () => applyServices());
+  }
 
-  // -----------------------------
-  // Galerie: filtres + lightbox
-  // -----------------------------
-  const gFilterBtns = $$('[data-gfilter]');
-  const gItems = $$('[data-gallery] .g-item');
+  // init
+  setActiveTab(activeCategory);
 
-  const setGalleryFilter = (type) => {
-    gFilterBtns.forEach((b) => {
-      const key = b.getAttribute('data-gfilter') || 'all';
-      const isActive = key === type;
-      b.classList.toggle('chip--active', isActive);
-      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
-    });
+  // ---------- GALLERY FILTERS + LIGHTBOX
+  const chips = $$("[data-gchip]");
+  const items = $$("[data-gitem]");
+  const lb = $("[data-lightbox]");
+  const lbImg = lb ? $("[data-lb-img]", lb) : null;
+  const lbClose = lb ? $("[data-lb-close]", lb) : null;
+  const lbPrev = lb ? $("[data-lb-prev]", lb) : null;
+  const lbNext = lb ? $("[data-lb-next]", lb) : null;
 
-    gItems.forEach((item) => {
-      const t = item.getAttribute('data-type') || 'all';
-      const show = type === 'all' || t === type;
-      item.classList.toggle('is-hidden', !show);
-    });
+  let lbIndex = -1;
+
+  const visibleGalleryItems = () => items.filter(it => it.style.display !== "none");
+
+  const openLB = (index) => {
+    const vis = visibleGalleryItems();
+    if (!lb || !lbImg || !vis.length) return;
+
+    lbIndex = Math.max(0, Math.min(index, vis.length - 1));
+    const fig = vis[lbIndex];
+    const src = fig.getAttribute("data-src");
+    const alt = fig.getAttribute("data-alt") || "";
+
+    lbImg.src = src;
+    lbImg.alt = alt;
+
+    lb.showModal();
+    document.documentElement.classList.add("no-scroll");
   };
 
-  if (gFilterBtns.length && gItems.length) {
-    gFilterBtns.forEach((b) => {
-      b.addEventListener('click', () => {
-        const type = b.getAttribute('data-gfilter') || 'all';
-        setGalleryFilter(type);
+  const closeLB = () => {
+    if (!lb) return;
+    lb.close();
+    document.documentElement.classList.remove("no-scroll");
+  };
+
+  const navLB = (dir) => {
+    const vis = visibleGalleryItems();
+    if (!vis.length) return;
+    lbIndex = (lbIndex + dir + vis.length) % vis.length;
+    const fig = vis[lbIndex];
+    lbImg.src = fig.getAttribute("data-src");
+    lbImg.alt = fig.getAttribute("data-alt") || "";
+  };
+
+  if (chips.length && items.length) {
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        chips.forEach(c => c.classList.toggle("active", c === chip));
+        const type = chip.getAttribute("data-gchip");
+
+        items.forEach(fig => {
+          const t = fig.getAttribute("data-type");
+          const show = type === "all" || t === type;
+          fig.style.display = show ? "" : "none";
+        });
       });
     });
   }
-  const galleryImgs = $$('[data-gallery] img');
-  const dlg = document.getElementById('lightbox');
-  const dlgImg = document.getElementById('lightboxImg');
-  const dlgCap = document.getElementById('lightboxCap');
-  const dlgClose = $('[data-modal-close]');
 
-  const openLightbox = (img) => {
-    if (!dlg || !dlgImg) return;
-    dlgImg.src = img.currentSrc || img.src;
-    dlgImg.alt = img.alt || 'Agrandissement';
-    if (dlgCap) dlgCap.textContent = img.alt || '';
-    if (typeof dlg.showModal === 'function') dlg.showModal();
-  };
-
-  if (galleryImgs.length && dlg) {
-    galleryImgs.forEach((img) => {
-      img.style.cursor = 'zoom-in';
-      img.addEventListener('click', () => openLightbox(img));
+  // click to open
+  items.forEach((fig, idx) => {
+    fig.addEventListener("click", () => {
+      // open within visible list index
+      const vis = visibleGalleryItems();
+      const visIndex = vis.indexOf(fig);
+      openLB(visIndex >= 0 ? visIndex : idx);
     });
+  });
 
-    if (dlgClose) dlgClose.addEventListener('click', () => dlg.close());
-
-    dlg.addEventListener('click', (e) => {
-      const rect = dlg.getBoundingClientRect();
-      const inDialog = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
-      if (!inDialog) dlg.close();
+  // close / nav handlers
+  if (lb) {
+    lb.addEventListener("click", (e) => {
+      // click outside panel
+      if (e.target === lb) closeLB();
+    });
+    lb.addEventListener("close", () => {
+      document.documentElement.classList.remove("no-scroll");
+      if (lbImg) lbImg.src = "";
     });
   }
 
-  // -----------------------------
-  // Fake form submit (opens WhatsApp)
-  // -----------------------------
-  const form = document.querySelector('[data-fake-form]');
+  lbClose && lbClose.addEventListener("click", closeLB);
+  lbPrev && lbPrev.addEventListener("click", () => navLB(-1));
+  lbNext && lbNext.addEventListener("click", () => navLB(1));
+
+  document.addEventListener("keydown", (e) => {
+    if (!lb || !lb.open) return;
+    if (e.key === "Escape") closeLB();
+    if (e.key === "ArrowLeft") navLB(-1);
+    if (e.key === "ArrowRight") navLB(1);
+  });
+
+  // ---------- FAQ accordion
+  const faqBtns = $$('[data-acc-btn]');
+  faqBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('[data-acc-item]');
+      if (!item) return;
+      const open = item.getAttribute('data-open') === 'true';
+      item.setAttribute('data-open', open ? 'false' : 'true');
+    });
+  });
+
+  // ---------- Active nav links (optional, subtle)
+  const navLinks = $$('[data-nav-link]');
+  const sections = navLinks
+    .map(a => $(a.getAttribute('href')))
+    .filter(Boolean);
+
+  if (navLinks.length && sections.length && 'IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const id = `#${entry.target.id}`;
+        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+      });
+    }, { rootMargin: '-25% 0px -65% 0px', threshold: 0.01 });
+
+    sections.forEach(s => obs.observe(s));
+  }
+
+  // ---------- Scroll reveal (light)
+  const revealEls = $$('[data-reveal]');
+  revealEls.forEach(el => el.classList.add('reveal'));
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(ent => {
+        if (ent.isIntersecting) {
+          ent.target.classList.add('in');
+          io.unobserve(ent.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('in'));
+  }
+
+  // ---------- Contact form fallback => WhatsApp
+  const form = $('[data-form]');
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const name = (form.querySelector('input[name="name"]')?.value || '').trim();
-      const msg = (form.querySelector('textarea[name="message"]')?.value || '').trim();
 
-      // basic validation
-      if (name.length < 2 || msg.length < 10) {
-        const warn = name.length < 2 ? 'Merci d’indiquer ton nom.' : 'Ton message est trop court.';
-        alert(warn);
+      const name = (form.querySelector('input[name="name"]')?.value || '').trim();
+      const message = (form.querySelector('textarea[name="message"]')?.value || '').trim();
+
+      const errors = [];
+      if (name.length < 2) errors.push('Merci d’indiquer ton prénom.');
+      if (message.length < 10) errors.push('Ton message est un peu court (min. 10 caractères).');
+
+      const box = form.querySelector('[data-form-feedback]');
+      if (box) {
+        box.textContent = '';
+        box.classList.remove('ok', 'err');
+      }
+
+      if (errors.length) {
+        if (box) {
+          box.textContent = errors.join(' ');
+          box.classList.add('err');
+        }
         return;
       }
 
-      const waMsg = `Bonjour, je m’appelle ${name}. Je souhaite un RDV à Gravelines. Message : ${msg}`;
-      window.open(`${WA_BASE}?text=${encodeURIComponent(waMsg)}`, '_blank', 'noopener,noreferrer');
+      const msg = `Bonjour, je m’appelle ${name}. Je souhaite un RDV à Gravelines. Message : ${message}`;
+      const url = `${WA_BASE}?text=${encodeURIComponent(msg)}`;
+
+      if (box) {
+        box.textContent = 'Merci ! Ouverture de WhatsApp pour une réponse plus rapide…';
+        box.classList.add('ok');
+      }
+
+      setTimeout(() => {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }, 450);
+
       form.reset();
     });
   }
 
-  // -----------------------------
-  // Scroll reveal
-  // -----------------------------
-  const revealTargets = [
-    '.section-head',
-    '.step-card',
-    '.prestation',
-    '.info-card',
-    '.quote',
-    '.acc-item',
-    '.contact',
-    '.footer-grid > *'
-  ].flatMap((sel) => $$(sel));
+  // ---------- Footer year
+  const y = $('[data-year]');
+  if (y) y.textContent = String(new Date().getFullYear());
 
-  revealTargets.forEach((el) => el.classList.add('reveal'));
+  // ---------- Background micro-parallax (ultra léger)
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion) {
+    const targets = [
+      { el: $('.bg-frag--hero-1'), factor: 0.08 },
+      { el: $('.bg-frag--presta-2'), factor: 0.06 },
+      { el: $('.bg-frag--gallery-1'), factor: 0.05 }
+    ].filter(t => t.el);
 
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in');
-            io.unobserve(entry.target);
+    if (targets.length) {
+      let ticking = false;
+
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY || 0;
+          const isMobile = window.matchMedia('(max-width: 720px)').matches;
+          const mobileScale = isMobile ? 0.55 : 1;
+
+          for (const t of targets) {
+            const offset = Math.max(-18, Math.min(18, (y * t.factor) * mobileScale));
+            t.el.style.setProperty('--bg-parallax', `${-offset}px`);
           }
+
+          ticking = false;
         });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
-    );
-    revealTargets.forEach((el) => io.observe(el));
-  } else {
-    revealTargets.forEach((el) => el.classList.add('in'));
+      };
+
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+    }
   }
+
 })();
