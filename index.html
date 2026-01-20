@@ -1,23 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <title>Ongles & Cils à Gravelines | La Main d’Or — Réservation WhatsApp</title>
-  <meta name="description" content="Prothésiste ongulaire & technicienne de cils à Gravelines. Résultat net, tenue durable. Réservez facilement sur WhatsApp." />
+  <meta name="description" content="Prothésiste ongulaire & technicienne de cils à Gravelines. Résultat net, tenue durable. Réservez en 30 secondes sur WhatsApp." />
 
-  <!-- OpenGraph -->
+  <!-- OpenGraph / Twitter -->
   <meta property="og:title" content="La Main d’Or — Ongles & Cils à Gravelines" />
-  <meta property="og:description" content="Ongles & cils à Gravelines. Réservation rapide sur WhatsApp. Résultat net, tenue durable." />
+  <meta property="og:description" content="Réservation rapide sur WhatsApp • Résultat net • Tenue durable" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="fr_FR" />
+  <meta property="og:image" content="assets/img/og-cover.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-  <!-- SEO local -->
+  <!-- Local SEO hints -->
   <meta name="geo.region" content="FR-59" />
   <meta name="geo.placename" content="Gravelines" />
 
-  <!-- Schema LocalBusiness -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script defer src="assets/js/main.js"></script>
+
+  <!-- Schema.org LocalBusiness -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -28,226 +34,356 @@
       "addressLocality": "Gravelines",
       "addressCountry": "FR"
     },
-    "url": "https://wa.me/33750126032",
+    "areaServed": "Gravelines",
     "sameAs": [
       "https://www.instagram.com/manon__behra",
       "https://g.page/r/CTha_eAXpwwcEAE/review"
     ]
   }
   </script>
-
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="main.js"></script>
 </head>
-
 <body>
+  <a class="skip-link" href="#main">Aller au contenu</a>
 
-<!-- TOP BAR -->
-<div class="top-bar">
-  📍 Gravelines • Sur RDV • Réponse rapide sur WhatsApp
-</div>
-
-<!-- NAVBAR -->
-<header class="navbar" data-header>
-  <div class="container nav-inner">
-    <div class="brand">La Main d’Or</div>
-
-    <nav class="nav-links">
-      <a href="#prestations">Prestations</a>
-      <a href="#galerie">Galerie</a>
-      <a href="#avis">Avis</a>
-      <a href="#contact" class="btn btn-primary">Réserver sur WhatsApp</a>
-    </nav>
+  <!-- Top bar -->
+  <div class="top-bar" role="banner">
+    📍 Gravelines • Sur RDV • Réponse rapide sur WhatsApp
   </div>
-</header>
 
-<main>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="container hero-grid">
-    <div class="hero-content">
-      <h1>Ongles & Cils à Gravelines — Résultat net, tenue durable.</h1>
-      <p class="hero-sub">
-        Prothésiste ongulaire & technicienne de cils.<br>
-        Hygiène irréprochable • Produits professionnels • Sur RDV.
-      </p>
-
-      <div class="hero-ctas">
-        <a href="https://wa.me/33750126032" class="btn btn-primary btn-lg">
-          Réserver sur WhatsApp
-        </a>
-        <a href="#prestations" class="btn btn-secondary">
-          Voir les prestations
-        </a>
-      </div>
-
-      <div class="hero-trust">
-        ⭐⭐⭐⭐⭐ Avis clientes • Réponse rapide
-      </div>
-    </div>
-
-    <div class="hero-image">
-      <img src="assets/img/placeholder-hero.jpg" alt="Résultat ongles et cils La Main d’Or">
-    </div>
-  </div>
-</section>
-
-<!-- RESERVATION EN 30 SECONDES -->
-<section class="steps">
-  <div class="container">
-    <h2>Réserver en 30 secondes</h2>
-
-    <div class="steps-grid">
-      <div class="step">
-        <span>1</span>
-        <p>Choisis ta prestation</p>
-      </div>
-      <div class="step">
-        <span>2</span>
-        <p>Envoie un message WhatsApp</p>
-      </div>
-      <div class="step">
-        <span>3</span>
-        <p>Je confirme ton créneau</p>
-      </div>
-    </div>
-
-    <a href="https://wa.me/33750126032" class="btn btn-primary">
-      Réserver maintenant
-    </a>
-  </div>
-</section>
-
-<!-- PRESTATIONS -->
-<section id="prestations" class="prestations">
-  <div class="container">
-    <h2>Prestations</h2>
-
-    <!-- Recherche -->
-    <input type="search" placeholder="Rechercher une prestation…" class="search" data-search>
-
-    <!-- Tabs -->
-    <div class="tabs" data-tabs>
-      <button class="tab active" data-tab="manucure">Manucure</button>
-      <button class="tab" data-tab="ongles">Ongles mains</button>
-      <button class="tab" data-tab="pieds">Ongles pieds</button>
-      <button class="tab" data-tab="cils">Cils</button>
-    </div>
-
-    <!-- Prestations list -->
-    <div class="prestations-list" data-prestations>
-
-      <!-- Exemple prestation -->
-      <article class="prestation" data-category="ongles">
-        <h3>Pose complète gel</h3>
-        <p>Allongement + finition soignée</p>
-        <button
-          class="btn btn-outline"
-          data-whatsapp="Pose complète gel">
-          Réserver
-        </button>
-      </article>
-
-      <article class="prestation featured" data-category="cils">
-        <span class="badge">Populaire</span>
-        <h3>Cil à cil</h3>
-        <p>Effet naturel, regard ouvert</p>
-        <button
-          class="btn btn-outline"
-          data-whatsapp="Cil à cil">
-          Réserver
-        </button>
-      </article>
-
-      <article class="prestation" data-category="cils">
-        <h3>Volume russe</h3>
-        <p>Regard intense et structuré</p>
-        <button
-          class="btn btn-outline"
-          data-whatsapp="Volume russe">
-          Réserver
-        </button>
-      </article>
-
-    </div>
-  </div>
-</section>
-
-<!-- GALERIE -->
-<section id="galerie" class="galerie">
-  <div class="container">
-    <h2>Résultats</h2>
-
-    <div class="gallery-grid">
-      <img src="assets/img/placeholder-1.jpg" alt="">
-      <img src="assets/img/placeholder-2.jpg" alt="">
-      <img src="assets/img/placeholder-3.jpg" alt="">
-      <img src="assets/img/placeholder-4.jpg" alt="">
-    </div>
-
-    <a href="https://www.instagram.com/manon__behra" class="btn btn-secondary">
-      Voir Instagram
-    </a>
-  </div>
-</section>
-
-<!-- AVIS -->
-<section id="avis" class="avis">
-  <div class="container">
-    <h2>Avis clientes</h2>
-
-    <div class="avis-grid">
-      <blockquote>“Travail impeccable, très professionnelle.”</blockquote>
-      <blockquote>“Tenue parfaite, je recommande à 100%.”</blockquote>
-      <blockquote>“Résultat magnifique, hygiène au top.”</blockquote>
-    </div>
-
-    <a href="https://g.page/r/CTha_eAXpwwcEAE/review" class="btn btn-primary">
-      Lire / Laisser un avis Google
-    </a>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact" class="contact">
-  <div class="container">
-    <h2>Contact & RDV</h2>
-
-    <div class="contact-actions">
-      <a href="https://wa.me/33750126032" class="btn btn-primary btn-lg">
-        Réserver sur WhatsApp
+  <!-- Sticky navbar -->
+  <header class="site-header" data-header>
+    <div class="container header-inner">
+      <a class="brand" href="#" aria-label="La Main d’Or">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span class="brand-text">La Main d’Or</span>
       </a>
-      <a href="https://www.instagram.com/manon__behra" class="btn btn-secondary">
-        DM Instagram
-      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" data-nav-toggle>
+        <span class="nav-toggle__lines" aria-hidden="true"></span>
+      </button>
+
+      <nav class="nav-menu" data-nav-menu>
+        <a class="nav-link" href="#prestations">Prestations</a>
+        <a class="nav-link" href="#galerie">Galerie</a>
+        <a class="nav-link" href="#avis">Avis</a>
+        <a class="nav-link" href="#contact">Contact</a>
+        <a class="btn btn--primary nav-cta" href="https://wa.me/33750126032" target="_blank" rel="noopener">Réserver sur WhatsApp</a>
+      </nav>
     </div>
+  </header>
 
-    <!-- Fallback form -->
-    <form class="contact-form" data-form>
-      <input type="text" placeholder="Votre nom" required>
-      <textarea placeholder="Votre message" required></textarea>
-      <button type="submit" class="btn btn-outline">Envoyer</button>
-    </form>
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <p class="kicker">Ongles & cils • Gravelines</p>
+          <h1 class="hero-title">Ongles & Cils à Gravelines — <span class="accent">résultat net</span>, tenue durable.</h1>
+          <p class="hero-subtitle">Prothésiste ongulaire & technicienne de cils. Hygiène irréprochable, produits pro, sur rendez-vous. Réservation simple et rapide.</p>
 
-    <p class="contact-note">
-      📍 Gravelines • Sur RDV uniquement
-    </p>
+          <div class="hero-actions">
+            <a class="btn btn--primary btn--lg" href="https://wa.me/33750126032" target="_blank" rel="noopener">Réserver sur WhatsApp</a>
+            <a class="btn btn--ghost btn--lg" href="#prestations">Voir les prestations</a>
+          </div>
+
+          <ul class="trust-row" aria-label="Éléments de réassurance">
+            <li class="trust-pill"><span class="trust-dot" aria-hidden="true"></span>Réponse rapide</li>
+            <li class="trust-pill"><span class="trust-dot" aria-hidden="true"></span>Sur RDV</li>
+            <li class="trust-pill"><span class="trust-dot" aria-hidden="true"></span>⭐ Avis clientes</li>
+          </ul>
+
+          <p class="hero-note">Astuce : si tu hésites, envoie “Je ne sais pas quoi choisir” sur WhatsApp — je te guide.</p>
+        </div>
+
+        <div class="hero-media">
+          <figure class="hero-card">
+            <img src="assets/img/hero-main.svg" alt="Résultats ongles et cils" width="1200" height="1400" loading="eager" decoding="async" />
+            <figcaption class="hero-card__overlay">
+              <p class="hero-card__title">Réservation en 30 secondes</p>
+              <p class="hero-card__desc">Choisis → envoie un message → je confirme ton créneau.</p>
+            </figcaption>
+          </figure>
+          <div class="hero-mini" aria-hidden="true">
+            <div class="hero-card hero-card--mini"><img src="assets/img/hero-mini-1.svg" alt="" width="900" height="900" loading="lazy" decoding="async" /></div>
+            <div class="hero-card hero-card--mini"><img src="assets/img/hero-mini-2.svg" alt="" width="900" height="900" loading="lazy" decoding="async" /></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Steps -->
+    <section class="section section--alt" aria-label="Réserver en 30 secondes">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Réserver en 30 secondes</h2>
+          <p class="section-subtitle">Tu choisis une prestation, tu envoies un message, je te confirme rapidement un créneau.</p>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-card"><span class="step-num">1</span><p><strong>Choisis</strong> ta prestation</p></div>
+          <div class="step-card"><span class="step-num">2</span><p><strong>Envoie</strong> un message WhatsApp</p></div>
+          <div class="step-card"><span class="step-num">3</span><p><strong>Je confirme</strong> ton rendez-vous</p></div>
+        </div>
+
+        <div class="center">
+          <a class="btn btn--primary" href="https://wa.me/33750126032" target="_blank" rel="noopener">Réserver maintenant</a>
+          <button class="btn btn--link" type="button" data-quick-help>Je ne sais pas quoi choisir</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Prestations -->
+    <section id="prestations" class="section prestations">
+      <div class="container">
+        <div class="section-head section-head--split">
+          <div>
+            <h2 class="section-title">Prestations</h2>
+            <p class="section-subtitle">Choisis une catégorie, recherche, puis réserve en 1 clic. Prix & durée affichés clairement.</p>
+          </div>
+          <a class="btn btn--ghost" href="https://wa.me/33750126032" target="_blank" rel="noopener">Réserver sur WhatsApp</a>
+        </div>
+
+        <div class="tools-row">
+          <label class="sr-only" for="serviceSearch">Rechercher une prestation</label>
+          <input id="serviceSearch" class="search" type="search" placeholder="Rechercher (ex : gel, dépose, 2 semaines…)" autocomplete="off" data-search />
+        </div>
+
+        <div class="tabs" data-tabs>
+          <button class="tab active" type="button" data-tab="Ongles mains">Ongles mains</button>
+          <button class="tab" type="button" data-tab="Ongles pieds">Ongles pieds</button>
+          <button class="tab" type="button" data-tab="Manucure">Manucure</button>
+          <button class="tab" type="button" data-tab="Cils">Cils</button>
+        </div>
+
+        <div class="featured-wrap" data-featured aria-label="Prestations populaires"></div>
+
+        <div class="prestations-list" data-prestations aria-label="Liste des prestations"></div>
+
+        <div class="to-check" data-to-check hidden>
+          <h3>À vérifier</h3>
+          <p class="muted-note">Ces prestations ont une info manquante (prix ou durée). Elles s’affichent avec “—”.</p>
+          <ul data-to-check-list></ul>
+        </div>
+
+        <p class="muted-note">*Les prix affichés proviennent de ton format “1er nombre = prix / 2e = durée”.</p>
+      </div>
+    </section>
+
+    <!-- Galerie -->
+    <section id="galerie" class="section section--alt">
+      <div class="container">
+        <div class="section-head section-head--split">
+          <div>
+            <h2 class="section-title">Résultats</h2>
+            <p class="section-subtitle">Un aperçu de réalisations (ongles & cils). Clique pour agrandir.</p>
+          </div>
+          <a class="btn btn--ghost" href="https://www.instagram.com/manon__behra" target="_blank" rel="noopener">Voir Instagram</a>
+        </div>
+
+        <div class="ugc" data-gallery>
+          <img src="assets/img/g-1.svg" alt="Résultat 1" width="900" height="900" loading="lazy" decoding="async" />
+          <img src="assets/img/g-2.svg" alt="Résultat 2" width="900" height="900" loading="lazy" decoding="async" />
+          <img src="assets/img/g-3.svg" alt="Résultat 3" width="900" height="900" loading="lazy" decoding="async" />
+          <img src="assets/img/g-4.svg" alt="Résultat 4" width="900" height="900" loading="lazy" decoding="async" />
+          <img src="assets/img/g-5.svg" alt="Résultat 5" width="900" height="900" loading="lazy" decoding="async" />
+          <img src="assets/img/g-6.svg" alt="Résultat 6" width="900" height="900" loading="lazy" decoding="async" />
+          <img src="assets/img/g-7.svg" alt="Résultat 7" width="900" height="900" loading="lazy" decoding="async" />
+          <img src="assets/img/g-8.svg" alt="Résultat 8" width="900" height="900" loading="lazy" decoding="async" />
+          <img src="assets/img/g-9.svg" alt="Résultat 9" width="900" height="900" loading="lazy" decoding="async" />
+        </div>
+
+        <p class="muted-note">Envie d’un rendu similaire ? Clique sur une prestation et réserve en 1 message.</p>
+      </div>
+    </section>
+
+    <!-- Réassurance -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Une prestation pro, en toute confiance</h2>
+          <p class="section-subtitle">Hygiène, produits, finition : tout est pensé pour un résultat net et durable.</p>
+        </div>
+
+        <div class="grid cards-4">
+          <div class="info-card">
+            <div class="icon" aria-hidden="true">🧼</div>
+            <h3>Hygiène & sécurité</h3>
+            <p>Matériel propre, gestes soignés, protocole clair.</p>
+          </div>
+          <div class="info-card">
+            <div class="icon" aria-hidden="true">💎</div>
+            <h3>Finition premium</h3>
+            <p>Résultat net, cuticules respectées, rendu élégant.</p>
+          </div>
+          <div class="info-card">
+            <div class="icon" aria-hidden="true">🧴</div>
+            <h3>Produits pro</h3>
+            <p>Tenue durable, confort, conseils d’entretien.</p>
+          </div>
+          <div class="info-card">
+            <div class="icon" aria-hidden="true">⏱️</div>
+            <h3>RDV clair</h3>
+            <p>Réservation simple, confirmation rapide, échanges fluides.</p>
+          </div>
+        </div>
+
+        <div class="center" style="margin-top:18px">
+          <a class="btn btn--primary" href="https://wa.me/33750126032" target="_blank" rel="noopener">Réserver sur WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Avis -->
+    <section id="avis" class="section section--alt">
+      <div class="container">
+        <div class="section-head section-head--split">
+          <div>
+            <h2 class="section-title">Avis clientes</h2>
+            <p class="section-subtitle">Quelques retours (exemples). Le plus important : ton expérience.</p>
+          </div>
+          <a class="btn btn--primary" href="https://g.page/r/CTha_eAXpwwcEAE/review" target="_blank" rel="noopener">Lire / Laisser un avis Google</a>
+        </div>
+
+        <div class="grid cards-3">
+          <blockquote class="quote">
+            <p>“Travail impeccable, très douce et minutieuse. Je reviens sans hésiter.”</p>
+            <footer>— Cliente</footer>
+          </blockquote>
+          <blockquote class="quote">
+            <p>“Tenue parfaite, résultat propre. Merci pour les conseils d’entretien !”</p>
+            <footer>— Cliente</footer>
+          </blockquote>
+          <blockquote class="quote">
+            <p>“Cils magnifiques et confortables. RDV rapide via WhatsApp.”</p>
+            <footer>— Cliente</footer>
+          </blockquote>
+        </div>
+
+        <div class="center" style="margin-top:18px">
+          <a class="btn btn--ghost" href="https://wa.me/33750126032" target="_blank" rel="noopener">Réserver maintenant</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">FAQ</h2>
+          <p class="section-subtitle">Réponses rapides aux questions fréquentes.</p>
+        </div>
+
+        <div class="accordion">
+          <details class="acc-item">
+            <summary class="acc-summary">Combien de temps ça dure ?</summary>
+            <div class="acc-panel">La tenue varie selon la prestation et l’entretien. Dis-moi ton objectif (naturel / durable / intense) et je te conseille.</div>
+          </details>
+          <details class="acc-item">
+            <summary class="acc-summary">Je n’ai jamais fait mes cils/ongles, je choisis quoi ?</summary>
+            <div class="acc-panel">Écris “Je ne sais pas quoi choisir” sur WhatsApp : je te propose 1–2 options adaptées.</div>
+          </details>
+          <details class="acc-item">
+            <summary class="acc-summary">Retard / annulation ?</summary>
+            <div class="acc-panel">Préviens-moi au plus tôt sur WhatsApp. On reprogramme au mieux selon les créneaux.</div>
+          </details>
+          <details class="acc-item">
+            <summary class="acc-summary">Paiement ?</summary>
+            <div class="acc-panel">Le paiement se fait le jour du RDV. Si besoin, je te confirme les modalités par message.</div>
+          </details>
+        </div>
+
+        <div class="center" style="margin-top:18px">
+          <button class="btn btn--primary" type="button" data-quick-help>Demander conseil sur WhatsApp</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section section--alt">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Contact & RDV</h2>
+          <p class="section-subtitle">WhatsApp est le plus rapide. Instagram en second. Formulaire en secours.</p>
+        </div>
+
+        <div class="contact">
+          <div>
+            <h3>Réserver</h3>
+            <p class="section-subtitle">📍 Gravelines • Sur RDV • Réponse rapide</p>
+            <div class="hero-actions">
+              <a class="btn btn--primary btn--lg" href="https://wa.me/33750126032" target="_blank" rel="noopener">Réserver sur WhatsApp</a>
+              <a class="btn btn--ghost btn--lg" href="https://www.instagram.com/manon__behra" target="_blank" rel="noopener">DM Instagram</a>
+            </div>
+            <ul class="contact-list">
+              <li>Zone : Gravelines</li>
+              <li>Horaires : sur RDV (à compléter)</li>
+              <li>Avis Google : <a class="inline-link" href="https://g.page/r/CTha_eAXpwwcEAE/review" target="_blank" rel="noopener">laisser un avis</a></li>
+            </ul>
+          </div>
+
+          <form class="form" data-fake-form>
+            <div class="form-row">
+              <label class="label" for="name">Nom</label>
+              <input id="name" class="input" name="name" type="text" placeholder="Votre nom" required minlength="2" />
+            </div>
+            <div class="form-row">
+              <label class="label" for="msg">Message</label>
+              <textarea id="msg" class="input input--textarea" name="message" placeholder="Ex : Je veux réserver une pose américaine cette semaine." required minlength="10"></textarea>
+            </div>
+            <button class="btn btn--primary" type="submit">Envoyer (ouvre WhatsApp)</button>
+            <p class="form-note">Le formulaire ouvre WhatsApp avec ton message (réponse plus rapide).</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <p class="footer-title">La Main d’Or</p>
+          <p class="footer-text">Ongles & cils à Gravelines — sur rendez-vous.</p>
+        </div>
+        <div>
+          <p class="footer-title">Contact</p>
+          <div class="footer-links">
+            <a href="https://wa.me/33750126032" target="_blank" rel="noopener">WhatsApp</a>
+            <a href="https://www.instagram.com/manon__behra" target="_blank" rel="noopener">Instagram</a>
+          </div>
+        </div>
+        <div>
+          <p class="footer-title">Preuve</p>
+          <div class="footer-links">
+            <a href="https://g.page/r/CTha_eAXpwwcEAE/review" target="_blank" rel="noopener">Avis Google</a>
+          </div>
+        </div>
+        <div class="footer-mini">
+          <p class="footer-title">Rappel</p>
+          <p class="footer-text">Pour réserver : clique sur WhatsApp.</p>
+          <a class="btn btn--primary btn--sm" href="https://wa.me/33750126032" target="_blank" rel="noopener">Réserver</a>
+        </div>
+      </div>
+
+      <div class="container footer-bottom">
+        <span>© <span data-year></span> La Main d’Or</span>
+        <span class="footer-muted">Site one-page • Conversion-first</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Sticky mobile CTA bar -->
+  <div class="sticky-bar" aria-label="Actions rapides">
+    <a class="sticky-wa" href="https://wa.me/33750126032" target="_blank" rel="noopener">WhatsApp</a>
+    <a class="sticky-ig" href="https://www.instagram.com/manon__behra" target="_blank" rel="noopener">Instagram</a>
   </div>
-</section>
 
-</main>
-
-<!-- STICKY MOBILE BAR -->
-<div class="sticky-bar">
-  <a href="https://wa.me/33750126032">WhatsApp</a>
-  <a href="https://www.instagram.com/manon__behra">Instagram</a>
-</div>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <p>© La Main d’Or — Gravelines</p>
-</footer>
-
+  <!-- Lightbox -->
+  <dialog class="modal" id="lightbox" aria-label="Agrandir l'image">
+    <div class="modal-inner">
+      <button class="icon-btn modal-close" type="button" data-modal-close aria-label="Fermer">×</button>
+      <img id="lightboxImg" src="" alt="" />
+      <p class="muted-note" id="lightboxCap"></p>
+    </div>
+  </dialog>
 </body>
 </html>

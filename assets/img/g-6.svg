@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbfaf8"/>
+      <stop offset="1" stop-color="#f3f1ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#g)"/>
+  <circle cx="820" cy="360" r="260" fill="#b48a97" opacity="0.12"/>
+  <circle cx="420" cy="760" r="320" fill="#4b2f3a" opacity="0.10"/>
+  <rect x="120" y="120" width="960" height="960" rx="64" fill="rgba(255,255,255,0.65)" stroke="rgba(18,18,20,0.10)" />
+  <text x="50%" y="52%" text-anchor="middle" font-family="ui-sans-serif,system-ui" font-size="44" fill="rgba(18,18,20,0.70)">Galerie 6</text>
+  <text x="50%" y="58%" text-anchor="middle" font-family="ui-sans-serif,system-ui" font-size="22" fill="rgba(18,18,20,0.50)">Remplace par une photo</text>
+</svg>
