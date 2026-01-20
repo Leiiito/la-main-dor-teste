@@ -1,444 +1,339 @@
-/* =========================================
-   La Main d'Or — main.js (vanilla)
-   - Prestations: tabs + recherche + rendu cards
-   - Réservation: liens Calendly par prestation
-   - WhatsApp: contact / message libre
-   - Galerie: filtres + lightbox
-   - FAQ: accordéon
-   - Active links nav + reveal
-   - Background: micro-parallax ultra léger
-   ========================================= */
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { SUPABASE_URL, SUPABASE_ANON_KEY, GENERIC_CALENDLY_URL } from "./supabase-config.js";
 
-(() => {
-  "use strict";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // --- constants
-  const WA_BASE = "https://wa.me/33750126032";
-  const IG_URL = "https://www.instagram.com/manon__behra";
-  const GOOGLE_REVIEW_URL = "https://g.page/r/CTha_eAXpwwcEAE/review";
+const els = {
+  year: document.getElementById("year"),
+  navToggle: document.querySelector(".nav__toggle"),
+  navMenu: document.getElementById("navMenu"),
+  servicesGrid: document.getElementById("servicesGrid"),
+  servicesStatus: document.getElementById("servicesStatus"),
+  serviceSearch: document.getElementById("serviceSearch"),
+  clearSearch: document.getElementById("clearSearch"),
+  tabs: Array.from(document.querySelectorAll(".tab[data-category]")),
+  galleryGrid: document.getElementById("galleryGrid"),
+  galleryStatus: document.getElementById("galleryStatus"),
+  lightbox: document.getElementById("lightbox"),
+  lightboxImg: document.getElementById("lightboxImg"),
+  lightboxCaption: document.getElementById("lightboxCaption"),
+};
 
-  const $ = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+let state = {
+  services: [],
+  gallery: [],
+  activeCategory: "all",
+  query: "",
+};
 
-  // ---------- utils
-  const normalize = (s) => {
-    const v = (s || "").toLowerCase().normalize("NFD");
-    try {
-      return v.replace(/\p{Diacritic}/gu, "").trim();
-    } catch (_) {
-      // Fallback (environnements sans Unicode property escapes)
-      return v.replace(/[̀-ͯ]/g, "").trim();
-    }
-  };
+function setStatus(el, type, message) {
+  if (!el) return;
+  if (!message) {
+    el.classList.remove("is-show", "is-ok", "is-err");
+    el.textContent = "";
+    return;
+  }
+  el.classList.add("is-show");
+  el.classList.toggle("is-ok", type === "ok");
+  el.classList.toggle("is-err", type === "err");
+  el.textContent = message;
+}
 
-  const fmtEuro = (v) => (typeof v === "number" ? `${v}€` : "—");
-  const fmtMin = (v) => (typeof v === "number" ? `${v} min` : "—");
-  const buildBookingLink = (service) => {
-    // Réservation directe Calendly (1 clic = la bonne prestation)
-    if (service && typeof service.calendlyUrl === 'string' && service.calendlyUrl.startsWith('https://calendly.com/')) {
-      return service.calendlyUrl;
-    }
-    // Fallback (ne devrait pas arriver) : contact WhatsApp avec message pré-rempli
-    const pText = typeof service.price === 'number' ? `${service.price}€` : '—€';
-    const dText = typeof service.duration === 'number' ? `${service.duration} min` : '— min';
-    const msg = `Bonjour, je souhaite réserver : ${service.title} (${pText} / ${dText}). Merci !`;
-    return `${WA_BASE}?text=${encodeURIComponent(msg)}`;
-  };
+function normalize(str) {
+  return (str || "")
+    .toString()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .trim();
+}
 
-  // ---------- PRESTATIONS DATA (32)
-  // Règle respectée: 1er nombre = prix, 2e nombre = durée.
-  // Si valeur manquante => null => affichage "—" + liste À vérifier.
-  const SERVICES = [
-    // Ongles pieds
-    { title: "Semi-permanent pieds", price: 25, duration: 45, category: "Ongles pieds", tag: "Pieds", calendlyUrl: "https://calendly.com/behramanon/semi-permanent-pieds-25-45-min" },
+function money(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return "";
+  return `${Math.round(v)}€`;
+}
 
-    // Manucure
-    { title: "Gainage / renfort", price: 40, duration: 75, category: "Manucure", featured: true, tag: "Renfort", calendlyUrl: "https://calendly.com/behramanon/gainage-renfort-40-75-min" },
+function minutes(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return "";
+  return `${Math.round(v)} min`;
+}
 
-    // Ongles mains
-    { title: "Semi-permanent mains", price: 25, duration: 45, category: "Ongles mains", featured: true, calendlyUrl: "https://calendly.com/behramanon/semi-permanent-mains-25-45-min" },
-    { title: "Dépose semi-permanent", price: 15, duration: 20, category: "Ongles mains", tag: "Dépose", calendlyUrl: "https://calendly.com/behramanon/depose-semi-permanent-15-20min" },
-    { title: "Pack dépose semi + nouvelle pose semi", price: 35, duration: 60, category: "Ongles mains", tag: "Pack", calendlyUrl: "https://calendly.com/behramanon/pack-depose-semi-nouvelle-pose-semi-35-60min" },
-    { title: "Pose américaine", price: 35, duration: 90, category: "Ongles mains", featured: true, tag: "Capsules", calendlyUrl: "https://calendly.com/behramanon/pose-americaine-35-90-min" },
-    { title: "Dépose pose américaine", price: 15, duration: 30, category: "Ongles mains", tag: "Dépose", calendlyUrl: "https://calendly.com/behramanon/depose-pose-americaine-15-30-min" },
-    { title: "Pack dépose capsule + nouvelle pose capsule", price: 45, duration: 90, category: "Ongles mains", tag: "Pack", calendlyUrl: "https://calendly.com/behramanon/pack-depose-capsule-nouvelle-pose-capsule-45-90min" },
-    { title: "Dépose gel", price: 20, duration: 45, category: "Ongles mains", tag: "Dépose", calendlyUrl: "https://calendly.com/behramanon/depose-gel-20-45-min" },
-    { title: "Remplissage gel", price: 35, duration: 90, category: "Ongles mains", tag: "Remplissage", calendlyUrl: "https://calendly.com/behramanon/remplissage-gel-35-90-min" },
-    { title: "Rallongement chablon", price: 50, duration: 120, category: "Ongles mains", tag: "Chablon", calendlyUrl: "https://calendly.com/behramanon/rallongement-chablon-50-120-min" },
-    { title: "Pack semi mains + pieds", price: 45, duration: 105, category: "Ongles mains", tag: "Pack", calendlyUrl: "https://calendly.com/behramanon/pack-semi-mains-pieds-45-105-min" },
-    { title: "Pack pose américaine + semi pieds", price: 55, duration: 105, category: "Ongles mains", tag: "Pack", calendlyUrl: "https://calendly.com/behramanon/pack-pose-americaine-semi-pieds-55-105-min" },
+function safeUrl(url) {
+  try {
+    if (!url) return "";
+    const u = new URL(url);
+    return u.toString();
+  } catch {
+    return "";
+  }
+}
 
-    // Cils
-    { title: "Rehaussement de cils", price: 45, duration: 70, category: "Cils", tag: "Rehaussement", calendlyUrl: "https://calendly.com/behramanon/rehaussement-de-cils-45-70-min" },
-    { title: "Rehaussement de cils + teinture", price: 55, duration: 75, category: "Cils", tag: "Rehaussement", calendlyUrl: "https://calendly.com/behramanon/rehaussement-de-cils-teinture-55-75min" },
-    { title: "Dépose extensions de cils (pose extérieure)", price: 15, duration: 15, category: "Cils", tag: "Dépose", calendlyUrl: "https://calendly.com/behramanon/depose-extensions-de-cils-pose-exterieure-15-15min" },
-    { title: "Dépose extensions de cils (réalisée par mes soins)", price: 10, duration: null, category: "Cils", tag: "Dépose", calendlyUrl: "https://calendly.com/behramanon/depose-extensions-de-cils-realisee-par-mes-soins-10" },
+function bookUrl(service) {
+  const u = safeUrl(service?.calendly_url);
+  return u || GENERIC_CALENDLY_URL;
+}
 
-    { title: "Extensions de cils — cils à cils", price: 40, duration: 90, category: "Cils", featured: true, calendlyUrl: "https://calendly.com/behramanon/extensions-de-cils-cils-a-cils-40-90-min" },
-    { title: "Remplissage cils à cils — 2 semaines", price: 30, duration: 60, category: "Cils", tag: "2 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-cils-a-cils-2-semaines-30-60-min" },
-    { title: "Remplissage cils à cils — 3 semaines", price: 35, duration: 75, category: "Cils", tag: "3 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-cils-a-cils-3-semaines-35-75-min" },
+function parsePriceDurationFromTitle(service) {
+  // RÈGLE: si "deux nombres" dans title ou description ex "40 90 min"
+  // 1er = prix, 2e = durée
+  // On ne modifie pas la DB; on affiche seulement si price/duration manquent.
+  const text = `${service?.title || ""} ${service?.description || ""}`;
+  const nums = Array.from(text.matchAll(/(\d{1,4})/g)).map(m => Number(m[1]));
+  if (nums.length >= 2) {
+    const price = Number.isFinite(service.price) ? service.price : nums[0];
+    const duration = Number.isFinite(service.duration) ? service.duration : nums[1];
+    return { price, duration };
+  }
+  return { price: service.price, duration: service.duration };
+}
 
-    { title: "Extensions de cils — volume mixte naturel", price: 50, duration: 90, category: "Cils", calendlyUrl: "https://calendly.com/behramanon/extensions-de-cils-volume-mixte-naturel-50-90-min" },
-    { title: "Remplissage mixte naturel — 2 semaines", price: 40, duration: 60, category: "Cils", tag: "2 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mixte-naturel-2-semaines-40-60-min" },
-    { title: "Remplissage mixte naturel — 3 semaines", price: 45, duration: 75, category: "Cils", tag: "3 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mixte-naturel-3-semaines-45-75-min" },
+function renderServices() {
+  const grid = els.servicesGrid;
+  if (!grid) return;
 
-    { title: "Extensions de cils — volume mixte fourni", price: 55, duration: 90, category: "Cils", calendlyUrl: "https://calendly.com/behramanon/extensions-de-cils-volume-mixte-fourni-55-90-min" },
-    { title: "Remplissage mixte fourni — 2 semaines", price: 45, duration: 60, category: "Cils", tag: "2 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mixte-fourni-2-semaines-45-60min" },
-    { title: "Remplissage mixte fourni — 3 semaines", price: 50, duration: 75, category: "Cils", tag: "3 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mixte-fourni-3-semaines-50-75min" },
+  const q = normalize(state.query);
+  const cat = state.activeCategory;
 
-    { title: "Extensions de cils — volume russe", price: 60, duration: 90, category: "Cils", calendlyUrl: "https://calendly.com/behramanon/extensions-de-cils-volume-russe-60-90-min" },
-    { title: "Remplissage volume russe — 2 semaines", price: 45, duration: 60, category: "Cils", tag: "2 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-volume-russe-2-semaines-45-60-min" },
-    { title: "Remplissage volume russe — 3 semaines", price: 50, duration: 75, category: "Cils", tag: "3 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-volume-russe-3-semaines-50-75-min" },
+  const filtered = state.services
+    .filter(s => cat === "all" ? true : s.category === cat)
+    .filter(s => {
+      if (!q) return true;
+      const hay = normalize(`${s.title} ${s.description} ${s.category}`);
+      return hay.includes(q);
+    });
 
-    { title: "Extensions de cils — volume mega russe", price: 70, duration: 90, category: "Cils", calendlyUrl: "https://calendly.com/behramanon/extensions-de-cils-volume-mega-russe-70-90-min" },
-    { title: "Remplissage mega russe — 2 semaines", price: 55, duration: 60, category: "Cils", tag: "2 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mega-russe-2-semaines-55-60min" },
-    { title: "Remplissage mega russe — 3 semaines", price: 60, duration: 75, category: "Cils", tag: "3 semaines", calendlyUrl: "https://calendly.com/behramanon/remplissage-mega-russe-3-semaines-60-75-min" }
-  ];
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="note"><p>Aucune prestation trouvée. Essayez un autre mot-clé.</p></div>`;
+    return;
+  }
 
-  const CATEGORIES = ["Manucure", "Ongles mains", "Ongles pieds", "Cils"];
-
-  // ---------- PRESTATIONS RENDER
-  const tabsRoot = $("[data-tabs]");
-  const tabButtons = tabsRoot ? $$('[data-tab]', tabsRoot) : [];
-  const searchInput = $("[data-search]");
-  const featuredRoot = $("[data-featured]");
-  const listRoot = $("[data-prestations]");
-  const toCheckBox = $("[data-to-check]");
-  const toCheckList = $("[data-to-check-list]");
-
-  let activeCategory = tabButtons.find(b => b.classList.contains("active"))?.dataset.tab || "Manucure";
-
-
-  const renderServiceCard = (s) => {
-    const isFeatured = !!s.featured;
-    const bookingUrl = buildBookingLink(s);
-
-    const tag = s.tag ? `<span class="badge badge-left">${s.tag}</span>` : "";
-    const featuredBadge = isFeatured ? `<span class="badge">Populaire</span>` : "";
+  const html = filtered.map(s => {
+    const { price, duration } = parsePriceDurationFromTitle(s);
+    const featured = !!s.featured;
 
     return `
-      <article class="prestation ${isFeatured ? "featured" : ""}" data-title="${s.title}">
-        ${featuredBadge}
-        ${tag}
-        <h3 class="title">${s.title}</h3>
-        <p class="desc">Réservation en ligne (Calendly) • Prix & durée visibles</p>
-        <div class="meta-row">
-          <span class="meta-pill"><strong>Prix</strong> ${fmtEuro(s.price)}</span>
-          <span class="meta-pill ${s.duration == null ? "meta-pill--warn" : ""}"><strong>Durée</strong> ${fmtMin(s.duration)}</span>
+      <article class="card service-card">
+        <div class="service-meta">
+          <span class="badge">${escapeHtml(s.category || "")}</span>
+          ${featured ? `<span class="badge badge--hot">Populaire</span>` : ""}
+          ${Number.isFinite(price) ? `<span class="badge">${money(price)}</span>` : ""}
+          ${Number.isFinite(duration) ? `<span class="badge">${minutes(duration)}</span>` : ""}
         </div>
-        <a class="btn btn--outline" href="${bookingUrl}" target="_blank" rel="noopener noreferrer" data-calendly>
-          Réserver
-        </a>
+
+        <h3>${escapeHtml(s.title || "Prestation")}</h3>
+        ${s.description ? `<p class="muted">${escapeHtml(s.description)}</p>` : `<p class="muted">—</p>`}
+
+        <div class="service-actions">
+          <a class="btn btn--primary btn--sm" target="_blank" rel="noopener" href="${escapeAttr(bookUrl(s))}">Réserver</a>
+          <a class="btn btn--ghost btn--sm" href="#contact">Question rapide</a>
+        </div>
       </article>
-    `.trim();
-  };
+    `;
+  }).join("");
 
+  grid.innerHTML = html;
+}
 
-  const applyServices = () => {
-    if (!listRoot) return;
+function renderGallery() {
+  const grid = els.galleryGrid;
+  if (!grid) return;
 
-    const q = normalize(searchInput?.value);
-
-    const inCat = SERVICES.filter(s => s.category === activeCategory);
-    const filtered = inCat.filter(s => !q || normalize(s.title).includes(q));
-
-    // featured first (max 3)
-    if (featuredRoot) {
-      const featured = filtered.filter(s => s.featured).slice(0, 3);
-      featuredRoot.innerHTML = featured.length
-        ? `<div class="featured-wrap">${featured.map(s => renderServiceCard(s)).join("")}</div>`
-        : "";
-    }
-
-    const rest = filtered.filter(s => !s.featured);
-    listRoot.innerHTML = rest.length
-      ? `<div class="prestations-list">${rest.map(s => renderServiceCard(s)).join("")}</div>`
-      : `<p class="empty">Aucune prestation trouvée. Essaie un autre mot-clé.</p>`;
-
-    buildToCheck();
-  };
-
-  const setActiveTab = (cat) => {
-    activeCategory = cat;
-    tabButtons.forEach(b => b.classList.toggle("active", b.dataset.tab === cat));
-    applyServices();
-  };
-
-  const buildToCheck = () => {
-    if (!toCheckBox || !toCheckList) return;
-
-    const issues = SERVICES.filter(s => s.price == null || s.duration == null || !s.calendlyUrl);
-    if (!issues.length) {
-      toCheckBox.hidden = true;
-      return;
-    }
-
-    toCheckList.innerHTML = issues.map(s => {
-      const missing = [s.price == null ? 'prix' : null, s.duration == null ? 'durée' : null, !s.calendlyUrl ? 'lien Calendly' : null].filter(Boolean).join(' + ');
-      return `<li><strong>${s.title}</strong> — ${missing} manquant(s)</li>`;
-    }).join("");
-
-    toCheckBox.hidden = false;
-  };
-
-  if (tabButtons.length) {
-    tabButtons.forEach(btn => btn.addEventListener("click", () => setActiveTab(btn.dataset.tab)));
-  }
-  if (searchInput) {
-    searchInput.addEventListener("input", () => applyServices());
+  if (!state.gallery.length) {
+    grid.innerHTML = `<div class="note"><p>La galerie est vide pour le moment. Ajoutez des images depuis <code>/admin</code>.</p></div>`;
+    return;
   }
 
-  
-  const validateCalendlyLinks = () => {
-    const urls = SERVICES.map(s => s.calendlyUrl).filter(Boolean);
-    const dup = urls.filter((u,i) => urls.indexOf(u) !== i);
-    if (dup.length) console.warn('[Calendly] Liens en doublon détectés:', Array.from(new Set(dup)));
-    const missing = SERVICES.filter(s => !s.calendlyUrl);
-    if (missing.length) console.warn('[Calendly] Prestations sans lien:', missing.map(s => s.title));
-  };
+  const html = state.gallery.map((it, idx) => {
+    // dimensions: use CSS aspect-ratio to reduce CLS; still add width/height attrs.
+    const alt = it.alt || "Réalisation La Main d’Or";
+    return `
+      <button class="gallery-item" type="button"
+        data-idx="${idx}"
+        aria-label="Agrandir l'image : ${escapeAttr(alt)}">
+        <img loading="lazy" decoding="async"
+          src="${escapeAttr(it.public_url)}"
+          alt="${escapeAttr(alt)}"
+          width="800" height="800" />
+      </button>
+    `;
+  }).join("");
 
-  // vérif console (doublons / manquants)
-  validateCalendlyLinks();
+  grid.innerHTML = html;
+}
 
-  // init
-  setActiveTab(activeCategory);
+function openLightbox(item) {
+  if (!item) return;
+  els.lightboxImg.src = item.public_url;
+  els.lightboxImg.alt = item.alt || "Réalisation";
+  els.lightboxCaption.textContent = item.alt || "";
+  els.lightbox.classList.add("is-open");
+  els.lightbox.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  // focus close
+  const closeBtn = els.lightbox.querySelector("[data-close]");
+  closeBtn?.focus?.();
+}
 
-  // ---------- GALLERY FILTERS + LIGHTBOX
-  // Supporte 2 versions de markup:
-  // - v1 (data-gchip / data-gitem / data-src)
-  // - v2 (data-filter / .g-item / <img src>)
-  const chips = $$("[data-gchip], [data-filter]");
-  const items = $$("[data-gitem], .g-item");
-  const lb = $("[data-lightbox]") || $("#lightbox");
-  const lbImg = lb ? ($("[data-lb-img]", lb) || $(".lightbox__img", lb)) : null;
-  const lbClose = lb ? $("[data-lb-close]", lb) : null;
-  const lbPrev = lb ? $("[data-lb-prev]", lb) : null;
-  const lbNext = lb ? $("[data-lb-next]", lb) : null;
+function closeLightbox() {
+  els.lightbox.classList.remove("is-open");
+  els.lightbox.setAttribute("aria-hidden", "true");
+  els.lightboxImg.src = "";
+  els.lightboxCaption.textContent = "";
+  document.body.style.overflow = "";
+}
 
-  let lbIndex = -1;
+function escapeHtml(str) {
+  return (str ?? "").toString()
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+function escapeAttr(str){ return escapeHtml(str).replaceAll("`","&#096;"); }
 
-  const visibleGalleryItems = () => items.filter(it => it.style.display !== "none");
+function setupNav() {
+  if (!els.navToggle || !els.navMenu) return;
 
-  const openLB = (index) => {
-    const vis = visibleGalleryItems();
-    if (!lb || !lbImg || !vis.length) return;
+  els.navToggle.addEventListener("click", () => {
+    const isOpen = els.navMenu.classList.toggle("is-open");
+    els.navToggle.setAttribute("aria-expanded", String(isOpen));
+  });
 
-    lbIndex = Math.max(0, Math.min(index, vis.length - 1));
-    const fig = vis[lbIndex];
-    const img = fig.querySelector("img") || fig;
-    const src = fig.getAttribute("data-src") || img.getAttribute("src") || "";
-    const alt = fig.getAttribute("data-alt") || img.getAttribute("alt") || "";
+  // Close on link click (mobile)
+  els.navMenu.addEventListener("click", (e) => {
+    const a = e.target.closest("a");
+    if (!a) return;
+    els.navMenu.classList.remove("is-open");
+    els.navToggle.setAttribute("aria-expanded", "false");
+  });
+}
 
-    lbImg.src = src;
-    lbImg.alt = alt;
-
-    lb.showModal();
-    document.documentElement.classList.add("no-scroll");
-  };
-
-  const closeLB = () => {
-    if (!lb) return;
-    lb.close();
-    document.documentElement.classList.remove("no-scroll");
-  };
-
-  const navLB = (dir) => {
-    const vis = visibleGalleryItems();
-    if (!vis.length) return;
-    lbIndex = (lbIndex + dir + vis.length) % vis.length;
-    const fig = vis[lbIndex];
-    const img = fig.querySelector("img") || fig;
-    lbImg.src = fig.getAttribute("data-src") || img.getAttribute("src") || "";
-    lbImg.alt = fig.getAttribute("data-alt") || img.getAttribute("alt") || "";
-  };
-
-  if (chips.length && items.length) {
-    chips.forEach(chip => {
-      chip.addEventListener("click", () => {
-        chips.forEach(c => {
-          c.classList.toggle("active", c === chip);
-          c.classList.toggle("is-active", c === chip);
-          c.setAttribute("aria-selected", c === chip ? "true" : "false");
-        });
-        const type = chip.getAttribute("data-gchip") || chip.getAttribute("data-filter");
-
-        items.forEach(fig => {
-          const t = fig.getAttribute("data-type");
-          const show = type === "all" || t === type;
-          fig.style.display = show ? "" : "none";
-        });
+function setupTabsAndSearch() {
+  els.tabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      els.tabs.forEach(b => {
+        b.classList.toggle("is-active", b === btn);
+        b.setAttribute("aria-selected", String(b === btn));
       });
-    });
-  }
-
-  // click to open
-  items.forEach((fig, idx) => {
-    fig.addEventListener("click", () => {
-      // open within visible list index
-      const vis = visibleGalleryItems();
-      const visIndex = vis.indexOf(fig);
-      openLB(visIndex >= 0 ? visIndex : idx);
+      state.activeCategory = btn.dataset.category || "all";
+      renderServices();
     });
   });
 
-  // close / nav handlers
-  if (lb) {
-    lb.addEventListener("click", (e) => {
-      // click outside panel
-      if (e.target === lb) closeLB();
-    });
-    lb.addEventListener("close", () => {
-      document.documentElement.classList.remove("no-scroll");
-      if (lbImg) lbImg.src = "";
-    });
-  }
+  els.serviceSearch?.addEventListener("input", (e) => {
+    state.query = e.target.value || "";
+    renderServices();
+  });
 
-  lbClose && lbClose.addEventListener("click", closeLB);
-  lbPrev && lbPrev.addEventListener("click", () => navLB(-1));
-  lbNext && lbNext.addEventListener("click", () => navLB(1));
+  els.clearSearch?.addEventListener("click", () => {
+    state.query = "";
+    if (els.serviceSearch) els.serviceSearch.value = "";
+    renderServices();
+    els.serviceSearch?.focus?.();
+  });
+}
+
+function setupGenericCTA() {
+  // All elements with data-cta="book-generic" should point to GENERIC_CALENDLY_URL
+  document.querySelectorAll('[data-cta="book-generic"]').forEach(el => {
+    if (el.tagName.toLowerCase() === "a") el.setAttribute("href", GENERIC_CALENDLY_URL);
+  });
+}
+
+function setupGalleryLightbox() {
+  els.galleryGrid?.addEventListener("click", (e) => {
+    const btn = e.target.closest(".gallery-item");
+    if (!btn) return;
+    const idx = Number(btn.dataset.idx);
+    const item = state.gallery[idx];
+    openLightbox(item);
+  });
+
+  els.lightbox?.addEventListener("click", (e) => {
+    if (e.target.matches("[data-close]")) closeLightbox();
+  });
 
   document.addEventListener("keydown", (e) => {
-    if (!lb || !lb.open) return;
-    if (e.key === "Escape") closeLB();
-    if (e.key === "ArrowLeft") navLB(-1);
-    if (e.key === "ArrowRight") navLB(1);
+    if (e.key === "Escape" && els.lightbox?.classList.contains("is-open")) closeLightbox();
   });
+}
 
-  // ---------- FAQ accordion
-  const faqBtns = $$('[data-acc-btn]');
-  faqBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const item = btn.closest('[data-acc-item]');
-      if (!item) return;
-      const open = item.getAttribute('data-open') === 'true';
-      item.setAttribute('data-open', open ? 'false' : 'true');
-    });
-  });
+async function loadServices() {
+  setStatus(els.servicesStatus, "ok", "Chargement des prestations…");
+  const { data, error } = await supabase
+    .from("services")
+    .select("*")
+    .order("order_index", { ascending: true })
+    .order("created_at", { ascending: true });
 
-  // ---------- Active nav links (optional, subtle)
-  const navLinks = $$('[data-nav-link]');
-  const sections = navLinks
-    .map(a => $(a.getAttribute('href')))
-    .filter(Boolean);
-
-  if (navLinks.length && sections.length && 'IntersectionObserver' in window) {
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const id = `#${entry.target.id}`;
-        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
-      });
-    }, { rootMargin: '-25% 0px -65% 0px', threshold: 0.01 });
-
-    sections.forEach(s => obs.observe(s));
+  if (error) {
+    console.error(error);
+    setStatus(els.servicesStatus, "err", "Impossible de charger les prestations (vérifiez la config Supabase).");
+    state.services = [];
+    renderServices();
+    return;
   }
 
-  // ---------- Scroll reveal (light)
-  const revealEls = $$('[data-reveal]');
-  revealEls.forEach(el => el.classList.add('reveal'));
+  state.services = (data || []).map(s => ({
+    id: s.id,
+    category: s.category,
+    title: s.title,
+    price: Number.isFinite(s.price) ? s.price : (s.price ?? null),
+    duration: Number.isFinite(s.duration) ? s.duration : (s.duration ?? null),
+    description: s.description,
+    calendly_url: s.calendly_url,
+    featured: !!s.featured,
+    order_index: s.order_index ?? 0,
+  }));
 
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(ent => {
-        if (ent.isIntersecting) {
-          ent.target.classList.add('in');
-          io.unobserve(ent.target);
-        }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  setStatus(els.servicesStatus, "ok", `✅ ${state.services.length} prestation(s) chargée(s).`);
+  renderServices();
+}
 
-    revealEls.forEach(el => io.observe(el));
-  } else {
-    revealEls.forEach(el => el.classList.add('in'));
+async function loadGallery() {
+  setStatus(els.galleryStatus, "ok", "Chargement de la galerie…");
+  const { data, error } = await supabase
+    .from("gallery_items")
+    .select("*")
+    .order("order_index", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error(error);
+    setStatus(els.galleryStatus, "err", "Impossible de charger la galerie (vérifiez la config Supabase).");
+    state.gallery = [];
+    renderGallery();
+    return;
   }
 
-  // ---------- Contact form fallback => WhatsApp
-  const form = $('[data-form]');
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
+  state.gallery = (data || []).filter(it => !!it.public_url).map(it => ({
+    id: it.id,
+    public_url: it.public_url,
+    storage_path: it.storage_path,
+    alt: it.alt || "",
+    category: it.category || "",
+    order_index: it.order_index ?? 0,
+  }));
 
-      const name = (form.querySelector('input[name="name"]')?.value || '').trim();
-      const message = (form.querySelector('textarea[name="message"]')?.value || '').trim();
+  setStatus(els.galleryStatus, "ok", `✅ ${state.gallery.length} image(s) chargée(s).`);
+  renderGallery();
+}
 
-      const errors = [];
-      if (name.length < 2) errors.push('Merci d’indiquer ton prénom.');
-      if (message.length < 10) errors.push('Ton message est un peu court (min. 10 caractères).');
+function setYear() {
+  if (els.year) els.year.textContent = String(new Date().getFullYear());
+}
 
-      let box = form.querySelector('[data-form-feedback]');
-      if (!box) {
-        box = document.createElement('p');
-        box.className = 'form__feedback';
-        box.setAttribute('data-form-feedback', '');
-        box.setAttribute('aria-live', 'polite');
-        const note = form.querySelector('.form__note');
-        (note ? note.parentNode : form).insertBefore(box, note || null);
-      }
+async function init() {
+  setYear();
+  setupNav();
+  setupTabsAndSearch();
+  setupGenericCTA();
+  setupGalleryLightbox();
 
-      box.textContent = '';
-      box.classList.remove('ok', 'err');
+  await Promise.all([loadServices(), loadGallery()]);
+}
 
-      if (errors.length) {
-        if (box) {
-          box.textContent = errors.join(' ');
-          box.classList.add('err');
-        }
-        return;
-      }
-
-      const msg = `Bonjour, je m’appelle ${name}. Je souhaite un RDV à Gravelines. Message : ${message}`;
-      const url = `${WA_BASE}?text=${encodeURIComponent(msg)}`;
-
-      if (box) {
-        box.textContent = 'Merci ! Ouverture de WhatsApp pour une réponse plus rapide…';
-        box.classList.add('ok');
-      }
-
-      setTimeout(() => {
-        window.open(url, '_blank', 'noopener,noreferrer');
-      }, 450);
-
-      form.reset();
-    });
-  }
-
-  // ---------- Footer year
-  const y = $('[data-year]');
-  if (y) y.textContent = String(new Date().getFullYear());
-
-  // ---------- Background micro-parallax (ultra léger)
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduceMotion) {
-    const targets = [
-      { el: $('.bg-frag--hero-1'), factor: 0.08 },
-      { el: $('.bg-frag--presta-2'), factor: 0.06 },
-      { el: $('.bg-frag--gallery-1'), factor: 0.05 }
-    ].filter(t => t.el);
-
-    if (targets.length) {
-      let ticking = false;
-
-      const onScroll = () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => {
-          const y = window.scrollY || 0;
-          const isMobile = window.matchMedia('(max-width: 720px)').matches;
-          const mobileScale = isMobile ? 0.55 : 1;
-
-          for (const t of targets) {
-            const offset = Math.max(-18, Math.min(18, (y * t.factor) * mobileScale));
-            t.el.style.setProperty('--bg-parallax', `${-offset}px`);
-          }
-
-          ticking = false;
-        });
-      };
-
-      onScroll();
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll, { passive: true });
-    }
-  }
-
-})();
+init();

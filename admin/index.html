@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — La Main d’Or</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script type="module" src="../assets/js/admin.js"></script>
+</head>
+<body class="admin-body">
+  <a class="skip-link" href="#main">Aller au contenu</a>
+
+  <header class="nav-wrap">
+    <nav class="nav container" aria-label="Admin">
+      <a class="brand" href="../index.html" aria-label="Retour au site">
+        <span class="brand__mark" aria-hidden="true">✦</span>
+        <span class="brand__text">
+          <span class="brand__name">La Main d’Or</span>
+          <span class="brand__tag">Admin</span>
+        </span>
+      </a>
+
+      <div class="nav__menu is-admin">
+        <a class="btn btn--ghost btn--sm" href="../index.html">Voir le site</a>
+        <button class="btn btn--primary btn--sm" id="logoutBtn" type="button">Déconnexion</button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="container admin">
+    <section class="admin-card" id="loginView" hidden>
+      <h1>Connexion admin</h1>
+      <p class="muted">Authentification Supabase (email / mot de passe).</p>
+
+      <form id="loginForm" class="form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="password">Mot de passe</label>
+          <input id="password" name="password" type="password" required autocomplete="current-password" />
+        </div>
+        <button class="btn btn--primary" type="submit">Se connecter</button>
+      </form>
+
+      <div id="loginStatus" class="status" role="status" aria-live="polite"></div>
+      <p class="fineprint">Astuce : créez l’utilisateur admin dans Supabase Auth.</p>
+    </section>
+
+    <section class="admin-card" id="appView" hidden>
+      <div class="admin-head">
+        <div>
+          <h1>Tableau de bord</h1>
+          <p class="muted">Gérez prestations &amp; galerie. Les changements apparaissent automatiquement sur la vitrine.</p>
+        </div>
+        <div class="admin-head__right">
+          <span class="pill pill--dark" id="userBadge">Connecté</span>
+        </div>
+      </div>
+
+      <div class="admin-tabs" role="tablist" aria-label="Sections admin">
+        <button class="tab is-active" role="tab" aria-selected="true" data-admin-tab="services">Prestations</button>
+        <button class="tab" role="tab" aria-selected="false" data-admin-tab="gallery">Galerie</button>
+      </div>
+
+      <div id="adminStatus" class="status" role="status" aria-live="polite"></div>
+
+      <!-- SERVICES -->
+      <section id="servicesPanel" class="admin-panel">
+        <div class="panel-head">
+          <h2>Prestations</h2>
+          <button class="btn btn--primary btn--sm" id="newServiceBtn" type="button">+ Ajouter</button>
+        </div>
+
+        <div class="admin-grid">
+          <div class="card card--soft">
+            <h3>Recherche</h3>
+            <div class="search">
+              <label class="sr-only" for="adminServiceSearch">Rechercher une prestation</label>
+              <input id="adminServiceSearch" type="search" placeholder="Titre, catégorie…" />
+              <button class="btn btn--ghost btn--sm" type="button" id="adminClearServiceSearch">Effacer</button>
+            </div>
+
+            <div class="note">
+              <p class="muted">Glissez-déposez pour réordonner (order_index). ✅</p>
+            </div>
+          </div>
+
+          <div class="card card--soft">
+            <h3>Raccourcis</h3>
+            <ul class="list">
+              <li><span class="badge">Featured</span> = mise en avant sur la vitrine</li>
+              <li>Le bouton “Réserver” ouvre le <em>calendly_url</em> de la prestation</li>
+              <li>Si besoin : laissez <em>calendly_url</em> vide → lien générique</li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="servicesList" class="admin-list" aria-live="polite"></div>
+      </section>
+
+      <!-- GALLERY -->
+      <section id="galleryPanel" class="admin-panel" hidden>
+        <div class="panel-head">
+          <h2>Galerie</h2>
+          <div class="panel-actions">
+            <button class="btn btn--ghost btn--sm" id="refreshGalleryBtn" type="button">Rafraîchir</button>
+          </div>
+        </div>
+
+        <div class="upload-zone" id="dropZone" tabindex="0" role="button" aria-label="Zone d'upload (glisser-déposer)">
+          <p><strong>Glissez-déposez</strong> vos images ici ou <span class="linklike">cliquez pour choisir</span>.</p>
+          <p class="muted">Compression côté client (si possible) • Multi-fichiers • Formats : jpg / png / webp</p>
+          <input id="fileInput" type="file" accept="image/*" multiple hidden />
+        </div>
+
+        <div class="admin-grid mt-lg">
+          <div class="card card--soft">
+            <h3>Conseils perf</h3>
+            <ul class="list">
+              <li>Préférez des images nettes &lt; 2000px de large</li>
+              <li>Alt court et descriptif (ex : “French rose”)</li>
+              <li>Glissez-déposez pour réordonner ✅</li>
+            </ul>
+          </div>
+          <div class="card card--soft">
+            <h3>Bucket</h3>
+            <p class="muted"><code>gallery</code> (public). Les fichiers sont stockés dans Supabase Storage.</p>
+          </div>
+        </div>
+
+        <div id="galleryList" class="gallery-admin-grid" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <!-- SERVICE MODAL -->
+    <dialog class="modal" id="serviceModal" aria-label="Édition prestation">
+      <form method="dialog" class="modal__card" id="serviceForm">
+        <div class="modal__head">
+          <h3 id="serviceModalTitle">Nouvelle prestation</h3>
+          <button class="icon-btn" value="cancel" aria-label="Fermer">×</button>
+        </div>
+
+        <div class="modal__body form">
+          <input type="hidden" id="serviceId" />
+
+          <div class="field">
+            <label for="category">Catégorie</label>
+            <select id="category" required>
+              <option value="Manucure">Manucure</option>
+              <option value="Ongles mains">Ongles mains</option>
+              <option value="Ongles pieds">Ongles pieds</option>
+              <option value="Cils">Cils</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="title">Titre</label>
+            <input id="title" required maxlength="80" />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="price">Prix (€)</label>
+              <input id="price" type="number" min="0" step="1" required />
+            </div>
+            <div class="field">
+              <label for="duration">Durée (min)</label>
+              <input id="duration" type="number" min="0" step="1" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="description">Description (court)</label>
+            <textarea id="description" maxlength="180" rows="3" placeholder="Ex : Pose complète, finition brillante, conseils d’entretien…"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="calendly_url">Lien Calendly (optionnel)</label>
+            <input id="calendly_url" type="url" placeholder="https://calendly.com/..." />
+          </div>
+
+          <div class="field-row">
+            <div class="field checkbox">
+              <input id="featured" type="checkbox" />
+              <label for="featured">Populaire / mise en avant</label>
+            </div>
+            <div class="field">
+              <label for="order_index">Ordre (order_index)</label>
+              <input id="order_index" type="number" min="0" step="1" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal__foot">
+          <button class="btn btn--ghost" value="cancel">Annuler</button>
+          <button class="btn btn--primary" id="saveServiceBtn" value="default" type="submit">Enregistrer</button>
+        </div>
+      </form>
+    </dialog>
+
+  </main>
+</body>
+</html>

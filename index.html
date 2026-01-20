@@ -1,422 +1,296 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>La Main d’Or — Ongles & Cils à Gravelines (sur rendez-vous)</title>
+  <meta name="description" content="Prothésiste ongulaire & technicienne de cils à Gravelines. Réservation rapide, prestations claires, galerie, avis et infos pratiques." />
 
-  <title>Ongles & Cils à Gravelines | La Main d’Or — Réservation en ligne</title>
-  <meta name="description" content="Prothésiste ongulaire & technicienne de cils à Gravelines. Réservez en 30 secondes en ligne : prestations, prix, durées, résultats, avis." />
-
-  <link rel="canonical" href="https://leiiito.github.io/la-main-dor-teste/" />
-
-  <!-- OpenGraph / Twitter -->
+  <!-- Open Graph -->
   <meta property="og:title" content="La Main d’Or — Ongles & Cils à Gravelines" />
-  <meta property="og:description" content="Réservation rapide en ligne. Résultat net, tenue durable, hygiène irréprochable." />
+  <meta property="og:description" content="Réservez votre rendez-vous ongles & cils en quelques secondes. Prestations, galerie, avis, contact." />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/img/og-cover.jpg" />
   <meta property="og:locale" content="fr_FR" />
-  <meta property="og:url" content="https://leiiito.github.io/la-main-dor-teste/" />
-  <meta property="og:image" content="https://leiiito.github.io/la-main-dor-teste/assets/img/og-cover.jpg" />
+
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="La Main d’Or — Ongles & Cils à Gravelines" />
+  <meta name="twitter:description" content="Réservez votre rendez-vous ongles & cils en quelques secondes." />
+  <meta name="twitter:image" content="assets/img/og-cover.jpg" />
 
-  <!-- Local SEO -->
-  <meta name="geo.region" content="FR-59" />
-  <meta name="geo.placename" content="Gravelines" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%230b0b0e' d='M32 4l8 16 18 3-13 13 3 18-16-9-16 9 3-18L6 23l18-3z'/%3E%3C/svg%3E">
 
-  <!-- Favicon -->
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-
-  <!-- CSS -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="assets/css/style.css" />
 
-  <!-- Schema.org -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "BeautySalon",
-    "name": "La Main d’Or",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Gravelines",
-      "addressRegion": "Hauts-de-France",
-      "addressCountry": "FR"
-    },
-    "areaServed": "Gravelines",
-    "sameAs": [
-      "https://www.instagram.com/manon__behra",
-      "https://wa.me/33750126032",
-      "https://g.page/r/CTha_eAXpwwcEAE/review"
-    ]
-  }
-  </script>
-
-  <!-- JS -->
-  <script defer src="assets/js/main.js"></script>
+  <script type="module" src="assets/js/main.js"></script>
 </head>
+
 <body>
+  <a class="skip-link" href="#main">Aller au contenu</a>
 
-  <!-- Top bar -->
-  <div class="topbar" role="note">
-    📍 Gravelines • Sur RDV • Réservation en ligne + questions WhatsApp
-  </div>
-
-  <!-- Header / Nav -->
-  <header class="header" data-header>
-    <div class="container header__inner">
-      <a class="brand" href="#top" aria-label="Retour en haut">
+  <header class="nav-wrap">
+    <nav class="nav container" aria-label="Navigation principale">
+      <a class="brand" href="#top" aria-label="La Main d’Or, retour en haut de page">
         <span class="brand__mark" aria-hidden="true">✦</span>
-        <span class="brand__name">La Main d’Or</span>
+        <span class="brand__text">
+          <span class="brand__name">La Main d’Or</span>
+          <span class="brand__tag">Ongles • Cils • Gravelines</span>
+        </span>
       </a>
 
-      <nav class="nav" aria-label="Navigation principale">
-        <a class="nav__link" href="#prestations">Prestations</a>
-        <a class="nav__link" href="#galerie">Galerie</a>
-        <a class="nav__link" href="#avis">Avis</a>
-        <a class="nav__link" href="#contact">Contact</a>
-      </nav>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="navMenu">
+        <span class="sr-only">Ouvrir le menu</span>
+        <span class="nav__burger" aria-hidden="true"></span>
+      </button>
 
-      <a class="btn btn--primary header__cta" href="#prestations">
-        Réserver en ligne
-      </a>
-    </div>
+      <div id="navMenu" class="nav__menu">
+        <a href="#prestations">Prestations</a>
+        <a href="#galerie">Galerie</a>
+        <a href="#avis">Avis</a>
+        <a href="#contact">Infos</a>
+        <a class="btn btn--primary btn--sm" href="#reserver" data-cta="book-generic">Réserver</a>
+      </div>
+    </nav>
   </header>
 
-  <main id="top">
-
-    <!-- Hero -->
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="bg-layer" aria-hidden="true">
-        <span class="bg-blob bg-blob--a"></span>
-        <span class="bg-blob bg-blob--b"></span>
-        <div class="bg-frag bg-frag--hero-1" role="presentation">
-          <img src="assets/img/bg/bg-01.jpg" alt="" loading="lazy" decoding="async" />
-        </div>
-      </div>
-
+  <main id="main">
+    <!-- HERO -->
+    <section id="top" class="hero">
       <div class="container hero__grid">
-        <div class="hero__content">
-          <p class="kicker">Ongles & Cils • Gravelines</p>
-          <h1 id="hero-title">Résultat net, tenue durable. <span class="hero__accent">Réservation simple</span>.</h1>
-          <p class="hero__sub">Prothésiste ongulaire & technicienne de cils. Hygiène irréprochable, produits professionnels, sur rendez-vous.</p>
+        <div class="hero__copy">
+          <p class="pill">Sur rendez-vous • Gravelines</p>
+          <h1>Ongles &amp; Cils à Gravelines — <span class="accent">résultats nets</span>, tenue durable.</h1>
+          <p class="lead">
+            Prestations premium, hygiène irréprochable, produits professionnels. Réservation en quelques secondes.
+          </p>
 
-          <div class="hero__ctas">
-            <a class="btn btn--primary btn--lg" href="#prestations">
-              Réserver en ligne
+          <div class="hero__cta" id="reserver">
+            <a class="btn btn--primary" href="#" data-cta="book-generic">
+              Réserver sur Calendly
             </a>
-            <a class="btn btn--ghost btn--lg" href="#prestations">
-              Voir les prestations
-            </a>
+            <a class="btn btn--ghost" href="#prestations">Voir les prestations</a>
           </div>
 
-          <div class="hero__proof">
-            <span class="pill" aria-label="Avis">⭐ Avis clientes</span>
-            <span class="pill">Réponse rapide</span>
-            <a class="pill pill--link" href="https://g.page/r/CTha_eAXpwwcEAE/review" target="_blank" rel="noopener">Avis Google</a>
-          </div>
+          <ul class="hero__bullets" role="list">
+            <li>⏱️ Créneaux clairs • rappel automatique</li>
+            <li>🧼 Hygiène &amp; matériel désinfecté</li>
+            <li>✨ Finition précise • tenue optimisée</li>
+          </ul>
         </div>
 
-        <div class="hero__media">
-          <img class="hero__image" src="assets/img/hero.jpg" alt="Réalisation ongles La Main d’Or à Gravelines" loading="eager" decoding="async"  width="1200" height="1500"/>
+        <div class="hero__visual" aria-hidden="true">
+          <div class="glass-card">
+            <div class="glass-card__top">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+            <div class="glass-card__body">
+              <div class="stat">
+                <div class="stat__k">Réservation</div>
+                <div class="stat__v">30 s</div>
+              </div>
+              <div class="divider"></div>
+              <div class="mini-grid">
+                <div class="mini-swatch"></div>
+                <div class="mini-swatch"></div>
+                <div class="mini-swatch"></div>
+                <div class="mini-swatch"></div>
+              </div>
+              <p class="muted">Un design chic, simple et rassurant — orienté conversion.</p>
+            </div>
+          </div>
+          <div class="hero__glow"></div>
         </div>
       </div>
     </section>
 
-    <!-- Steps -->
-    <section class="section section--soft" aria-labelledby="steps-title">
+    <!-- 3 STEPS -->
+    <section class="section">
       <div class="container">
         <div class="section__head">
-          <h2 id="steps-title">Réserver en 30 secondes</h2>
-          <p class="section__sub">Choisis une prestation, réserve ton créneau en ligne, et reçois ta confirmation. Simple et rapide.</p>
+          <h2>Réserver en 30 secondes</h2>
+          <p class="muted">Sans appels, sans échanges interminables. Vous choisissez, vous validez, c’est réservé.</p>
         </div>
 
         <div class="steps">
-          <div class="step">
-            <div class="step__n" aria-hidden="true">1</div>
-            <div>
-              <p class="step__title">Choisis une prestation</p>
-              <p class="step__text">Ongles mains/pieds, manucure ou cils.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step__n" aria-hidden="true">2</div>
-            <div>
-              <p class="step__title">Choisis ton créneau</p>
-              <p class="step__text">Ouverture directe sur Calendly pour cette prestation.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step__n" aria-hidden="true">3</div>
-            <div>
-              <p class="step__title">RDV confirmé</p>
-              <p class="step__text">Tu reçois la confirmation automatiquement.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="center">
-          <a class="btn btn--primary" href="#prestations">
-            Choisir une prestation
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Prestations -->
-    <section id="prestations" class="section prestations" aria-labelledby="prestations-title">
-      <div class="bg-layer" aria-hidden="true">
-        <span class="bg-blob bg-blob--c"></span>
-        <div class="bg-frag bg-frag--presta-1" role="presentation">
-          <img src="assets/img/bg/bg-04.jpg" alt="" loading="lazy" decoding="async" />
-        </div>
-        <div class="bg-frag bg-frag--presta-2" role="presentation">
-          <img src="assets/img/bg/bg-02.jpg" alt="" loading="lazy" decoding="async" />
-        </div>
-      </div>
-
-      <div class="container">
-        <div class="section__head">
-          <h2 id="prestations-title">Prestations</h2>
-          <p class="section__sub">Prix et durée visibles. Réservation en ligne en 1 clic.</p>
-        </div>
-
-        <div class="presta__tools">
-          <label class="search" aria-label="Rechercher une prestation">
-            <span class="search__icon" aria-hidden="true">⌕</span>
-            <input type="search" placeholder="Rechercher (ex: gel, remplissage, volume…)" data-search />
-          </label>
-
-          <div class="tabs" data-tabs role="tablist" aria-label="Catégories prestations">
-            <button class="tab active" data-tab="Manucure" role="tab" aria-selected="true">Manucure</button>
-            <button class="tab" data-tab="Ongles mains" role="tab" aria-selected="false">Ongles mains</button>
-            <button class="tab" data-tab="Ongles pieds" role="tab" aria-selected="false">Ongles pieds</button>
-            <button class="tab" data-tab="Cils" role="tab" aria-selected="false">Cils</button>
-          </div>
-        </div>
-
-        <div class="featured" data-featured aria-label="Prestations populaires"></div>
-        <div class="cards" data-prestations aria-live="polite"></div>
-
-        <div class="to-check" data-to-check hidden>
-          <h3>À vérifier</h3>
-          <p class="to-check__sub">Certaines prestations n’ont pas toutes les informations. Je te les liste ici.</p>
-          <ul data-to-check-list></ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Galerie -->
-    <section id="galerie" class="section section--alt galerie" aria-labelledby="galerie-title">
-      <div class="bg-layer" aria-hidden="true">
-        <span class="bg-blob bg-blob--d"></span>
-        <div class="bg-frag bg-frag--gallery-1" role="presentation">
-          <img src="assets/img/bg/bg-05.jpg" alt="" loading="lazy" decoding="async" />
-        </div>
-      </div>
-
-      <div class="container">
-        <div class="section__head">
-          <h2 id="galerie-title">Résultats</h2>
-          <p class="section__sub">Ongles et cils : un rendu propre, net et durable.</p>
-        </div>
-
-        <div class="chips" role="tablist" aria-label="Filtrer la galerie">
-          <button class="chip is-active" data-filter="all" role="tab" aria-selected="true">Tous</button>
-          <button class="chip" data-filter="ongles" role="tab" aria-selected="false">Ongles</button>
-          <button class="chip" data-filter="cils" role="tab" aria-selected="false">Cils</button>
-        </div>
-
-        <div class="gallery" data-gallery>
-          <!-- Ongles 10 -->
-          <figure class="g-item" data-type="ongles">
-            <img src="assets/img/galerie/ongles/ongles-01.jpg" alt="Manucure gel — réalisation 01 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" />
-          </figure>
-          <figure class="g-item" data-type="ongles"><img src="assets/img/galerie/ongles/ongles-02.jpg" alt="Pose ongles — réalisation 02 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="ongles"><img src="assets/img/galerie/ongles/ongles-03.jpg" alt="Nail art — réalisation 03 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="ongles"><img src="assets/img/galerie/ongles/ongles-04.jpg" alt="Manucure soignée — réalisation 04 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="ongles"><img src="assets/img/galerie/ongles/ongles-05.jpg" alt="Ongles finition brillante — réalisation 05 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="ongles"><img src="assets/img/galerie/ongles/ongles-06.jpg" alt="Pose américaine/gel — réalisation 06 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="ongles"><img src="assets/img/galerie/ongles/ongles-07.jpg" alt="Nail art détails — réalisation 07 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="ongles"><img src="assets/img/galerie/ongles/ongles-08.jpg" alt="Ongles couleur — réalisation 08 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="ongles"><img src="assets/img/galerie/ongles/ongles-09.jpg" alt="Manucure renfort — réalisation 09 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="ongles"><img src="assets/img/galerie/ongles/ongles-10.jpg" alt="Ongles nude — réalisation 10 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-
-          <!-- Cils 10 -->
-          <figure class="g-item" data-type="cils"><img src="assets/img/galerie/cils/cils-01.jpg" alt="Extensions de cils — résultat 01 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="cils"><img src="assets/img/galerie/cils/cils-02.jpg" alt="Cils volume — résultat 02 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="cils"><img src="assets/img/galerie/cils/cils-03.jpg" alt="Cils effet naturel — résultat 03 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="cils"><img src="assets/img/galerie/cils/cils-04.jpg" alt="Cils cil à cil — résultat 04 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="cils"><img src="assets/img/galerie/cils/cils-05.jpg" alt="Extensions de cils — résultat 05 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="cils"><img src="assets/img/galerie/cils/cils-06.jpg" alt="Rehaussement de cils — résultat 06 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="cils"><img src="assets/img/galerie/cils/cils-07.jpg" alt="Cils volume russe — résultat 07 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="cils"><img src="assets/img/galerie/cils/cils-08.jpg" alt="Extensions de cils — résultat 08 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="cils"><img src="assets/img/galerie/cils/cils-09.jpg" alt="Cils mixte — résultat 09 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-          <figure class="g-item" data-type="cils"><img src="assets/img/galerie/cils/cils-10.jpg" alt="Cils mega volume — résultat 10 — La Main d’Or à Gravelines" width="1200" height="1200" loading="lazy" decoding="async" /></figure>
-        </div>
-
-        <div class="gallery__ctas">
-          <a class="btn btn--primary" href="#prestations">Réserver en ligne</a>
-          <a class="btn btn--ghost" href="https://www.instagram.com/manon__behra" target="_blank" rel="noopener">Voir plus sur Instagram</a>
-        </div>
-      </div>
-
-      <!-- Lightbox (dialog) -->
-      <dialog class="lightbox" id="lightbox" aria-label="Agrandir l’image">
-        <button class="lightbox__close" type="button" data-lb-close aria-label="Fermer">✕</button>
-        <button class="lightbox__nav lightbox__nav--prev" type="button" data-lb-prev aria-label="Image précédente">‹</button>
-        <button class="lightbox__nav lightbox__nav--next" type="button" data-lb-next aria-label="Image suivante">›</button>
-        <img class="lightbox__img" alt="" />
-      </dialog>
-    </section>
-
-    <!-- Réassurance -->
-    <section class="section" aria-labelledby="trust-title">
-      <div class="container">
-        <div class="section__head">
-          <h2 id="trust-title">Une expérience rassurante</h2>
-          <p class="section__sub">Tout est pensé pour un résultat propre, durable et confortable.</p>
-        </div>
-
-        <div class="grid-4">
-          <article class="trust-card">
-            <div class="trust-card__icon" aria-hidden="true">🧼</div>
-            <h3>Hygiène & sécurité</h3>
-            <p>Matériel propre, gestes soignés, environnement net.</p>
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">1</div>
+            <h3>Choisissez votre prestation</h3>
+            <p>Filtrez par catégorie ou recherchez par mot-clé.</p>
           </article>
-          <article class="trust-card">
-            <div class="trust-card__icon" aria-hidden="true">✨</div>
-            <h3>Finition premium</h3>
-            <p>Résultat précis, bords propres, rendu lumineux.</p>
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">2</div>
+            <h3>Sélectionnez un créneau</h3>
+            <p>Calendly affiche les disponibilités en temps réel.</p>
           </article>
-          <article class="trust-card">
-            <div class="trust-card__icon" aria-hidden="true">🧴</div>
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">3</div>
+            <h3>Confirmez</h3>
+            <p>Vous recevez une confirmation + rappel automatique.</p>
+          </article>
+        </div>
+
+        <div class="center mt-lg">
+          <a class="btn btn--primary" href="#" data-cta="book-generic">Réserver maintenant</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="prestations" class="section section--soft">
+      <div class="container">
+        <div class="section__head">
+          <h2>Prestations</h2>
+          <p class="muted">Prix &amp; durées transparents. Chaque prestation possède son bouton de réservation.</p>
+        </div>
+
+        <div class="services-ui" role="region" aria-label="Recherche et filtres des prestations">
+          <div class="tabs" role="tablist" aria-label="Catégories de prestations">
+            <button class="tab is-active" role="tab" aria-selected="true" data-category="all">Tout</button>
+            <button class="tab" role="tab" aria-selected="false" data-category="Manucure">Manucure</button>
+            <button class="tab" role="tab" aria-selected="false" data-category="Ongles mains">Ongles mains</button>
+            <button class="tab" role="tab" aria-selected="false" data-category="Ongles pieds">Ongles pieds</button>
+            <button class="tab" role="tab" aria-selected="false" data-category="Cils">Cils</button>
+          </div>
+
+          <div class="search">
+            <label class="sr-only" for="serviceSearch">Rechercher une prestation</label>
+            <input id="serviceSearch" type="search" placeholder="Rechercher (ex : gel, remplissage, volume…)" autocomplete="off" />
+            <button class="btn btn--ghost btn--sm" type="button" id="clearSearch">Effacer</button>
+          </div>
+        </div>
+
+        <div id="servicesStatus" class="status" role="status" aria-live="polite"></div>
+
+        <div id="servicesGrid" class="cards-grid" aria-live="polite"></div>
+
+        <div class="note mt-lg">
+          <p><strong>Astuce :</strong> chaque prestation peut avoir son propre lien Calendly. L’admin gère tout depuis <code>/admin</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="galerie" class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2>Galerie</h2>
+          <p class="muted">Quelques réalisations. Cliquez pour agrandir.</p>
+        </div>
+
+        <div id="galleryStatus" class="status" role="status" aria-live="polite"></div>
+        <div id="galleryGrid" class="gallery-grid"></div>
+
+        <div class="center mt-lg">
+          <a class="btn btn--ghost" href="https://instagram.com/manon__behra" target="_blank" rel="noopener">Voir plus sur Instagram</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUST -->
+    <section class="section section--soft">
+      <div class="container">
+        <div class="section__head">
+          <h2>Réassurance</h2>
+          <p class="muted">Du soin, de la précision, et une routine qualité à chaque rendez-vous.</p>
+        </div>
+
+        <div class="trust">
+          <article class="card">
+            <h3>Hygiène stricte</h3>
+            <p>Désinfection du matériel et protocole propre à chaque cliente.</p>
+          </article>
+          <article class="card">
             <h3>Produits pro</h3>
-            <p>Choix de produits professionnels adaptés à toi.</p>
+            <p>Produits professionnels pour une finition propre et une tenue optimisée.</p>
           </article>
-          <article class="trust-card">
-            <div class="trust-card__icon" aria-hidden="true">🕒</div>
-            <h3>RDV clair</h3>
-            <p>Durées affichées, confirmation rapide, planning simple.</p>
+          <article class="card">
+            <h3>Tenue &amp; confort</h3>
+            <p>Préparation soignée + conseils d’entretien pour durer.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- Avis -->
-    <section id="avis" class="section section--soft avis" aria-labelledby="avis-title">
-      <div class="bg-layer" aria-hidden="true">
-        <span class="bg-blob bg-blob--e"></span>
-        <div class="bg-frag bg-frag--avis-1" role="presentation">
-          <img src="assets/img/bg/bg-06.jpg" alt="" loading="lazy" decoding="async" />
-        </div>
-      </div>
-
+    <!-- REVIEWS -->
+    <section id="avis" class="section">
       <div class="container">
         <div class="section__head">
-          <h2 id="avis-title">Avis clientes</h2>
-          <p class="section__sub">La preuve sociale qui compte : du travail propre et une tenue au top.</p>
+          <h2>Avis</h2>
+          <p class="muted">Ce que les clientes disent (exemples). Consultez les avis Google.</p>
         </div>
 
-        <div class="quotes">
-          <blockquote class="quote">“Travail impeccable, très douce et très pro. Je reviens !”</blockquote>
-          <blockquote class="quote">“Cils parfaits, résultat naturel, super tenue.”</blockquote>
-          <blockquote class="quote">“Rendu magnifique, hygiène au top, je recommande à 100%.”</blockquote>
+        <div class="reviews">
+          <article class="review">
+            <p class="review__quote">“Résultat magnifique, très propre, et super tenue. Je recommande.”</p>
+            <p class="review__meta">— Cliente</p>
+          </article>
+          <article class="review">
+            <p class="review__quote">“Accueil chaleureux, hygiène parfaite, finitions impeccables.”</p>
+            <p class="review__meta">— Cliente</p>
+          </article>
+          <article class="review">
+            <p class="review__quote">“Réservation facile, créneaux clairs, et travail hyper précis.”</p>
+            <p class="review__meta">— Cliente</p>
+          </article>
         </div>
 
-        <div class="center">
-          <a class="btn btn--primary" href="https://g.page/r/CTha_eAXpwwcEAE/review" target="_blank" rel="noopener">Lire / Laisser un avis Google</a>
+        <div class="center mt-lg">
+          <a class="btn btn--primary" href="https://g.page/r/CTha_eAXpwwcEAE/review" target="_blank" rel="noopener">Lire / laisser un avis Google</a>
         </div>
       </div>
     </section>
 
-    <!-- FAQ -->
-    <section class="section" aria-labelledby="faq-title">
+    <!-- CONTACT -->
+    <section id="contact" class="section section--soft">
       <div class="container">
         <div class="section__head">
-          <h2 id="faq-title">FAQ</h2>
-          <p class="section__sub">Réponses rapides aux questions les plus fréquentes.</p>
+          <h2>Contact &amp; infos</h2>
+          <p class="muted">Une question rapide ? Écrivez sur WhatsApp. Pour réserver : utilisez le bouton.</p>
         </div>
 
-        <div class="faq" data-faq>
-          <details class="faq__item">
-            <summary>Combien de temps ça dure ?</summary>
-            <p>La durée dépend de la prestation. Elle est indiquée sur chaque carte (ex: 60 min).</p>
-          </details>
-          <details class="faq__item">
-            <summary>Je ne sais pas quoi choisir…</summary>
-            <p>Écris-moi sur WhatsApp : je t’oriente selon ton style, ton budget et le rendu souhaité.</p>
-            <p><a class="link" href="https://wa.me/33750126032" target="_blank" rel="noopener">Demander conseil sur WhatsApp</a></p>
-          </details>
-          <details class="faq__item">
-            <summary>Annulation / retard ?</summary>
-            <p>Préviens dès que possible sur WhatsApp, on trouve une solution ensemble.</p>
-          </details>
-          <details class="faq__item">
-            <summary>Paiement ?</summary>
-            <p>Le paiement se fait sur place (modalités précisées au moment du RDV).</p>
-          </details>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="section section--alt contact" aria-labelledby="contact-title">
-      <div class="bg-layer" aria-hidden="true">
-        <span class="bg-blob bg-blob--f"></span>
-        <div class="bg-frag bg-frag--contact-1" role="presentation">
-          <img src="assets/img/bg/bg-03.jpg" alt="" loading="lazy" decoding="async" />
-        </div>
-      </div>
-
-      <div class="container">
-        <div class="section__head">
-          <h2 id="contact-title">Contact & RDV</h2>
-          <p class="section__sub">Le plus rapide : la réservation en ligne. Besoin de conseil : WhatsApp ou Instagram.</p>
-        </div>
-
-        <div class="contact__ctas">
-          <a class="btn btn--primary btn--lg" href="#prestations">Réserver en ligne</a>
-          <a class="btn btn--ghost btn--lg" href="https://wa.me/33750126032" target="_blank" rel="noopener">Question WhatsApp</a>
-          <a class="btn btn--ghost btn--lg" href="https://www.instagram.com/manon__behra" target="_blank" rel="noopener">DM Instagram</a>
-        </div>
-
-        <form class="form" data-form>
-          <div class="form__grid">
-            <label class="field">
-              <span>Nom</span>
-              <input type="text" name="name" autocomplete="name" required />
-            </label>
-            <label class="field">
-              <span>Message</span>
-              <textarea name="message" rows="4" required placeholder="Ex: Bonjour, je voudrais réserver une pose américaine cette semaine…"></textarea>
-            </label>
+        <div class="contact">
+          <div class="contact__card">
+            <h3>Réservation</h3>
+            <p>Le plus rapide : choisissez une prestation et cliquez sur “Réserver”.</p>
+            <a class="btn btn--primary" href="#" data-cta="book-generic">Réserver</a>
           </div>
-          <button class="btn btn--ghost" type="submit">Envoyer (WhatsApp recommandé)</button>
-          <p class="form__note">📍 Gravelines • Sur RDV • Réservation en ligne + questions WhatsApp</p>
-        </form>
+
+          <div class="contact__card">
+            <h3>WhatsApp</h3>
+            <p>Message direct : réponse dès que possible.</p>
+            <a class="btn btn--ghost" href="https://wa.me/33750126032" target="_blank" rel="noopener">Écrire sur WhatsApp</a>
+          </div>
+
+          <div class="contact__card">
+            <h3>Instagram</h3>
+            <p>Dernières réalisations &amp; infos.</p>
+            <a class="btn btn--ghost" href="https://instagram.com/manon__behra" target="_blank" rel="noopener">@manon__behra</a>
+          </div>
+        </div>
+
+        <p class="fineprint mt-lg">
+          © <span id="year"></span> La Main d’Or • Gravelines • <a href="/admin/index.html">Admin</a>
+        </p>
       </div>
     </section>
-
   </main>
 
-  <!-- Sticky mobile bar -->
-  <div class="sticky" aria-label="Actions rapides">
-    <a class="sticky__btn sticky__btn--wa" href="https://wa.me/33750126032" target="_blank" rel="noopener">WhatsApp</a>
-    <a class="sticky__btn" href="https://www.instagram.com/manon__behra" target="_blank" rel="noopener">Instagram</a>
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement d'image">
+    <div class="lightbox__backdrop" data-close></div>
+    <div class="lightbox__panel" role="document">
+      <button class="lightbox__close" type="button" data-close aria-label="Fermer">×</button>
+      <img id="lightboxImg" alt="" />
+      <p id="lightboxCaption" class="lightbox__caption"></p>
+    </div>
   </div>
 
-  <footer class="footer">
-    <div class="container footer__inner">
-      <div>
-        <p class="footer__brand">La Main d’Or</p>
-        <p class="footer__muted">Gravelines • Ongles & Cils</p>
-      </div>
-      <div class="footer__links">
-        <a class="link" href="#prestations">Réserver</a>
-        <a class="link" href="https://www.instagram.com/manon__behra" target="_blank" rel="noopener">Instagram</a>
-        <a class="link" href="https://g.page/r/CTha_eAXpwwcEAE/review" target="_blank" rel="noopener">Avis Google</a>
-      </div>
-      <p class="footer__muted">© <span data-year></span></p>
+  <noscript>
+    <div class="noscript container">
+      <p><strong>JavaScript est nécessaire</strong> pour afficher les prestations et la galerie (chargées depuis Supabase).</p>
     </div>
-  </footer>
-
+  </noscript>
 </body>
 </html>
