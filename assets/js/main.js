@@ -260,8 +260,34 @@
   buildToCheck();
 
   // -----------------------------
-  // Gallery lightbox
+  // Galerie: filtres + lightbox
   // -----------------------------
+  const gFilterBtns = $$('[data-gfilter]');
+  const gItems = $$('[data-gallery] .g-item');
+
+  const setGalleryFilter = (type) => {
+    gFilterBtns.forEach((b) => {
+      const key = b.getAttribute('data-gfilter') || 'all';
+      const isActive = key === type;
+      b.classList.toggle('chip--active', isActive);
+      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+
+    gItems.forEach((item) => {
+      const t = item.getAttribute('data-type') || 'all';
+      const show = type === 'all' || t === type;
+      item.classList.toggle('is-hidden', !show);
+    });
+  };
+
+  if (gFilterBtns.length && gItems.length) {
+    gFilterBtns.forEach((b) => {
+      b.addEventListener('click', () => {
+        const type = b.getAttribute('data-gfilter') || 'all';
+        setGalleryFilter(type);
+      });
+    });
+  }
   const galleryImgs = $$('[data-gallery] img');
   const dlg = document.getElementById('lightbox');
   const dlgImg = document.getElementById('lightboxImg');
