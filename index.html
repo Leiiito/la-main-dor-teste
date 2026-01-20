@@ -72,24 +72,17 @@
           </ul>
         </div>
 
-        <div class="hero__visual" aria-hidden="true">
-          <div class="glass-card">
-            <div class="glass-card__top">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        
+        <div class="hero__visual" aria-label="Réservation">
+          <div class="booking-card" id="reservationCard">
+            <div class="booking-card__media">
+              <img id="reservationImage" src="assets/img/hero.jpg" alt="Photo de réservation" loading="lazy" decoding="async">
             </div>
-            <div class="glass-card__body">
-              <div class="stat">
-                <div class="stat__k">Réservation</div>
-                <div class="stat__v">30 s</div>
-              </div>
-              <div class="divider"></div>
-              <div class="mini-grid">
-                <div class="mini-swatch"></div>
-                <div class="mini-swatch"></div>
-                <div class="mini-swatch"></div>
-                <div class="mini-swatch"></div>
-              </div>
-              <p class="muted">Un design chic, simple et rassurant — orienté conversion.</p>
+            <div class="booking-card__body">
+              <p class="pill pill--dark" id="reservationBadge">Réservation en 30 secondes</p>
+              <h3 id="reservationTitle">Réserver votre créneau</h3>
+              <p class="muted" id="reservationText">Choisissez un créneau disponible en quelques secondes. Confirmation immédiate.</p>
+              <a class="btn btn--primary" id="reservationCta" href="#" data-cta="reservation-cta">Voir les créneaux</a>
             </div>
           </div>
           <div class="hero__glow"></div>

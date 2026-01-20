@@ -184,6 +184,53 @@
               <p class="muted">Validation basique : email + URLs (si renseignées).</p>
             </form>
           </div>
+
+          <div class="card card--soft">
+            <h3>Section réservation <span class="muted">(à côté du Hero)</span></h3>
+
+            <form id="reservationForm" class="form">
+              <div class="field">
+                <label for="reservation_image">Photo</label>
+                <input id="reservation_image" type="file" accept="image/*" />
+                <div class="image-preview" id="reservation_image_wrap" hidden>
+                  <img id="reservation_image_preview" alt="Aperçu de la photo" />
+                  <button type="button" class="btn btn--ghost btn--sm" id="reservation_image_remove">Retirer la photo</button>
+                </div>
+                <p class="muted">L’image sera optimisée (resize + compression) côté navigateur avant sauvegarde.</p>
+              </div>
+
+              <div class="field">
+                <label for="reservation_badge">Badge / mini-texte <span class="muted">(optionnel)</span></label>
+                <input id="reservation_badge" type="text" maxlength="40" placeholder="Ex : Réservation en 30 secondes" />
+              </div>
+
+              <div class="field">
+                <label for="reservation_title">Titre</label>
+                <input id="reservation_title" type="text" required maxlength="80" placeholder="Ex : Réserver votre créneau" />
+              </div>
+
+              <div class="field">
+                <label for="reservation_text">Texte court</label>
+                <textarea id="reservation_text" rows="3" maxlength="220" placeholder="Ex : Choisissez un créneau disponible en quelques secondes. Confirmation immédiate."></textarea>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="reservation_cta_text">Texte du bouton</label>
+                  <input id="reservation_cta_text" type="text" required maxlength="40" placeholder="Ex : Voir les créneaux" />
+                </div>
+                <div class="field">
+                  <label for="reservation_cta_url">Lien du bouton</label>
+                  <input id="reservation_cta_url" type="text" placeholder="https://calendly.com/... ou https://..." />
+                </div>
+              </div>
+
+              <button class="btn btn--primary" type="submit">Enregistrer</button>
+              <p class="muted">
+                Site statique : la photo est stockée dans ce navigateur. Pense à utiliser <strong>Exporter / Importer</strong> pour transférer ta configuration.
+              </p>
+            </form>
+          </div>
         </div>
       </section>
 
