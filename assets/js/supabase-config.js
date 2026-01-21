@@ -2,7 +2,7 @@
  * Supabase config
  * Remplir SUPABASE_URL et SUPABASE_ANON_KEY (voir README)
  */
-export const SUPABASE_URL = "https://oyewvpbqtzdcqbyomsu.supabase.co";
+export const SUPABASE_URL = "https://oyewvpbqtzdcqbypomsu.supabase.co";
 export const SUPABASE_ANON_KEY = "sb_publishable_KQHqPsLPRchmnLJ4L3HNKg_Zb-0X_cF";
 
 /**
