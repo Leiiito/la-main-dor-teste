@@ -10,3 +10,10 @@ export const SUPABASE_ANON_KEY = "SUPABASE_ANON_KEY";
  * L’admin peut mettre un calendly_url par prestation, sinon ce fallback est utilisé.
  */
 export const GENERIC_CALENDLY_URL = "https://calendly.com/votre-compte/rdv";
+
+
+// Edge Function (admin sécurisé)
+export const EDGE_FUNCTION_NAME = "admin-api";
+
+// Storage bucket pour les images
+export const IMAGES_BUCKET = "public-images";

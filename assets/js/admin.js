@@ -1,3 +1,4 @@
+import { SUPABASE_URL, SUPABASE_ANON_KEY, EDGE_FUNCTION_NAME, IMAGES_BUCKET } from "./supabase-config.js";
 // Admin (site statique) — La Main d’Or
 // - Mot de passe (protection simple front) + session localStorage
 // - CRUD prestations (localStorage)
@@ -14,10 +15,129 @@ const LS = {
   REVIEWS: "lmd_reviews",
 };
 
+// ----------------- Supabase (admin sécurisé via Edge Function)
+function getSupabaseClient() {
+  if (!SUPABASE_URL || SUPABASE_URL === "SUPABASE_URL") return null;
+  if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === "SUPABASE_ANON_KEY") return null;
+  if (!window.supabase?.createClient) return null;
+  return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+function getAdminPasswordForServer() {
+  // On garde le mot de passe uniquement en session (pas persistant).
+  return sessionStorage.getItem("lmd_admin_password") || "";
+}
+
+async function callAdminApi(body) {
+  const sb = getSupabaseClient();
+  if (!sb) return { ok: false, reason: "supabase_not_configured" };
+
+  const password = getAdminPasswordForServer();
+  if (!password) return { ok: false, reason: "missing_password" };
+
+  const { data, error } = await sb.functions.invoke(EDGE_FUNCTION_NAME, {
+    body: { password, ...body },
+  });
+
+  if (error) return { ok: false, error };
+  return { ok: true, data };
+}
+
+async function syncSettingsToSupabase() {
+  // Regroupe TOUT dans settings.value pour que la vitrine soit à jour partout.
+  const settings = loadSettings();
+  const services = loadServices();
+  const gallery = loadGallery();
+
+  const payload = {
+    ...settings,
+    services,
+    gallery,
+  };
+
+  return callAdminApi({ action: "save_settings", value: payload });
+}
+
+async function syncReviewsToSupabase(reviews) {
+  return callAdminApi({ action: "replace_reviews", reviews });
+}
+
+async function uploadReservationImageToSupabase(dataUrl) {
+  const res = await callAdminApi({
+    action: "upload_image",
+    bucket: IMAGES_BUCKET,
+    folder: "reservation",
+    data_url: dataUrl,
+  });
+  if (!res.ok) return null;
+  return res.data?.publicUrl || null;
+}
+
+
 const ADMIN_PASS_HASH_SHA256_HEX =
   "293a5e11f0aad8d69be0ee35a564fea7828e192ddd70057eb88872f1878d96a1"; // sha256("18121995")
 
 const $ = (s) => document.querySelector(s);
+
+// Badge de synchro (Supabase)
+const syncBadge = () => $("#syncBadge");
+
+function setSyncBadge(state, text) {
+  const el = syncBadge();
+  if (!el) return;
+  el.textContent = text;
+  el.classList.remove("pill--ok", "pill--warn", "pill--err");
+  if (state === "ok") el.classList.add("pill--ok");
+  else if (state === "err") el.classList.add("pill--err");
+  else el.classList.add("pill--warn");
+}
+
+function refreshSyncBadgeIdle() {
+  const sb = getSupabaseClient();
+  if (!sb) {
+    setSyncBadge("warn", "Supabase : non configuré");
+    return;
+  }
+  const pwd = getAdminPasswordForServer();
+  if (!pwd) {
+    setSyncBadge("warn", "Supabase : mot de passe requis");
+    return;
+  }
+  setSyncBadge("ok", "Supabase : prêt");
+}
+
+async function runSync(label, fn) {
+  const sb = getSupabaseClient();
+  if (!sb) {
+    setSyncBadge("warn", "Supabase : non configuré");
+    return;
+  }
+
+  const pwd = getAdminPasswordForServer();
+  if (!pwd) {
+    setSyncBadge("warn", "Supabase : mot de passe requis");
+    return;
+  }
+
+  setSyncBadge("warn", `Supabase : synchronisation…`);
+  const res = await fn();
+  if (res?.ok) {
+    setSyncBadge("ok", `Supabase : synchronisé`);
+    return;
+  }
+
+  if (res?.reason === "missing_password") {
+    setSyncBadge("warn", "Supabase : reconnecte-toi");
+    return;
+  }
+  if (res?.reason === "supabase_not_configured") {
+    setSyncBadge("warn", "Supabase : non configuré");
+    return;
+  }
+
+  setSyncBadge("err", `Supabase : erreur`);
+  setStatus($("#adminStatus"), `${label} : erreur de synchronisation Supabase.`, "err");
+}
 
 function setStatus(el, msg, type = "") {
   if (!el) return;
@@ -55,6 +175,7 @@ function loadServices() {
 }
 function saveServices(arr) {
   localStorage.setItem(LS.SERVICES, JSON.stringify(arr));
+  runSync("Prestations", () => syncSettingsToSupabase()).catch(() => {});
 }
 
 function loadGallery() {
@@ -63,6 +184,7 @@ function loadGallery() {
 }
 function saveGallery(arr) {
   localStorage.setItem(LS.GALLERY, JSON.stringify(arr));
+  runSync("Galerie", () => syncSettingsToSupabase()).catch(() => {});
 }
 
 function loadSettings() {
@@ -71,6 +193,8 @@ function loadSettings() {
 }
 function saveSettings(obj) {
   localStorage.setItem(LS.SETTINGS, JSON.stringify(obj));
+  // Sync Supabase (si configuré)
+  runSync("Vitrine", () => syncSettingsToSupabase()).catch(() => {});
 }
 
 function loadReviews() {
@@ -79,6 +203,8 @@ function loadReviews() {
 }
 function saveReviews(arr) {
   localStorage.setItem(LS.REVIEWS, JSON.stringify(arr));
+  // Sync Supabase (si configuré)
+  runSync("Avis", () => syncReviewsToSupabase(arr)).catch(() => {});
 }
 
 function reindex(arr) {
@@ -108,6 +234,7 @@ function showApp() {
   loginView.hidden = true;
   appView.hidden = false;
   logoutBtn.hidden = false;
+  refreshSyncBadgeIdle();
 }
 
 // ----------------- Tabs
@@ -244,6 +371,27 @@ function fillSettingsForm(settings) {
   contact_instagram.value = s.contact.links.instagram || "";
   contact_google.value = s.contact.links.google || "";
   contact_calendly.value = s.contact.links.calendly || "";
+
+// Réservation (à côté du Hero)
+reservation_badge.value = s.reservation.badge || "";
+reservation_title.value = s.reservation.title || "";
+reservation_text.value = s.reservation.text || "";
+reservation_cta_text.value = s.reservation.cta_text || "";
+reservation_cta_url.value = s.reservation.cta_url || "";
+
+const imgUrl = (s.reservation.image_url || "").trim();
+const dataUrl = (s.reservation.image_data_url || "").trim();
+reservationImageDataUrl = dataUrl;
+if (reservation_image_wrap && reservation_image_preview) {
+  const src = imgUrl || dataUrl;
+  if (src) {
+    reservation_image_preview.src = src;
+    reservation_image_wrap.hidden = false;
+  } else {
+    reservation_image_preview.removeAttribute("src");
+    reservation_image_wrap.hidden = true;
+  }
+}
 
   // Réservation
   reservation_badge.value = s.reservation.badge || "";
@@ -791,6 +939,8 @@ loginForm?.addEventListener("submit", async (e) => {
     setStatus(loginStatus, "Mot de passe incorrect.", "err");
     return;
   }
+  // Utilisé pour les appels serveur (Edge Function) pendant la session.
+  sessionStorage.setItem("lmd_admin_password", pwd);
   setAuthed(true);
   showApp();
   setStatus(adminStatus, "Connexion réussie.", "ok");
@@ -798,6 +948,7 @@ loginForm?.addEventListener("submit", async (e) => {
 
 logoutBtn?.addEventListener("click", () => {
   setAuthed(false);
+  sessionStorage.removeItem("lmd_admin_password");
   showLogin();
   setStatus(loginStatus, "Déconnecté.", "ok");
 });
@@ -1042,7 +1193,8 @@ exportBtn?.addEventListener("click", doExport);
 importBtn?.addEventListener("click", doImport);
 
 // ----------------- Init
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await hydrateFromSupabaseIfAvailable();
   if (isAuthed()) showApp(); else showLogin();
   services = loadServices();
   gallery = loadGallery();
@@ -1061,3 +1213,43 @@ document.addEventListener("DOMContentLoaded", () => {
   resetReviewForm();
   setTab("settings");
 });
+
+
+// ----------------- Supabase : hydrater l’admin depuis la config en ligne
+async function hydrateFromSupabaseIfAvailable() {
+  const sb = getSupabaseClient();
+  if (!sb) return;
+
+  const { data: row, error: sErr } = await sb
+    .from("settings")
+    .select("value")
+    .eq("key", "global")
+    .single();
+
+  if (sErr || !row?.value) return;
+  const value = row.value || {};
+
+  // Injecte en localStorage pour réutiliser les écrans admin existants
+  localStorage.setItem(LS.SETTINGS, JSON.stringify(value));
+  localStorage.setItem(LS.SERVICES, JSON.stringify(Array.isArray(value.services) ? value.services : []));
+  localStorage.setItem(LS.GALLERY, JSON.stringify(Array.isArray(value.gallery) ? value.gallery : []));
+
+  const { data: reviews, error: rErr } = await sb
+    .from("reviews")
+    .select("*")
+    .order("order_index", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (!rErr && Array.isArray(reviews)) {
+    // on remet le format attendu par ton admin
+    const mapped = reviews.map(r => ({
+      id: r.id,
+      name: r.author,
+      rating: r.rating,
+      text: r.text,
+      date: r.date || "",
+      order_index: r.order_index || 0,
+    }));
+    localStorage.setItem(LS.REVIEWS, JSON.stringify(mapped));
+  }
+}

@@ -6,7 +6,10 @@
   <title>Admin — La Main d’Or</title>
   <meta name="robots" content="noindex,nofollow" />
   <link rel="stylesheet" href="../assets/css/style.css" />
-  <script type="module" src="../assets/js/admin.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="module" src="../assets/js/supabase-config.js"></script>
+<script type="module" src="../assets/js/admin.js"></script>
 </head>
 <body class="admin-body">
   <a class="skip-link" href="#main">Aller au contenu</a>
@@ -58,6 +61,7 @@
         </div>
         <div class="admin-head__right">
           <span class="pill pill--dark" id="sessionBadge">Connecté</span>
+          <span class="pill pill--warn" id="syncBadge">Supabase : non configuré</span>
         </div>
       </div>
 

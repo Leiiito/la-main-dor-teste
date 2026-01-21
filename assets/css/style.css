@@ -81,6 +81,23 @@ code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Libera
 }
 .pill--dark{background: rgba(0,0,0,.35)}
 
+/* Pills états (admin : synchro) */
+.pill--ok{
+  color: var(--text);
+  border-color: rgba(82, 170, 120, .35);
+  background: rgba(82, 170, 120, .16);
+}
+.pill--warn{
+  color: var(--text);
+  border-color: rgba(214, 179, 120, .35);
+  background: rgba(214, 179, 120, .14);
+}
+.pill--err{
+  color: var(--text);
+  border-color: rgba(196, 88, 88, .40);
+  background: rgba(196, 88, 88, .16);
+}
+
 .accent{color: var(--accent)}
 
 .muted{color: var(--muted)}

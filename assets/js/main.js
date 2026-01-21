@@ -1,7 +1,7 @@
 // Vitrine — La Main d’Or (site statique)
 // Lit prestations + galerie depuis localStorage (remplies via /admin)
 
-import { GENERIC_CALENDLY_URL } from "./supabase-config.js";
+import { GENERIC_CALENDLY_URL, SUPABASE_URL, SUPABASE_ANON_KEY } from "./supabase-config.js";
 
 const LS = {
   SERVICES: "lmd_services",
@@ -9,6 +9,40 @@ const LS = {
   SETTINGS: "lmd_settings",
   REVIEWS: "lmd_reviews",
 };
+
+// ----------------- Supabase (lecture publique)
+// Si SUPABASE_URL / SUPABASE_ANON_KEY sont renseignés, la vitrine lit les données depuis Supabase.
+function getSupabaseClient() {
+  if (!SUPABASE_URL || SUPABASE_URL === "SUPABASE_URL") return null;
+  if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === "SUPABASE_ANON_KEY") return null;
+  if (!window.supabase?.createClient) return null;
+  return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+async function fetchPublicConfigFromSupabase() {
+  const sb = getSupabaseClient();
+  if (!sb) return null;
+
+  const { data: row, error: sErr } = await sb
+    .from("settings")
+    .select("value")
+    .eq("key", "global")
+    .single();
+
+  if (sErr || !row?.value) return null;
+
+  const { data: reviews, error: rErr } = await sb
+    .from("reviews")
+    .select("*")
+    .order("order_index", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  return {
+    settings: row.value || {},
+    reviews: !rErr && Array.isArray(reviews) ? reviews : [],
+  };
+}
+
 
 const $ = (s) => document.querySelector(s);
 
@@ -35,10 +69,14 @@ function esc(str) {
 function setStatus(el, msg) { if (el) el.textContent = msg || ""; }
 
 function loadServices() {
+  const fromSettings = settings?.services;
+  if (Array.isArray(fromSettings)) return fromSettings;
   const arr = safeParse(localStorage.getItem(LS.SERVICES), []);
   return Array.isArray(arr) ? arr : [];
 }
 function loadGallery() {
+  const fromSettings = settings?.gallery;
+  if (Array.isArray(fromSettings)) return fromSettings;
   const arr = safeParse(localStorage.getItem(LS.GALLERY), []);
   return Array.isArray(arr) ? arr : [];
 }
@@ -117,6 +155,7 @@ function getBookUrl(service) {
 
 // ----------------- Vitrine (Hero + Contact + Avis)
 let settings = mergeSettings(loadSettings());
+let reviewsData = null;
 
 function getGenericBookUrl() {
   const fromAdmin = (settings?.contact?.links?.calendly || "").trim();
@@ -222,8 +261,9 @@ function applyReservation() {
   const text = document.querySelector("#reservationText");
   const cta = document.querySelector("#reservationCta");
 
+  const url = (r.image_url || "").trim();
   const dataUrl = (r.image_data_url || "").trim();
-  if (img && dataUrl) img.src = dataUrl;
+  if (img && (url || dataUrl)) img.src = url || dataUrl;
 
   const badgeTxt = (r.badge || "").trim();
   if (badge) {
@@ -312,7 +352,7 @@ function renderReviews() {
   const wrap = document.querySelector("#avis .reviews");
   if (!wrap) return;
 
-  const list = loadReviews()
+  const list = (Array.isArray(reviewsData) ? reviewsData : loadReviews())
     .slice()
     .sort((a,b)=>(+a.order_index||0)-(+b.order_index||0));
 
@@ -489,13 +529,25 @@ toggle?.addEventListener("click", () => {
 });
 
 // ----------------- Boot
-document.addEventListener("DOMContentLoaded", () => {
-  settings = mergeSettings(loadSettings());
+document.addEventListener("DOMContentLoaded", async () => {
+  // 1) Essaye Supabase (global, multi-appareils)
+  const remote = await fetchPublicConfigFromSupabase();
+  if (remote?.settings) {
+    settings = mergeSettings(remote.settings);
+    reviewsData = remote.reviews || [];
+  } else {
+    // 2) Fallback local (pour dev / sans Supabase)
+    settings = mergeSettings(loadSettings());
+    reviewsData = null;
+  }
+
   applyHero();
-  applyReservation();
   applyContact();
   renderReviews();
+
   services = loadServices();
   setActiveTab("all");
+
+  // Galerie (depuis settings.gallery si Supabase, sinon localStorage)
   renderGallery();
 });
