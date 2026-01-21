@@ -2,8 +2,8 @@
  * Supabase config
  * Remplir SUPABASE_URL et SUPABASE_ANON_KEY (voir README)
  */
-export const SUPABASE_URL = "SUPABASE_URL";
-export const SUPABASE_ANON_KEY = "SUPABASE_ANON_KEY";
+export const SUPABASE_URL = "https://oyewvpbqtzdcqbypomsu.supabase.co";
+export const SUPABASE_ANON_KEY = "sb_publishable_KQHqPsLPRchmnLJ4L3HNKg_Zb-0X_cF";
 
 /**
  * Lien Calendly générique (Hero / CTA navbar) — à personnaliser.
