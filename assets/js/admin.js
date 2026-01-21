@@ -50,24 +50,39 @@ async function syncSettingsToSupabase() {
   const gallery = loadGallery();
 
   const payload = {
-    ...settings,
+    ...(settings || {}),
     services,
     gallery,
   };
 
-  return callAdminApi({ action: "save_settings", value: payload });
+  // ✅ L’Edge Function attend { action, payload }
+  return callAdminApi({ action: "save_settings", payload });
 }
 
 async function syncReviewsToSupabase(reviews) {
-  return callAdminApi({ action: "replace_reviews", reviews });
+  // L’admin stocke { name, rating, text, date }. La DB attend { author, rating, text, date }.
+  const payload = (Array.isArray(reviews) ? reviews : []).map((r, i) => ({
+    id: r.id,
+    author: r.name,
+    rating: r.rating,
+    text: r.text,
+    date: r.date || null,
+    order_index: Number.isFinite(+r.order_index) ? +r.order_index : i * 10,
+  }));
+
+  return callAdminApi({ action: "save_reviews", payload });
 }
 
 async function uploadReservationImageToSupabase(dataUrl) {
+  // Optionnel : si tu ajoutes plus tard l’action "upload_image" côté Edge Function (Storage),
+  // cette fonction pourra être utilisée. Pour l’instant, l’image est stockée dans settings.reservation.image_data_url.
   const res = await callAdminApi({
     action: "upload_image",
-    bucket: IMAGES_BUCKET,
-    folder: "reservation",
-    data_url: dataUrl,
+    payload: {
+      bucket: IMAGES_BUCKET,
+      folder: "reservation",
+      data_url: dataUrl,
+    },
   });
   if (!res.ok) return null;
   return res.data?.publicUrl || null;
